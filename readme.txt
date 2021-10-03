@@ -1,4 +1,4 @@
-=== Roxwp Site Monitor ===
+=== RoxWP Site Monitor ===
 Contributors: absoluteplugins, niamul, mhamudul_hk
 Tags: site monitor, activity monitor
 Requires at least: 5.2
