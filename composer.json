@@ -1,0 +1,24 @@
+{
+    "name": "absolute-plugins/roxwp-site-monitor",
+    "description": "WordPress Site Activity Monitor For RoxWP",
+    "type": "project",
+    "license": "GPL-v3",
+    "authors": [
+        {
+            "name": "AbsolutePlugins",
+            "email": "info@absoluteplugins.com"
+        }
+    ],
+    "autoload": {
+        "files": [ "includes/helpers.php" ],
+        "psr-4": {
+            "AbsolutePlugins\\RoxwpSiteMonitor\\": "includes/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.6"
+    },
+    "require-dev": {
+    }
+}

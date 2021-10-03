@@ -1,0 +1,240 @@
+<?php
+/**
+ * Data Monitor Base
+ *
+ * @package RoxwpSiteMonitor\Monitors
+ * @version 1.0.0
+ * @since RoxwpSiteMonitor 1.0.0
+ */
+
+namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+
+use Exception;
+use Plugin_Upgrader;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.1 403 Forbidden' );
+	die();
+}
+
+class Monitor_Plugins_Activity extends Activity_Monitor_Base {
+
+	use Activity_Monitor_Trait;
+
+	protected $check_maybe_log = false;
+
+	protected $_plugin = [];
+
+	public function init() {
+		add_action( 'activated_plugin', [ $this, 'on_plugin_activated' ], 10, 2 );
+		add_action( 'deactivated_plugin', [ $this, 'on_plugin_deactivated' ], 10, 2 );
+
+		add_action( 'delete_plugin', [ $this, 'on_before_delete' ] );
+		add_action( 'deleted_plugin', [ $this, 'on_plugin_deleted' ], 10, 2 );
+		add_action( 'upgrader_process_complete', [ $this, 'on_plugin_install_or_update' ], 10, 2 );
+
+		// Plugin Editor Actions.
+		add_action( 'wp_ajax_edit-theme-plugin-file', [ $this, 'on_plugin_file_modify' ], -1 );
+		add_filter( 'wp_redirect', [ $this, 'on_plugin_file_modify' ], -1 );
+
+		// $plugin_file `directory_name/main_file.php`
+	}
+
+	protected function maybe_log_plugin( $action, $plugin, $file = null ) {
+
+		/**
+		 * Should report activity for WP Core Updates?
+		 *
+		 * @param bool $status
+		 * @param string $plugin
+		 * @param string $action
+		 * @param string $file   file path if one is being modified.
+		 */
+		return (bool) apply_filters( 'roxwp_should_log_plugins_activity', true, $plugin, $action, $file );
+	}
+
+	protected function log_plugin( $action, $plugin, $extra = [] ) {
+		if ( ! $this->maybe_log_plugin( $action, $plugin ) ) {
+			return;
+		}
+		$this->log_activity(
+			$action,
+			0,
+			$plugin,
+			$this->get_name( $plugin ),
+			$extra + [ 'version' => $this->get_plugin_data( $plugin, 'Version' ) ]
+		);
+	}
+
+	public function on_plugin_activated( $plugin, $network_wide ) {
+		$this->log_plugin( Activity_Monitor_Base::ITEM_ACTIVATED, $plugin, [
+			'network_wide' => $network_wide,
+			'author'      => $this->get_plugin_data( $plugin, 'Author' ),
+			'author_uri'  => $this->get_plugin_data( $plugin, 'AuthorURI' ),
+			'plugin_uri'  => $this->get_plugin_data( $plugin, 'PluginURI' ),
+			'description' => $this->get_plugin_data( $plugin, 'Description' ),
+		] );
+	}
+
+	public function on_plugin_deactivated( $plugin, $network_wide ) {
+		$this->log_plugin( Activity_Monitor_Base::ITEM_DEACTIVATED, $plugin, [ 'network_wide' => $network_wide ] );
+	}
+
+	/**
+	 * Cache plugin data before delete.
+	 *
+	 * @param string $plugin
+	 */
+	public function on_before_delete( $plugin ) {
+
+		if ( ! $this->maybe_log_plugin( Activity_Monitor_Base::ITEM_DELETED, $plugin ) ) {
+			return;
+		}
+
+		// cache plugin data
+		$data = $this->get_plugin_data( $plugin );
+		$hash = md5( $plugin );
+
+		set_transient( 'roxwp_plugin_data_' . $hash, $data, 60 );
+	}
+
+	public function on_plugin_deleted( $plugin, $deleted ) {
+
+		$hash = md5( $plugin );
+
+		$data = get_transient( 'roxwp_plugin_data_' . $hash );
+		if ( $data ) {
+			$this->_plugin[$hash] = $data;
+		}
+
+		delete_transient( 'roxwp_plugin_data_' . $hash );
+
+		$this->log_plugin( Activity_Monitor_Base::ITEM_DELETED, $plugin, [ 'deleted' => $deleted ] );
+	}
+
+	/**
+	 *
+	 * @param Plugin_Upgrader $upgrader
+	 * @param array $extra
+	 */
+	public function on_plugin_install_or_update( $upgrader, $extra ) {
+		if ( ! isset( $extra['type'] ) || 'plugin' !== $extra['type'] ) {
+			return;
+		}
+
+		if ( 'install' === $extra['action'] ) {
+			$path = $upgrader->plugin_info();
+			if ( $path ) {
+
+				// @XXX may be we can remove this.
+				$hash = md5( $path );
+				$this->_plugin[ $hash ] = get_plugin_data( $upgrader->skin->result['local_destination'] . '/' . $path, false, false );
+
+				$this->log_plugin( Activity_Monitor_Base::ITEM_INSTALLED, $path );
+				return;
+			}
+
+		}
+
+		if ( isset( $extra['action'] ) && 'update' === $extra['action'] ) {
+			if ( isset( $extra['bulk'] ) && true == $extra['bulk'] ) {
+				$slugs = $extra['plugins'];
+			} else {
+				if ( ! isset( $upgrader->skin->plugin ) ) {
+					return;
+				}
+
+				$slugs = [ $upgrader->skin->plugin ];
+			}
+
+			foreach ( $slugs as $slug ) {
+				$this->log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $slug );
+			}
+		}
+	}
+
+	/**
+	 * Hooked into plugin file edit ajax action
+	 *
+	 * @see wp_edit_theme_plugin_file()
+	 */
+	public function on_plugin_file_modify( $location = null ) {
+		if ( ! empty( $_POST ) && isset( $_POST['action'], $_POST['plugin'], $_POST['file'] ) && ! empty( $_POST['plugin'] ) ) {
+
+			if (
+				'edit-theme-plugin-file' === $_POST['action'] ||
+				(
+					'wp_redirect' === current_filter() &&
+					false !== strpos( $location, 'plugin-editor.php' ) &&
+					'update' === $_REQUEST['action']
+				)
+			) {
+
+				$_POST  = wp_unslash( $_POST );
+				$plugin = sanitize_text_field( $_POST['plugin'] );
+				$file   = sanitize_text_field( $_POST['file'] );
+				$_file  = WP_PLUGIN_DIR . $plugin;
+
+				if ( $this->maybe_log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $plugin, $file ) && file_exists( $_file ) ) {
+
+					roxwp_switch_to_site_locale();
+					/* translators: 1. Plugin Name, 2. File path. */
+					$name = $plugin === $file ? __( 'Modified main file (%2$s) of “%1%s” plugin' ) : __( 'Modified file (%2$s) of “%1%s” plugin');
+					roxwp_restore_locale();
+					$pluginName = $this->get_name( $plugin );
+
+					try {
+						$this->log_activity(
+							Activity_Monitor_Base::ITEM_UPDATED,
+							0,
+							$plugin,
+							sprintf( $name, $pluginName, $file ),
+							[
+								'file' => $file,
+								'version' => $this->get_plugin_data( $plugin, 'Version' ),
+							]
+						);
+					} catch ( Exception $e ) {}
+				}
+			}
+		}
+
+		// return the location so wp_redirect can complete.
+		return $location;
+	}
+
+	protected function get_name( $plugin_file ) {
+		$data = $this->get_plugin_data( $plugin_file );
+
+		return $data ? $data['Name'] : $plugin_file;
+	}
+
+	protected function get_plugin_data( $plugin_file, $header = null ) {
+
+		$hash = md5( $plugin_file );
+
+		if ( ! isset( $this->_plugin[ $hash ] ) ) {
+			$real_file = WP_PLUGIN_DIR . '/' . $plugin_file;
+
+			if ( ! is_readable( $real_file ) ) {
+				return false;
+			}
+
+			if ( ! function_exists( 'get_plugin_data' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+
+			$this->_plugin[ $hash ] = get_plugin_data( $real_file, false, false );
+
+		}
+
+		if ( $header ) {
+			return isset( $this->_plugin[ $hash ][ $header ] ) ? $this->_plugin[ $hash ][ $header ] : null;
+		}
+
+		return $this->_plugin[ $hash ];
+	}
+}
+
+// End of file Monitor_Plugins_Activity.php.

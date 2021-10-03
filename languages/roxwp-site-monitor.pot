@@ -1,0 +1,43 @@
+# Copyright (C) 2021 AbsolutePlugins
+# This file is distributed under the same license as the Roxwp Site Monitor plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Roxwp Site Monitor 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/roxwp-site-monitor\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-10-01T11:19:39+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.5.0\n"
+"X-Domain: rwp-site-mon\n"
+
+#. Plugin Name of the plugin
+msgid "Roxwp Site Monitor"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://absoluteplugins.com/wordpress-plugins/roxwp-site-monitor/"
+msgstr ""
+
+#. Description of the plugin
+msgid "WordPress Site Activity Monitor For RoxWP"
+msgstr ""
+
+#. Author of the plugin
+msgid "AbsolutePlugins"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://absoluteplugins.com/"
+msgstr ""
+
+#: roxwp-site-monitor.php:99
+msgid "Cloning is forbidden."
+msgstr ""
+
+#: roxwp-site-monitor.php:106
+msgid "Unserializing instances of this class is forbidden."
+msgstr ""
