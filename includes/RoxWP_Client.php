@@ -23,7 +23,8 @@ class RoxWP_Client {
 
 	protected static $instance;
 
-	private $api = 'https://rox-wp.test/api/v1';
+//	private $api = 'https://rox-wp.test/api/v1';
+	private $api = 'https://staging.roxwp.com/api/v1';
 
 	private $api_key;
 

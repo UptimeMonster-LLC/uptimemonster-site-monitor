@@ -119,38 +119,14 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			return;
 		}
 
-		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
-			$actor = [
-				'type' => 'cron',
-				'ip'   => $this->get_ip_address(), // maybe cron triggered by visitor.
-			];
-		} else {
-			if ( is_user_logged_in() ) {
-				$actor = wp_get_current_user();
-				$actor = [
-					'type'  => 'user',
-					'id'    => $actor->ID,
-					'ip'    => $this->get_ip_address(),
-					'name'  => $this->get_user_display_name( $actor ),
-					'email' => $actor->user_email,
-					'role'  => $this->get_user_role( $actor ),
-				];
-			} else {
-				$actor = [
-					'type' => 'visitor',
-					'ip'   => $this->get_ip_address(),
-				];
-			}
-		}
-
 		$log = [
 			'action'    => $action,
 			'activity'  => $this->activity,
 			'subtype'   => $subtype,
-			'id'        => $_objectId > 0 ? $_objectId : null,
+			'object_id' => $_objectId > 0 ? $_objectId : null,
 			'name'      => $this->strip_activity_name( $name ),
 			'timestamp' => current_time( 'mysql' ),
-			'actor'     => $actor,
+			'actor'     => roxwp_get_current_actor(),
 		];
 
 		if ( $data ) {
@@ -194,91 +170,6 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 				__METHOD__
 			)
 		);
-	}
-
-	/**
-	 * @param WP_User|int| string $identity User's identity (username, email or id)
-	 *
-	 * @return false|WP_User
-	 */
-	protected function get_user( $identity ) {
-
-		if ( $identity instanceof WP_User ) {
-			return $identity;
-		}
-
-		$by = 'id';
-
-		if ( is_string( $identity ) ) {
-			if ( is_email( $identity ) ) {
-				$by = 'email';
-			} else {
-				$by = 'login';
-			}
-		}
-
-		return get_user_by( $by, $identity );
-	}
-
-	/**
-	 * @param WP_User $user
-	 *
-	 * @return string
-	 */
-	protected function get_user_role( $user ) {
-		return strtolower( key( $user->caps ) );
-	}
-
-	/**
-	 * Get real address
-	 *
-	 * @since 2.1.4
-	 *
-	 * @return string real address IP
-	 */
-	protected function get_ip_address() {
-		$server_ip_keys = array(
-			'HTTP_CF_CONNECTING_IP', // CloudFlare
-			'HTTP_TRUE_CLIENT_IP', // CloudFlare Enterprise header
-			'HTTP_CLIENT_IP',
-			'HTTP_X_FORWARDED_FOR',
-			'HTTP_X_FORWARDED',
-			'HTTP_X_CLUSTER_CLIENT_IP',
-			'HTTP_FORWARDED_FOR',
-			'HTTP_FORWARDED',
-			'REMOTE_ADDR',
-		);
-
-		foreach ( $server_ip_keys as $key ) {
-			if ( isset( $_SERVER[ $key ] ) && filter_var( $_SERVER[ $key ], FILTER_VALIDATE_IP ) ) {
-				return sanitize_text_field( $_SERVER[ $key ] );
-			}
-		}
-
-		// Fallback local ip.
-		return '127.0.0.1';
-	}
-
-	/**
-	 * @param WP_User $user
-	 */
-	protected function get_user_display_name( $user ) {
-		$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) );
-		if ( empty( $name ) ) {
-			$name = $user->display_name;
-		}
-
-		if ( $user->user_login !== $name ) {
-			roxwp_switch_to_site_locale();
-			$name = sprintf(
-				_x( '%1$s (%2$s)', 'User display name with username', 'rwp-site-mon' ),
-				$name,
-				$user->user_login
-			);
-			roxwp_restore_locale();
-		}
-
-		return $name;
 	}
 
 	/**

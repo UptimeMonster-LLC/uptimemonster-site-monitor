@@ -32,7 +32,7 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 
 	protected function maybe_log_activity( $action, $objectId ) {
 
-		$user = $this->get_user( $objectId );
+		$user = roxwp_get_user( $objectId );
 
 		/**
 		 * Should report activity for WP Core Updates?
@@ -47,7 +47,7 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 	}
 
 	protected function log_user( $action, $user, $extra = [] ) {
-		$user = $this->get_user( $user );
+		$user = roxwp_get_user( $user );
 
 		if ( ! $this->maybe_log_activity( $action, $user ) ) {
 			return;
@@ -57,10 +57,10 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 			$action,
 			$user->ID,
 			'session',
-			$this->get_user_display_name( $user ),
+			roxwp_get_user_display_name( $user ),
 			[
 				'username' => $user->user_login,
-				'role'     => $this->get_user_role( $user ),
+				'role'     => roxwp_get_user_role( $user ),
 				'email'    => $user->user_email,
 			] + $extra
 		);

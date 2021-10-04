@@ -57,7 +57,10 @@ final class RoxWP_Site_Monitor {
 		if ( file_exists( RWP_SM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
 			require_once RWP_SM_PLUGIN_PATH . 'vendor/autoload.php';
 
+			// Start monitoring activities.
 			MonitorActivities::get_instance();
+
+			// Plugin Dashboard.
 			Dashboard::get_instance();
 
 		} else {

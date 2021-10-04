@@ -34,7 +34,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 
 	protected function maybe_log_activity( $action, $objectId ) {
 
-		$user = $this->get_user( $objectId );
+		$user = roxwp_get_user( $objectId );
 
 		/**
 		 * Should report activity for WP Core Updates?
@@ -49,7 +49,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 	}
 
 	protected function log_user( $action, $user, $extra = [] ) {
-		$user = $this->get_user( $user );
+		$user = roxwp_get_user( $user );
 
 		if ( ! $this->maybe_log_activity( $action, $user ) ) {
 			return;
@@ -59,10 +59,10 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 			$action,
 			$user->ID,
 			'user',
-			$this->get_user_display_name( $user ),
+			roxwp_get_user_display_name( $user ),
 			[
 				'username' => $user->user_login,
-				'role'     => $this->get_user_role( $user ),
+				'role'     => roxwp_get_user_role( $user ),
 				'email'    => $user->user_email,
 			] + $extra
 		);
@@ -81,7 +81,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 	}
 
 	public function on_deleted( $id, $reassign, $user ) {
-		$reassign = $this->get_user( $reassign );
+		$reassign = roxwp_get_user( $reassign );
 		$this->log_user(
 			Activity_Monitor_Base::ITEM_DELETED,
 			$user,
@@ -89,7 +89,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 				'old'           => $user->to_array(),
 				'reassigned_to' => [
 					'id'       => $reassign->ID,
-					'name'     => $this->get_user_display_name( $reassign ),
+					'name'     => roxwp_get_user_display_name( $reassign ),
 					'email'    => $reassign->user_email,
 					'username' => $reassign->user_login,
 				],
