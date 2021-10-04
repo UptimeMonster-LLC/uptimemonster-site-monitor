@@ -1,6 +1,6 @@
 <?php
 /**
- * Custom Error Handler Drop-in.
+ * RoxWP Error Logger Drop-In
  *
  * Plugin Name: Roxwp Site Error Logger Drop-in
  * Plugin URI: https://absoluteplugins.com/wordpress-plugins/roxwp-site-monitor/

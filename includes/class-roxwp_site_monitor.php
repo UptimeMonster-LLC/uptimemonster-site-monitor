@@ -29,6 +29,11 @@ final class RoxWP_Site_Monitor {
 	 */
 	protected static $instance;
 
+	protected static $errorHandlerDist;
+	protected static $errorHandlerVersion;
+
+	protected static $errorHandler;
+
 	/**
 	 * Create one instance of this class, stores and return that.
 	 *
@@ -48,6 +53,11 @@ final class RoxWP_Site_Monitor {
 	protected function __construct() {
 
 		// Check if autoloader exists, include it or show error with admin notice ui.
+
+		// DropIns
+		self::$errorHandlerDist    = RWP_SM_PLUGIN_PATH . 'includes/fatal-error-handler.php';
+		self::$errorHandler        = WP_CONTENT_DIR . '/fatal-error-handler.php';
+		self::$errorHandlerVersion = '1.0.0';
 
 		register_activation_hook( RWP_SM_PLUGIN_FILE, [ __CLASS__, 'install' ] );
 		register_deactivation_hook( RWP_SM_PLUGIN_FILE, [ __CLASS__, 'uninstall' ] );
@@ -69,14 +79,55 @@ final class RoxWP_Site_Monitor {
 	}
 
 	public static function install() {
+		self::installDropIn();
 		do_action( 'roxwp_site_monitor_activation' );
-
 		wp_safe_redirect( Dashboard::get_instance()->get_page_url() );
 		die();
 	}
 
 	public static function uninstall() {
+		self::removeDropIn();
 		do_action( 'roxwp_site_monitor_deactivation' );
+	}
+
+	public static function isDropInInstalled() {
+		return ! self::dropInNeedUpdate();
+	}
+
+	protected static function dropInNeedUpdate() {
+		if ( file_exists( self::$errorHandler ) ) {
+			$file = file_get_contents( self::$errorHandler );
+
+			if (
+				false !== strpos( $file, 'RoxWP Error Logger Drop-In' ) &&
+				false !== strpos( $file, 'Version: ' . self::$errorHandlerVersion )
+			) {
+				// update not needed.
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	protected static function installDropIn() {
+
+		if ( self::dropInNeedUpdate() ) {
+			self::removeDropIn();
+
+			$file = file_get_contents( self::$errorHandlerDist );
+			$fp   = @fopen( self::$errorHandler, 'w' );
+			if ( $fp ) {
+				fputs( $fp, $file );
+				fclose( $fp );
+			}
+		}
+	}
+
+	protected static function removeDropIn() {
+		if ( file_exists( self::$errorHandler ) ) {
+			@unlink( self::$errorHandler );
+		}
 	}
 
 	/**
