@@ -68,7 +68,7 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 			);
 		}
 
-		$this->log_activity( 'log_deprecated', 0, 'function', $message, compact( $function, $replacement, $version ) );
+		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'function', $message, compact( $function, $replacement, $version ) );
 	}
 
 	protected function log_deprecated_class( $class, $version, $parent_class ) {
@@ -93,7 +93,7 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 			);
 		}
 
-		$this->log_activity( 'log_deprecated', 0, 'class', $message, compact( $class, $version, $parent_class ) );
+		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'class', $message, compact( $class, $version, $parent_class ) );
 	}
 
 	protected function log_deprecated_argument( $function, $message, $version ) {
@@ -116,7 +116,7 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 			);
 		}
 
-		$this->log_activity( 'log_deprecated', 0, 'argument', $message, compact( $function, $version ) );
+		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'argument', $message, compact( $function, $version ) );
 	}
 
 	protected function log_deprecated_hook( $hook, $replacement, $version, $message ) {
