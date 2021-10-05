@@ -139,7 +139,7 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 			           ) . $message;
 		}
 
-		$this->log_activity( 'log_deprecated', 0, 'hook', $message, compact( $hook, $replacement, $version ) );
+		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'hook', $message, compact( $hook, $replacement, $version ) );
 	}
 }
 

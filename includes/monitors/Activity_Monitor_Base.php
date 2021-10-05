@@ -47,6 +47,8 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	const ITEM_LOGGED_IN = 'logged_in';
 	const ITEM_LOGGED_OUT = 'logged_out';
 	const ITEM_LOGIN_FAILED = 'login_failed';
+	const ITEM_DEPRECATED = 'deprecated';
+	const ITEM_ERROR_LOG = 'error_log';
 
 	protected $activity;
 
@@ -125,7 +127,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			'subtype'   => $subtype,
 			'object_id' => $_objectId > 0 ? $_objectId : null,
 			'name'      => $this->strip_activity_name( $name ),
-			'timestamp' => current_time( 'mysql' ),
+			'timestamp' => roxwp_get_current_time(),
 			'actor'     => roxwp_get_current_actor(),
 			'extra'     => [
 				'wp_version' => get_bloginfo( 'version' ),

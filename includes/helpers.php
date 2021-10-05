@@ -47,6 +47,15 @@ function roxwp_restore_locale() {
 }
 
 /**
+ * Get Gmt Time in mysql format.
+ *
+ * @return string
+ */
+function roxwp_get_current_time() {
+	return current_time( 'mysql', 1 );
+}
+
+/**
  * Get current actor data.
  *
  * @return array|string[]

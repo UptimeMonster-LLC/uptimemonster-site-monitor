@@ -132,7 +132,7 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 			'subtype'   => 'error',
 			'object_id' => null,
 			'name'      => null,
-			'timestamp' => current_time( 'mysql' ),
+			'timestamp' => roxwp_get_current_time(),
 			'actor'     => roxwp_get_current_actor(),
 			'extra'     => $error,
 		] );

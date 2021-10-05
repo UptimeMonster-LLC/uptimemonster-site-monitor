@@ -149,7 +149,7 @@ class RoxWP_Client {
 		}
 
 		// Signature Timestamp.
-		$timestamp = current_time( 'timestamp' );
+		$timestamp = current_time( 'timestamp', 1 );
 
 		// Signature Hash
 		$hash = hash_hmac( 'sha256', "{$this->api_key}{$method}{$data}{$timestamp}", $this->api_secret );
