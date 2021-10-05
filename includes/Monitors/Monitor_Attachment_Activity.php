@@ -52,4 +52,4 @@ class Monitor_Attachment_Activity extends Monitor_Posts_Activity {
 	}
 }
 
-// End of file Activity_Monitor_Base.php.
+// End of file Monitor_Attachment_Activity.php.

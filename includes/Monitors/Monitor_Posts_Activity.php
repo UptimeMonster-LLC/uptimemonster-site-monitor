@@ -27,6 +27,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 	public function init() {
 
 		add_action( 'transition_post_status', [ $this, 'log_on_status_change' ], 10, 3 );
+		add_action( 'post_updated', [ $this, 'log_on_change' ] );
 		add_action( 'delete_post', [ $this, 'log_delete' ], 10, 2 );
 	}
 
@@ -74,10 +75,29 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 	 * @throws Exception
 	 */
 	public function log_on_status_change( $new_status, $old_status, $post ) {
+		$action = $this->get_action_from_status_change( $new_status, $old_status );
+		if ( ! $this->maybe_log_activity( $action, $post->ID ) ) {
+			return;
+		}
 		$this->log_activity(
-			$this->get_action_from_status_change( $new_status, $old_status ),
+			$action,
 			$post->ID,
 			$post->post_type,
+			$this->get_name( $post )
+		);
+	}
+
+	public function log_on_change( $post_ID ) {
+		if ( ! $this->maybe_log_activity( Activity_Monitor_Base::ITEM_UPDATED, $post_ID ) ) {
+			return;
+		}
+
+		$post = get_post( $post_ID );
+
+		$this->log_activity(
+			Activity_Monitor_Base::ITEM_UPDATED,
+			$post_ID,
+			get_post_type( $post_ID ),
 			$this->get_name( $post )
 		);
 	}
@@ -90,14 +110,16 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 	 * @throws Exception
 	 */
 	public function log_delete( $postId ) {
-		if ( $this->maybe_log_activity( Activity_Monitor_Base::ITEM_DELETED, $postId ) ) {
-			$this->log_activity(
-				Activity_Monitor_Base::ITEM_DELETED,
-				$postId,
-				get_post_type( $postId ),
-				$this->get_name( $postId )
-			);
+		if ( ! $this->maybe_log_activity( Activity_Monitor_Base::ITEM_DELETED, $postId ) ) {
+			return;
 		}
+
+		$this->log_activity(
+			Activity_Monitor_Base::ITEM_DELETED,
+			$postId,
+			get_post_type( $postId ),
+			$this->get_name( $postId )
+		);
 	}
 
 	protected function get_action_from_status_change( $new_status, $old_status ) {

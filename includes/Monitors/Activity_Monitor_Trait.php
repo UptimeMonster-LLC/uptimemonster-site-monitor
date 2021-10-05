@@ -42,4 +42,4 @@ trait Activity_Monitor_Trait {
 	final protected function __construct() {}
 }
 
-// End of file Monitor_Base.php.
+// End of file Activity_Monitor_Trait.php.

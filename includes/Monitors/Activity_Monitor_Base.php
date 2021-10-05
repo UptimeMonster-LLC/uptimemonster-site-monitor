@@ -116,7 +116,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			);
 		}
 
-		$_objectId = $_objectId > 0 ? $_objectId : null;
+		$_objectId = $_objectId ? $_objectId : null;
 
 		if ( $this->check_maybe_log && ! $this->maybe_log_activity( $action, $objectId ) ) {
 			return;
@@ -126,14 +126,11 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			'action'    => $action,
 			'activity'  => $this->activity,
 			'subtype'   => $subtype,
-			'object_id' => $_objectId > 0 ? $_objectId : null,
+			'object_id' => $_objectId,
 			'name'      => $this->strip_activity_name( $name ),
 			'timestamp' => roxwp_get_current_time(),
 			'actor'     => roxwp_get_current_actor(),
-			'extra'     => [
-				'wp_version' => get_bloginfo( 'version' ),
-				'plugins'    => '',
-			],
+			'extra'     => [ 'wp_version' => get_bloginfo( 'version' ) ],
 		];
 
 		if ( $data ) {
