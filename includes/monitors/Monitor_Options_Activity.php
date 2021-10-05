@@ -29,7 +29,7 @@ class Monitor_Options_Activity extends Activity_Monitor_Base {
 	protected function maybe_log_option( $action, $option, $value, $new_value = null ) {
 
 		/**
-		 * Should report activity for WP Core Updates?
+		 * Should report activity?
 		 *
 		 * @param bool $status
 		 * @param string $option

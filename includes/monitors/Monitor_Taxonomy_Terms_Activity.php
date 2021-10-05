@@ -36,7 +36,7 @@ class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {
 		$status = ! is_wp_error( $term ) && 'nav_menu' !== $term->taxonomy;
 
 		/**
-		 * Should report activity for WP Core Updates?
+		 * Should report activity?
 		 *
 		 * @param bool $status
 		 * @param WP_Term|WP_Error $term

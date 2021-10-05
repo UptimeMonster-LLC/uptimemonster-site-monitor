@@ -1,6 +1,6 @@
 <?php
 /**
- * Custom Error Handler Drop-in.
+ * Error handler drop-in for RoxWP Site Monitor Error Monitoring Support.
  *
  * Plugin Name: Roxwp Site Error Logger Drop-in
  * Plugin URI: https://absoluteplugins.com/wordpress-plugins/roxwp-site-monitor/
@@ -87,6 +87,11 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 
 		// No error, just skip the error handling code.
 		if ( null === $error ) {
+			return null;
+		}
+
+		// Don't handle deprecated, it has its own monitor.
+		if ( isset( $error['type'] ) && E_USER_DEPRECATED === $error['type'] ) {
 			return null;
 		}
 

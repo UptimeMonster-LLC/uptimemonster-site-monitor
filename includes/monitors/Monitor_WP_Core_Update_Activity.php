@@ -32,7 +32,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 	protected function maybe_log_activity( $action, $objectId ) {
 
 		/**
-		 * Should report activity for WP Core Updates?
+		 * Should report activity?
 		 *
 		 * @param bool $status
 		 * @param null $object

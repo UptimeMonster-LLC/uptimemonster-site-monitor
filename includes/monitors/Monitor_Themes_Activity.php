@@ -57,7 +57,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 	protected function maybe_log_theme( $action, $theme, $file = null ) {
 
 		/**
-		 * Should report activity for WP Core Updates?
+		 * Should report activity?
 		 *
 		 * @param bool $status
 		 * @param string $plugin

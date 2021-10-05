@@ -33,7 +33,7 @@ class Monitor_Nav_Menu_Activity extends Activity_Monitor_Base {
 		$menu = wp_get_nav_menu_object( $objectId );
 
 		/**
-		 * Should report activity for WP Core Updates?
+		 * Should report activity?
 		 *
 		 * @param bool $status
 		 * @param null $menu

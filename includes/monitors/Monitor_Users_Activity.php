@@ -37,7 +37,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 		$user = roxwp_get_user( $objectId );
 
 		/**
-		 * Should report activity for WP Core Updates?
+		 * Should report activity?
 		 *
 		 * @param bool $status
 		 * @param string $option

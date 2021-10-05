@@ -41,7 +41,7 @@ class Monitor_Widgets_Activity extends Activity_Monitor_Base {
 	protected function maybe_log_widget( $action, $sidebar, $widget ) {
 
 		/**
-		 * Should report activity for WP Core Updates?
+		 * Should report activity?
 		 *
 		 * @param bool $status
 		 * @param string $option
