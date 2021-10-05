@@ -81,6 +81,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 
 		if ( ! $this->activity ) {
 			$this->activity = str_replace( [ __NAMESPACE__, 'Monitor_', '_Activity' ], '', get_called_class() );
+			$this->activity = ltrim( $this->activity, '\\' );
 		}
 
 		if ( 'string' !== gettype( $subtype ) ) {
