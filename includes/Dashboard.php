@@ -33,6 +33,8 @@ class Dashboard {
 		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
 		add_action( 'admin_menu', [ $this, 'register_menu' ] );
 		add_action( 'admin_init', [ $this, 'handle_post' ] );
+
+		add_filter( 'plugin_action_links_' . RWP_SM_PLUGIN_BASENAME, [ $this, 'plugin_action_links' ] );
 	}
 
 	public function admin_notice() {
@@ -49,6 +51,13 @@ class Dashboard {
 				<?php
 			}
 		}
+	}
+
+	public function plugin_action_links( $links ) {
+
+		$links[] = sprintf( '<a href="%s">%s</a>', $this->get_page_url(), esc_html__( 'Settings', 'rwp-site-mon' ) );
+
+		return $links;
 	}
 
 	public function register_menu() {
@@ -91,8 +100,17 @@ class Dashboard {
 		return admin_url( 'options-general.php?page=roxwp-settings' );
 	}
 
-
 	public function handle_post() {
+		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && 'install-drop-in' === $_GET['action'] ) {
+			if ( wp_verify_nonce( $_GET['_wpnonce'], 'roxwp-install-drop-in' ) ) {
+				RoxWP_Site_Monitor::maybe_install_drop_in();
+
+				$this->add_settings_status( __( 'Error Logger Drop-In Updated.', 'rwp-site-mon' ), 'success' );
+
+				wp_safe_redirect( $this->get_page_url() );
+				die();
+			}
+		}
 		if ( isset( $_POST['rwp-settings-save'], $_POST['roxwp'] ) && is_array( $_POST['roxwp'] ) && ! empty( $_POST['roxwp'] ) ) {
 			check_admin_referer( 'roxwp-site-monitor-settings' );
 
@@ -191,7 +209,10 @@ class Dashboard {
 		$keys       = $this->get_api_keys();
 		$api_key    = isset( $keys['api_key'] ) ? $keys['api_key'] : '';
 		$api_secret = isset( $keys['api_secret'] ) ? $keys['api_secret'] : '';
-
+		$installUrl = wp_nonce_url(
+			add_query_arg( [ 'action' => 'install-drop-in' ], $this->get_page_url() ),
+			'roxwp-install-drop-in'
+		);
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline">
@@ -218,6 +239,79 @@ class Dashboard {
 						</th>
 						<td>
 							<input name="roxwp[api_secret]" type="password" id="roxwp-api-secret" value="<?php echo esc_attr( $api_secret ); ?>" class="regular-text" autocomplete="off">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label><?php esc_html_e( 'Error Logging Drop-in', 'rwp-site-mon' ); ?></label>
+						</th>
+						<td>
+							<table>
+								<tbody>
+								<tr>
+									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Status:', 'rwp-site-mon' ); ?></strong></th>
+									<td style="padding:0;"><?php
+
+										if ( RoxWP_Site_Monitor::isDropInInstalled() ) {
+											if ( RoxWP_Site_Monitor::dropInNeedUpdate() ) {
+												printf(
+													/* translators: 1. New Version Number, 2. Update URL */
+													__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'rwp-site-mon' ),
+													RoxWP_Site_Monitor::dropInVersion( false ),
+													esc_url( $installUrl )
+												);
+											} else {
+												printf(
+												/* translators: 1. Error handler drop-in version. */
+													esc_html__( 'Installed (Version %s)', 'rwp-site-mon' ),
+													RoxWP_Site_Monitor::dropInVersion()
+												);
+											}
+										} else {
+											?>
+											<p class="help"><?php
+												if ( RoxWP_Site_Monitor::isWPContentWritable() ) {
+													printf(
+														/* translators: 1. Installation URL */
+														__( 'Click <a href="%s">here</a> to install the drop-in.', 'rwp-site-mon' ),
+														esc_url( $installUrl )
+													);
+												} else {
+													printf(
+														__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'rwp-site-mon' ),
+														RoxWP_Site_Monitor::getDropInDistFile(),
+														RoxWP_Site_Monitor::getDropInFile()
+													);
+												}
+												?></p>
+											<?php
+										}
+										?></td>
+								</tr>
+								<tr>
+									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'WP Content Directory', 'rwp-site-mon' ); ?></strong></th>
+									<td style="padding:0;"><?php
+										if ( RoxWP_Site_Monitor::isWPContentWritable() ) {
+											esc_html_e( 'Writable', 'rwp-site-mon' );
+										} else {
+											esc_html_e( 'Not Writable', 'rwp-site-mon' );
+										}
+										?></td>
+								</tr>
+								<?php if ( RoxWP_Site_Monitor::isDropInInstalled() ) { ?>
+									<tr>
+										<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Drop-In', 'rwp-site-mon' ); ?></strong></th>
+										<td style="padding:0;"><?php
+											if ( RoxWP_Site_Monitor::isDropInWritable() ) {
+												esc_html_e( 'Writable', 'rwp-site-mon' );
+											} else {
+												esc_html_e( 'Not Writable', 'rwp-site-mon' );
+											}
+											?></td>
+									</tr>
+								<?php } ?>
+								</tbody>
+							</table>
 						</td>
 					</tr>
 					</tbody>

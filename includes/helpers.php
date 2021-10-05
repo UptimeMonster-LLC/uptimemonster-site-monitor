@@ -16,16 +16,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Switch Plugin to site language.
+ * Switch to english language (en_US) so we can understand and analyse the data.
+ *
+ * Must restore language after uses.
+ * @see roxwp_restore_locale()
+ *
  */
-function roxwp_switch_to_site_locale() {
+function roxwp_switch_to_english() {
 	if ( function_exists( 'switch_to_locale' ) ) {
-		switch_to_locale( get_locale() );
+//		switch_to_locale( get_locale() );
+		switch_to_locale( 'en_US' );
 
 		// Filter on plugin_locale so other plugin/theme can load the correct locale.
 		add_filter( 'plugin_locale', 'get_locale' );
 
-		// We don't need to reload plugin local.
+		\AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Site_Monitor::get_instance()->load_plugin_textdomain();
 	}
 }
 
@@ -50,16 +55,17 @@ function roxwp_get_current_actor() {
 	if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
 		$actor = [
 			'type' => 'cron',
+			'name' => 'WP Cron',
 			'ip'   => roxwp_get_ip_address(), // maybe cron triggered by visitor.
 		];
 	} elseif ( class_exists( '\WP_CLI', false ) ) {
 		$actor = [
 			'type' => 'wp-cli',
+			'name' => 'WP CLI',
 			'ip'   => roxwp_get_ip_address(), // maybe cron triggered by visitor.
 		];
 	} else {
 		if ( ! function_exists( 'is_user_logged_in' ) ) {
-			//
 			require_once ABSPATH . 'wp-includes/pluggable.php';
 		}
 		if ( is_user_logged_in() ) {
@@ -75,6 +81,7 @@ function roxwp_get_current_actor() {
 		} else {
 			$actor = [
 				'type' => 'visitor',
+				'name' => 'Unknown Visitor',
 				'ip'   => roxwp_get_ip_address(),
 			];
 		}
@@ -112,25 +119,30 @@ function roxwp_get_user( $identity, $field = null ) {
 	return get_user_by( $field, $identity );
 }
 
+/**
+ * @param WP_User $user
+ *
+ * @return string
+ */
 function roxwp_get_user_display_name( $user ) {
 	$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) );
+
 	if ( empty( $name ) ) {
 		$name = $user->display_name;
 	}
 
-	if ( $user->user_login !== $name ) {
-		roxwp_switch_to_site_locale();
-		$name = sprintf(
-			_x( '%1$s (%2$s)', 'User display name with username', 'rwp-site-mon' ),
-			$name,
-			$user->user_login
-		);
-		roxwp_restore_locale();
+	if ( empty( $name ) ) {
+		$name = $user->user_nicename;
 	}
 
 	return $name;
 }
 
+/**
+ * @param WP_User $user
+ *
+ * @return string
+ */
 function roxwp_get_user_role( $user ) {
 	return strtolower( key( $user->caps ) );
 }
@@ -161,6 +173,95 @@ function roxwp_get_ip_address() {
 
 	// Fallback local ip.
 	return '127.0.0.1';
+}
+
+/**
+ * @param string $plugin_file
+ *
+ * @return array|false
+ */
+function roxwp_get_plugin_data( $plugin_file ) {
+
+	if ( ! is_readable( $plugin_file ) ) {
+		return false;
+	}
+
+	if ( ! function_exists( 'get_plugin_data' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
+
+	return get_plugin_data( $plugin_file, false, false );
+}
+
+function roxwp_get_all_plugins() {
+	if ( ! function_exists( 'get_plugins' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
+
+	roxwp_switch_to_english();
+
+	$data = array_merge( get_plugins(), get_mu_plugins(), get_dropins() );
+
+	roxwp_restore_locale();
+
+	return $data;
+}
+
+/**
+ * Get All theme with data.
+ *
+ * @return array|array[]
+ */
+function roxwp_get_all_themes() {
+	if ( ! function_exists( 'wp_get_themes' ) ) {
+		require_once ABSPATH . 'wp-includes/theme.php';
+	}
+
+	$themes = wp_get_themes();
+
+	if ( empty( $themes ) ) {
+		return [];
+	}
+
+	return array_map( function( $theme ) {
+		return roxwp_get_theme_data_headers( $theme );
+	}, $themes );
+}
+
+/**
+ * @param WP_Theme $theme
+ *
+ * @return array
+ */
+function roxwp_get_theme_data_headers( $theme ) {
+	$headers = [
+		'Name',
+		'Parent Theme',
+		'ThemeURI',
+		'Description',
+		'Author',
+		'AuthorURI',
+		'Version',
+		'Template',
+		'Status',
+		'Tags',
+		'TextDomain',
+		'DomainPath',
+		'RequiresWP',
+		'RequiresPHP',
+	];
+
+	$data = [];
+
+	foreach ( $headers as $header ) {
+		if ( is_a( $theme, WP_Theme::class ) ) {
+			$data[ $header ] = $theme->get( $header );
+		} else {
+			$data[ $header ] = '';
+		}
+	}
+
+	return $data;
 }
 
 // End of file helpers.php.

@@ -58,11 +58,11 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 			$user->ID,
 			'session',
 			roxwp_get_user_display_name( $user ),
-			[
+			array_merge( $extra, [
 				'username' => $user->user_login,
 				'role'     => roxwp_get_user_role( $user ),
 				'email'    => $user->user_email,
-			] + $extra
+			] )
 		);
 	}
 

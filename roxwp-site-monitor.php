@@ -32,6 +32,10 @@ if ( ! defined( 'RWP_SM_PLUGIN_FILE' ) ) {
 	define( 'RWP_SM_PLUGIN_FILE', __FILE__ );
 }
 
+if ( ! defined( 'RWP_SM_PLUGIN_BASENAME' ) ) {
+	define( 'RWP_SM_PLUGIN_BASENAME', plugin_basename( RWP_SM_PLUGIN_FILE ) );
+}
+
 if ( ! defined( 'RWP_SM_PLUGIN_PATH' ) ) {
 	/** @define "RWP_SM_PLUGIN_PATH" "./" */
 	define( 'RWP_SM_PLUGIN_PATH', plugin_dir_path( RWP_SM_PLUGIN_FILE ) );

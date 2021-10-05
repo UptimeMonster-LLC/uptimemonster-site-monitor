@@ -58,23 +58,28 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		if ( ! $this->maybe_log_plugin( $action, $plugin ) ) {
 			return;
 		}
+
+		if ( isset( $extra['name'] ) ) {
+			$name = $extra['name'];
+			unset( $extra['name'] );
+		} else {
+			$name = $this->get_name( $plugin );
+		}
+
+		$data = $this->get_plugin_data( $plugin );
+		$data = empty( $data ) ? [] : $data;
+
 		$this->log_activity(
 			$action,
 			0,
 			$plugin,
-			$this->get_name( $plugin ),
-			$extra + [ 'version' => $this->get_plugin_data( $plugin, 'Version' ) ]
+			$name,
+			array_merge( $extra, $data )
 		);
 	}
 
 	public function on_plugin_activated( $plugin, $network_wide ) {
-		$this->log_plugin( Activity_Monitor_Base::ITEM_ACTIVATED, $plugin, [
-			'network_wide' => $network_wide,
-			'author'      => $this->get_plugin_data( $plugin, 'Author' ),
-			'author_uri'  => $this->get_plugin_data( $plugin, 'AuthorURI' ),
-			'plugin_uri'  => $this->get_plugin_data( $plugin, 'PluginURI' ),
-			'description' => $this->get_plugin_data( $plugin, 'Description' ),
-		] );
+		$this->log_plugin( Activity_Monitor_Base::ITEM_ACTIVATED, $plugin, [ 'network_wide' => $network_wide ] );
 	}
 
 	public function on_plugin_deactivated( $plugin, $network_wide ) {
@@ -154,6 +159,16 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		}
 	}
 
+	protected function is_plugin_file_modified( $location = null ) {
+		return (
+			'edit-theme-plugin-file' === $_POST['action'] ||
+			(
+				'wp_redirect' === current_filter() &&
+				false !== strpos( $location, 'plugin-editor.php' ) && 'update' === $_REQUEST['action']
+			)
+		);
+	}
+
 	/**
 	 * Hooked into plugin file edit ajax action
 	 *
@@ -162,14 +177,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 	public function on_plugin_file_modify( $location = null ) {
 		if ( ! empty( $_POST ) && isset( $_POST['action'], $_POST['plugin'], $_POST['file'] ) && ! empty( $_POST['plugin'] ) ) {
 
-			if (
-				'edit-theme-plugin-file' === $_POST['action'] ||
-				(
-					'wp_redirect' === current_filter() &&
-					false !== strpos( $location, 'plugin-editor.php' ) &&
-					'update' === $_REQUEST['action']
-				)
-			) {
+			if ( $this->is_plugin_file_modified( $location ) ) {
 
 				$_POST  = wp_unslash( $_POST );
 				$plugin = sanitize_text_field( $_POST['plugin'] );
@@ -178,24 +186,17 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 
 				if ( $this->maybe_log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $plugin, $file ) && file_exists( $_file ) ) {
 
-					roxwp_switch_to_site_locale();
+					roxwp_switch_to_english();
 					/* translators: 1. Plugin Name, 2. File path. */
 					$name = $plugin === $file ? __( 'Modified main file (%2$s) of “%1%s” plugin' ) : __( 'Modified file (%2$s) of “%1%s” plugin');
 					roxwp_restore_locale();
-					$pluginName = $this->get_name( $plugin );
 
-					try {
-						$this->log_activity(
-							Activity_Monitor_Base::ITEM_UPDATED,
-							0,
-							$plugin,
-							sprintf( $name, $pluginName, $file ),
-							[
-								'file' => $file,
-								'version' => $this->get_plugin_data( $plugin, 'Version' ),
-							]
-						);
-					} catch ( Exception $e ) {}
+					$extra = [
+						'name' => sprintf( $name, $this->get_name( $plugin ), $file ),
+						'file' => $file,
+					];
+
+					$this->log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $plugin, $extra );
 				}
 			}
 		}
@@ -215,17 +216,10 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		$hash = md5( $plugin_file );
 
 		if ( ! isset( $this->_plugin[ $hash ] ) ) {
+
 			$real_file = WP_PLUGIN_DIR . '/' . $plugin_file;
 
-			if ( ! is_readable( $real_file ) ) {
-				return false;
-			}
-
-			if ( ! function_exists( 'get_plugin_data' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/plugin.php';
-			}
-
-			$this->_plugin[ $hash ] = get_plugin_data( $real_file, false, false );
+			$this->_plugin[ $hash ] = roxwp_get_plugin_data( $real_file );
 
 		}
 

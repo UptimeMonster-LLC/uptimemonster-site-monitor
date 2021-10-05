@@ -46,7 +46,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 
 		if ( 'wp_maybe_auto_update' === current_filter() ) {
 
-			roxwp_switch_to_site_locale();
+			roxwp_switch_to_english();
 			/* translators: 1. WordPress Version. */
 			$name = __( 'WordPress Auto Upgrading From %s', 'roxwp-site-mon' );
 			roxwp_restore_locale();
@@ -71,7 +71,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		if ( 'do-core-upgrade' === $action || 'do-core-reinstall' === $action ) {
 			if ( isset( $_POST['upgrade'] ) ) {
 				$action = 'do-core-upgrade' === $action ? Activity_Monitor_Base::ITEM_UPGRADING : Activity_Monitor_Base::ITEM_REINSTALLING;
-				roxwp_switch_to_site_locale();
+				roxwp_switch_to_english();
 				/* translators: 1. WordPress Version. */
 				$name = 'do-core-upgrade' === $action ? __( 'WordPress Upgrading From %s', 'roxwp-site-mon' ) : __( 'WordPress Reinstalling %s', 'roxwp-site-mon' );
 				roxwp_restore_locale();
@@ -92,7 +92,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 	public function log_on_successful_update( $version ) {
 		global $pagenow;
 
-		roxwp_switch_to_site_locale();
+		roxwp_switch_to_english();
 		/* translators: 1. WordPress Updated Version. */
 		$name = 'update-core.php' !== $pagenow ? __( 'WordPress Auto Updated to %s', 'roxwp-site-mon' ) : __( 'WordPress Updated to %s', 'roxwp-site-mon' );
 		roxwp_restore_locale();

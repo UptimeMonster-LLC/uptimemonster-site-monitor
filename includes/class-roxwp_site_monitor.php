@@ -9,6 +9,8 @@ namespace AbsolutePlugins\RoxwpSiteMonitor;
 
 
 
+use function Sodium\add;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
@@ -30,9 +32,10 @@ final class RoxWP_Site_Monitor {
 	protected static $instance;
 
 	protected static $errorHandlerDist;
-	protected static $errorHandlerVersion;
 
 	protected static $errorHandler;
+
+	protected static $errorHandlerData = [];
 
 	/**
 	 * Create one instance of this class, stores and return that.
@@ -57,7 +60,6 @@ final class RoxWP_Site_Monitor {
 		// DropIns
 		self::$errorHandlerDist    = RWP_SM_PLUGIN_PATH . 'includes/fatal-error-handler.php';
 		self::$errorHandler        = WP_CONTENT_DIR . '/fatal-error-handler.php';
-		self::$errorHandlerVersion = '1.0.0';
 
 		register_activation_hook( RWP_SM_PLUGIN_FILE, [ __CLASS__, 'install' ] );
 		register_deactivation_hook( RWP_SM_PLUGIN_FILE, [ __CLASS__, 'uninstall' ] );
@@ -79,10 +81,22 @@ final class RoxWP_Site_Monitor {
 	}
 
 	public static function install() {
-		self::installDropIn();
+
+		self::maybe_install_drop_in();
+
 		do_action( 'roxwp_site_monitor_activation' );
 		wp_safe_redirect( Dashboard::get_instance()->get_page_url() );
 		die();
+	}
+
+	public static function maybe_install_drop_in() {
+		$oldVersion = RoxWP_Site_Monitor::dropInVersion();
+
+		if ( ! RoxWP_Site_Monitor::dropInNeedUpdate() ) {
+			RoxWP_Site_Monitor::installDropIn();
+
+			do_action( 'roxwp_error_logger_installed', $oldVersion );
+		}
 	}
 
 	public static function uninstall() {
@@ -90,24 +104,60 @@ final class RoxWP_Site_Monitor {
 		do_action( 'roxwp_site_monitor_deactivation' );
 	}
 
-	public static function isDropInInstalled() {
-		return ! self::dropInNeedUpdate();
-	}
-
-	protected static function dropInNeedUpdate() {
-		if ( file_exists( self::$errorHandler ) ) {
-			$file = file_get_contents( self::$errorHandler );
-
-			if (
-				false !== strpos( $file, 'RoxWP Error Logger Drop-In' ) &&
-				false !== strpos( $file, 'Version: ' . self::$errorHandlerVersion )
-			) {
-				// update not needed.
-				return false;
-			}
+	public static function getDropInData( $installed = true ) {
+		$which = $installed ? 'installed' : 'dist';
+		if ( ! isset( self::$errorHandlerData[ $which ] ) ) {
+			self::$errorHandlerData[ $which ] = roxwp_get_plugin_data( $installed ? self::$errorHandler : self::$errorHandlerDist );
 		}
 
-		return true;
+		return self::$errorHandlerData[ $which ];
+	}
+
+	public static function getDropInFile() {
+		return self::$errorHandler;
+	}
+
+	public static function getDropInDistFile() {
+		return self::$errorHandlerDist;
+	}
+
+	public static function isDropInInstalled() {
+		$data = RoxWP_Site_Monitor::getDropInData();
+
+		return false !== $data && $data['Name'] === 'Roxwp Site Error Logger Drop-in';
+	}
+
+	/**
+	 * @param bool $installed
+	 *
+	 * @return string
+	 */
+	public static function dropInVersion( $installed = true ) {
+		if ( $installed ) {
+			if ( ! self::isDropInInstalled() ) {
+				return null;
+			}
+
+			return RoxWP_Site_Monitor::getDropInData()['Version'];
+		}
+
+		return RoxWP_Site_Monitor::getDropInData( false )['Version'];
+	}
+
+	public static function isWPContentWritable() {
+		return is_writable( WP_CONTENT_DIR );
+	}
+
+	public static function isDropInWritable() {
+		return is_writable( self::$errorHandler );
+	}
+
+	public static function dropInNeedUpdate() {
+		if ( ! self::isDropInInstalled() ) {
+			return true;
+		}
+
+		return version_compare( self::dropInVersion(), self::dropInVersion( false ), '<' );
 	}
 
 	protected static function installDropIn() {

@@ -1,6 +1,6 @@
 <?php
 /**
- * RoxWP Error Logger Drop-In
+ * Custom Error Handler Drop-in.
  *
  * Plugin Name: Roxwp Site Error Logger Drop-in
  * Plugin URI: https://absoluteplugins.com/wordpress-plugins/roxwp-site-monitor/
@@ -42,6 +42,10 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 		try {
 			// Bail if no error found.
 			$error = $this->detect_error();
+
+			if ( ! $error ) {
+				return;
+			}
 
 			$this->send_error_log( $error );
 
@@ -92,6 +96,9 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 	}
 
 	protected function _detect_error( $error ) {
+		if ( ! $error ) {
+			return null;
+		}
 		// Bail if this error should not be handled.
 		if ( ! $this->should_handle_error( $error ) ) {
 			return null;
@@ -101,6 +108,10 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 	}
 
 	protected function send_error_log( $error ) {
+		if ( ! $error ) {
+			return;
+		}
+
 		if ( ! function_exists( 'roxwp_get_current_actor' ) ) {
 			require_once WP_CONTENT_DIR . '/plugins/roxwp-site-monitor/includes/helpers.php';
 		}
@@ -110,7 +121,7 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 		}
 
 		$client = \AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Client::get_instance();
-		$response = $client->send_log( [
+		$client->send_log( [
 			'action'    => 'error_log',
 			'activity'  => 'wp-error-handler',
 			'subtype'   => 'error',

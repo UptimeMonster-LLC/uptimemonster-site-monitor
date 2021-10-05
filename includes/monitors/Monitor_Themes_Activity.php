@@ -72,7 +72,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		roxwp_switch_to_site_locale();
+		roxwp_switch_to_english();
 		$name = sprintf(
 			__( 'Switched to %1$s theme from %2$s', 'rwp-site-mon' ),
 			$new_theme->get( 'Name' ),
@@ -121,23 +121,22 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 		$hash = md5( $stylesheet );
 
 		$data = get_transient( 'roxwp_theme_data_' . $hash );
+
 		if ( $data ) {
 			$this->_theme[ $hash ] = $data;
 		}
 
 		delete_transient( 'roxwp_theme_data_' . $hash );
 
+		$data = $this->get_theme_data( $stylesheet );
+		$data = empty( $data ) ? [] : $data;
+
 		$this->log_activity(
 			Activity_Monitor_Base::ITEM_DELETED,
 			0,
 			$stylesheet,
 			$this->get_name( $stylesheet ),
-			[
-				'version'    => $this->get_theme_data( $stylesheet, 'Version' ),
-				'author'     => $this->get_theme_data( $stylesheet, 'Author' ),
-				'theme_uri'  => $this->get_theme_data( $stylesheet, 'ThemeURI' ),
-				'author_uri' => $this->get_theme_data( $stylesheet, 'AuthorURI' ),
-			]
+			$data
 		);
 	}
 
@@ -202,12 +201,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 			0,
 			$stylesheet,
 			$this->get_name( $stylesheet ),
-			[
-				'version'    => $this->get_theme_data( $stylesheet, 'Version' ),
-				'author'     => $this->get_theme_data( $stylesheet, 'Author' ),
-				'theme_uri'  => $this->get_theme_data( $stylesheet, 'ThemeURI' ),
-				'author_uri' => $this->get_theme_data( $stylesheet, 'AuthorURI' ),
-			]
+			$this->get_theme_data( $stylesheet )
 		);
 	}
 
@@ -235,12 +229,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 					0,
 					$slug,
 					$this->get_name( $slug ),
-					[
-						'version'    => $this->get_theme_data( $slug, 'Version' ),
-						'author'     => $this->get_theme_data( $slug, 'Author' ),
-						'theme_uri'  => $this->get_theme_data( $slug, 'ThemeURI' ),
-						'author_uri' => $this->get_theme_data( $slug, 'AuthorURI' ),
-					]
+					$this->get_theme_data( $slug )
 				);
 			}
 		}
@@ -263,12 +252,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 					0,
 					$slug,
 					$this->get_name( $slug ),
-					[
-						'version'    => $this->get_theme_data( $slug, 'Version' ),
-						'author'     => $this->get_theme_data( $slug, 'Author' ),
-						'theme_uri'  => $this->get_theme_data( $slug, 'ThemeURI' ),
-						'author_uri' => $this->get_theme_data( $slug, 'AuthorURI' ),
-					]
+					$this->get_theme_data( $slug )
 				);
 			}
 		}
@@ -282,13 +266,11 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		$this->log_activity(
-			Activity_Monitor_Base::ITEM_UPDATED,
-			0,
-			$slug,
-			$customize_manager->theme()->get( 'Name' ),
-			[ 'customizer' => true ]
-		);
+		$data = roxwp_get_theme_data_headers( $customize_manager->theme() );
+
+		$data['customizer'] = true;
+
+		$this->log_activity( Activity_Monitor_Base::ITEM_UPDATED, 0, $slug, $customize_manager->theme()->get( 'Name' ), $data );
 	}
 
 	/**
@@ -316,7 +298,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 				if ( $this->maybe_log_theme( Activity_Monitor_Base::ITEM_UPDATED, $theme, $file ) && file_exists( $_file ) ) {
 
-					roxwp_switch_to_site_locale();
+					roxwp_switch_to_english();
 					/* translators: 1. Theme Name, 2. File path. */
 					$name = __( 'Modified file (%2$s) of “%1%s” theme' );
 					roxwp_restore_locale();
@@ -354,7 +336,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 				require_once ABSPATH . 'wp-includes/theme.php';
 			}
 
-			$this->_theme[ $hash ] = wp_get_theme( $theme );
+			$this->_theme[ $hash ] = roxwp_get_theme_data_headers( wp_get_theme( $theme ) );
 
 		}
 

@@ -127,6 +127,10 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			'name'      => $this->strip_activity_name( $name ),
 			'timestamp' => current_time( 'mysql' ),
 			'actor'     => roxwp_get_current_actor(),
+			'extra'     => [
+				'wp_version' => get_bloginfo( 'version' ),
+				'plugins'    => '',
+			],
 		];
 
 		if ( $data ) {
@@ -144,7 +148,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 				);
 			}
 
-			$log['extra'] = $data;
+			$log['extra'] = array_merge( $log['extra'], $data );
 		}
 
 		RoxWP_Client::get_instance()->send_log( $log );
