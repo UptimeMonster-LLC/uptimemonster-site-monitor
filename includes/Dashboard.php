@@ -115,6 +115,8 @@ class Dashboard {
 
 			$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'rwp-site-mon' ) );
 
+			update_option( 'roxwp_need_setup','no' );
+
 			wp_safe_redirect( $this->get_page_url() );
 			die();
 		}
