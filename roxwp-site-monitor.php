@@ -46,7 +46,7 @@ if ( ! defined( 'RWP_SM_PLUGIN_URL' ) ) {
 }
 
 if ( ! class_exists( 'AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Site_Monitor', false ) ) {
-	require_once RWP_SM_PLUGIN_PATH . 'includes/class-roxwp_site_monitor.php';
+	require_once RWP_SM_PLUGIN_PATH . 'class-roxwp_site_monitor.php';
 }
 
 /**
