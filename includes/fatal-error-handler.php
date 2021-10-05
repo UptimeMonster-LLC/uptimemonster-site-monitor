@@ -128,7 +128,7 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 		$client = \AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Client::get_instance();
 		$client->send_log( [
 			'action'    => 'error_log',
-			'activity'  => 'wp-error-handler',
+			'activity'  => 'WP_Error_Handler',
 			'subtype'   => 'error',
 			'object_id' => null,
 			'name'      => null,
