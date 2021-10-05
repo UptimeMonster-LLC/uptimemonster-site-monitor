@@ -100,7 +100,25 @@ class Dashboard {
 		return admin_url( 'options-general.php?page=roxwp-settings' );
 	}
 
+	protected function installed_on() {
+		return get_option( 'roxwp_first_installed' );
+	}
+
 	public function handle_post() {
+
+		if ( 'yes' === get_option( 'roxwp_need_setup' ) ) {
+
+			if ( empty( $this->installed_on() ) ) {
+				$this->add_settings_status( __( 'Thank you for installing RoxWP Site Monitor.', 'rwp-site-mon' ) );
+				$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'rwp-site-mon' ) );
+			}
+
+			$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'rwp-site-mon' ) );
+
+			wp_safe_redirect( $this->get_page_url() );
+			die();
+		}
+
 		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && 'install-drop-in' === $_GET['action'] ) {
 			if ( wp_verify_nonce( $_GET['_wpnonce'], 'roxwp-install-drop-in' ) ) {
 				RoxWP_Site_Monitor::maybe_install_drop_in();
@@ -278,6 +296,7 @@ class Dashboard {
 													);
 												} else {
 													printf(
+														/* translators: 1. Source file path. 2. Destination file path. */
 														__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'rwp-site-mon' ),
 														RoxWP_Site_Monitor::getDropInDistFile(),
 														RoxWP_Site_Monitor::getDropInFile()

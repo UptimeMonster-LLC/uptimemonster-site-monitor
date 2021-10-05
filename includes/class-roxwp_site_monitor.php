@@ -58,7 +58,7 @@ final class RoxWP_Site_Monitor {
 		// Check if autoloader exists, include it or show error with admin notice ui.
 
 		// DropIns
-		self::$errorHandlerDist    = RWP_SM_PLUGIN_PATH . 'includes/fatal-error-handler.php';
+		self::$errorHandlerDist    = RWP_SM_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl';
 		self::$errorHandler        = WP_CONTENT_DIR . '/fatal-error-handler.php';
 
 		register_activation_hook( RWP_SM_PLUGIN_FILE, [ __CLASS__, 'install' ] );
@@ -81,22 +81,25 @@ final class RoxWP_Site_Monitor {
 	}
 
 	public static function install() {
-
+		// @TODO move installation to another file.
 		self::maybe_install_drop_in();
 
+		$api_keys = get_option( 'roxwp_site_monitor_api_keys', [] );
+		if ( empty( $api_keys ) ) {
+			update_option( 'roxwp_need_setup', 'yes' );
+		}
+
+		if ( empty( get_option( 'roxwp_first_installed' ) ) ) {
+			update_option( 'roxwp_first_installed', roxwp_get_current_time() );
+		}
+
+		update_option( 'roxwp_site_monitor_version', RWP_SM_PLUGIN_VERSION );
+
 		do_action( 'roxwp_site_monitor_activation' );
-		wp_safe_redirect( Dashboard::get_instance()->get_page_url() );
-		die();
 	}
 
 	public static function maybe_install_drop_in() {
-		$oldVersion = RoxWP_Site_Monitor::dropInVersion();
-
-		if ( ! RoxWP_Site_Monitor::dropInNeedUpdate() ) {
-			RoxWP_Site_Monitor::installDropIn();
-
-			do_action( 'roxwp_error_logger_installed', $oldVersion );
-		}
+		RoxWP_Site_Monitor::installDropIn();
 	}
 
 	public static function uninstall() {
@@ -162,6 +165,8 @@ final class RoxWP_Site_Monitor {
 
 	protected static function installDropIn() {
 
+		$oldVersion = self::dropInVersion();
+
 		if ( self::dropInNeedUpdate() ) {
 			self::removeDropIn();
 
@@ -171,6 +176,8 @@ final class RoxWP_Site_Monitor {
 				fputs( $fp, $file );
 				fclose( $fp );
 			}
+
+			do_action( 'roxwp_error_logger_installed', $oldVersion, self::isDropInInstalled() );
 		}
 	}
 

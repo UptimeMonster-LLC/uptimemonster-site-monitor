@@ -74,6 +74,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 		roxwp_switch_to_english();
 		$name = sprintf(
+			/* translators: 1. New theme name, 2. Old theme name. */
 			__( 'Switched to %1$s theme from %2$s', 'rwp-site-mon' ),
 			$new_theme->get( 'Name' ),
 			$old_theme->get( 'Name' )

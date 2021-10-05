@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'RWP_SM_PLUGIN_VERSION' ) ) {
-	define( 'RWP_SM_PLUGIN_VERSION', '1.1.0' );
+	define( 'RWP_SM_PLUGIN_VERSION', '1.0.0' );
 }
 
 if ( ! defined( 'RWP_SM_PLUGIN_FILE' ) ) {
