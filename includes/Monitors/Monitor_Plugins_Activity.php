@@ -74,7 +74,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 			0,
 			$plugin,
 			$name,
-			array_merge( $extra, $data )
+			array_merge( $data, $extra )
 		);
 	}
 

@@ -60,11 +60,11 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 			$user->ID,
 			'user',
 			roxwp_get_user_display_name( $user ),
-			[
+			array_merge( [
 				'username' => $user->user_login,
 				'role'     => roxwp_get_user_role( $user ),
 				'email'    => $user->user_email,
-			] + $extra
+			], $extra )
 		);
 	}
 
