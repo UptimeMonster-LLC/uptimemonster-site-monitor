@@ -45,6 +45,10 @@ if ( ! defined( 'RWP_SM_PLUGIN_URL' ) ) {
 	define( 'RWP_SM_PLUGIN_URL', plugin_dir_url( RWP_SM_PLUGIN_FILE ) );
 }
 
+if ( file_exists( RWP_SM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
+	require_once RWP_SM_PLUGIN_PATH . 'vendor/autoload.php';
+}
+
 if ( ! class_exists( 'AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Site_Monitor', false ) ) {
 	require_once RWP_SM_PLUGIN_PATH . 'class-roxwp_site_monitor.php';
 }

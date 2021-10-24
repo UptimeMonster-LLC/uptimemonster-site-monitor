@@ -7,10 +7,6 @@
 
 namespace AbsolutePlugins\RoxwpSiteMonitor;
 
-
-
-use function Sodium\add;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
@@ -66,18 +62,11 @@ final class RoxWP_Site_Monitor {
 
 		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ] );
 
-		if ( file_exists( RWP_SM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
-			require_once RWP_SM_PLUGIN_PATH . 'vendor/autoload.php';
+		// Start monitoring activities.
+		MonitorActivities::get_instance();
 
-			// Start monitoring activities.
-			MonitorActivities::get_instance();
-
-			// Plugin Dashboard.
-			Dashboard::get_instance();
-
-		} else {
-			add_action( 'admin_notices', [ __CLASS__, 'dependency_notice' ] );
-		}
+		// Plugin Dashboard.
+		Dashboard::get_instance();
 	}
 
 	public static function install() {
