@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-/** @define "RWP_SM_PLUGIN_PATH" "./../" */
+/** @define "RWP_SM_PLUGIN_PATH" "./" */
 
 /**
  * Site Monitor.
@@ -51,6 +51,13 @@ final class RoxWP_Site_Monitor {
 	 */
 	protected function __construct() {
 
+		if ( ! file_exists( RWP_SM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
+			add_action( 'admin_notices', [ __CLASS__, 'dependency_notice' ] );
+			return;
+		}
+
+		require_once RWP_SM_PLUGIN_PATH . 'vendor/autoload.php';
+
 		// Check if autoloader exists, include it or show error with admin notice ui.
 
 		// DropIns
@@ -62,18 +69,11 @@ final class RoxWP_Site_Monitor {
 
 		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ] );
 
-		if ( file_exists( RWP_SM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
-			require_once RWP_SM_PLUGIN_PATH . 'vendor/autoload.php';
+		// Start monitoring activities.
+		MonitorActivities::get_instance();
 
-			// Start monitoring activities.
-			MonitorActivities::get_instance();
-
-			// Plugin Dashboard.
-			Dashboard::get_instance();
-
-		} else {
-			add_action( 'admin_notices', [ __CLASS__, 'dependency_notice' ] );
-		}
+		// Plugin Dashboard.
+		Dashboard::get_instance();
 	}
 
 	public static function install() {
