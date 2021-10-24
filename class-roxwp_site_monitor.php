@@ -62,11 +62,18 @@ final class RoxWP_Site_Monitor {
 
 		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ] );
 
-		// Start monitoring activities.
-		MonitorActivities::get_instance();
+		if ( file_exists( RWP_SM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
+			require_once RWP_SM_PLUGIN_PATH . 'vendor/autoload.php';
 
-		// Plugin Dashboard.
-		Dashboard::get_instance();
+			// Start monitoring activities.
+			MonitorActivities::get_instance();
+
+			// Plugin Dashboard.
+			Dashboard::get_instance();
+
+		} else {
+			add_action( 'admin_notices', [ __CLASS__, 'dependency_notice' ] );
+		}
 	}
 
 	public static function install() {
