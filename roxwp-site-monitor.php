@@ -7,7 +7,7 @@
  * Author URI: https://absoluteplugins.com/
  * Text Domain: rwp-site-mon
  * Domain Path: /languages
- * Version: 1.0.0
+ * Version: 1.0.1
  *
  * RequiresPHP: 5.6
  * RequiresWP: 5.5.0
