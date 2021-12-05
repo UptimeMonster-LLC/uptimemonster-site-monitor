@@ -100,6 +100,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		// cache plugin data
 		$data = $this->get_plugin_data( $plugin );
 		$hash = md5( $plugin );
+		$data['Status'] = 2;
 
 		set_transient( 'roxwp_plugin_data_' . $hash, $data, 60 );
 	}
@@ -134,7 +135,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 
 				// @XXX may be we can remove this.
 				$hash = md5( $path );
-				$this->_plugin[ $hash ] = get_plugin_data( $upgrader->skin->result['local_destination'] . '/' . $path, false, false );
+				$this->_plugin[ $hash ] = roxwp_get_plugin_data( $upgrader->skin->result['local_destination'] . '/' . $path, false, false );
 
 				$this->log_plugin( Activity_Monitor_Base::ITEM_INSTALLED, $path );
 				return;

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-10-05T12:08:33+00:00\n"
+"POT-Creation-Date: 2021-10-24T04:57:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: rwp-site-mon\n"
@@ -35,17 +35,17 @@ msgid "https://absoluteplugins.com/"
 msgstr ""
 
 #. translators: 1. Download link for production build, 2. composer install command, 3. Plugin installation path for running composer install..
-#: class-roxwp_site_monitor.php:217
+#: class-roxwp_site_monitor.php:213
 msgid "It seems that you have downloaded the development version of this plugin from github or other sources. Please download it from %1$s or run %2$s command within %3$s directory."
 msgstr ""
 
-#: class-roxwp_site_monitor.php:230
-#: includes/Monitors/Activity_Monitor_Base.php:188
+#: class-roxwp_site_monitor.php:226
+#: includes/Monitors/Activity_Monitor_Base.php:185
 msgid "Cloning is forbidden."
 msgstr ""
 
-#: class-roxwp_site_monitor.php:237
-#: includes/Monitors/Activity_Monitor_Base.php:199
+#: class-roxwp_site_monitor.php:233
+#: includes/Monitors/Activity_Monitor_Base.php:196
 msgid "Unserializing instances of this class is forbidden."
 msgstr ""
 
@@ -70,96 +70,96 @@ msgstr ""
 msgid "Please update the api keys to activate it properly."
 msgstr ""
 
-#: includes/Dashboard.php:126
+#: includes/Dashboard.php:128
 msgid "Error Logger Drop-In Updated."
 msgstr ""
 
-#: includes/Dashboard.php:142
+#: includes/Dashboard.php:144
 msgid "Both api key & secret required."
 msgstr ""
 
-#: includes/Dashboard.php:146
-#: includes/Dashboard.php:184
+#: includes/Dashboard.php:148
+#: includes/Dashboard.php:186
 msgid "Nothing Changed."
 msgstr ""
 
-#: includes/Dashboard.php:155
+#: includes/Dashboard.php:157
 msgid "Api connected."
 msgstr ""
 
-#: includes/Dashboard.php:157
+#: includes/Dashboard.php:159
 msgid "Api keys updated."
 msgstr ""
 
 #. translators: 1. Error Details.
-#: includes/Dashboard.php:173
+#: includes/Dashboard.php:175
 msgid "Error connecting to RoxWP Server with following error: %s."
 msgstr ""
 
 #. translators: 1. Error Details.
-#: includes/Dashboard.php:176
+#: includes/Dashboard.php:178
 msgid "Error updating api keys with following error: %s."
 msgstr ""
 
-#: includes/Dashboard.php:189
+#: includes/Dashboard.php:191
 msgid "Api keys removed."
 msgstr ""
 
-#: includes/Dashboard.php:247
+#: includes/Dashboard.php:249
 msgid "Api Key"
 msgstr ""
 
-#: includes/Dashboard.php:256
+#: includes/Dashboard.php:258
 msgid "Api Secret"
 msgstr ""
 
-#: includes/Dashboard.php:264
+#: includes/Dashboard.php:266
 msgid "Error Logging Drop-in"
 msgstr ""
 
-#: includes/Dashboard.php:270
+#: includes/Dashboard.php:272
 msgid "Status:"
 msgstr ""
 
 #. translators: 1. New Version Number, 2. Update URL
-#: includes/Dashboard.php:277
+#: includes/Dashboard.php:279
 msgid "A newer version (Version %1$s) of the drop-in available. Click <a href=\"%2$s\">here</a> to update."
 msgstr ""
 
 #. translators: 1. Error handler drop-in version.
-#: includes/Dashboard.php:284
+#: includes/Dashboard.php:286
 msgid "Installed (Version %s)"
 msgstr ""
 
 #. translators: 1. Installation URL
-#: includes/Dashboard.php:294
+#: includes/Dashboard.php:296
 msgid "Click <a href=\"%s\">here</a> to install the drop-in."
 msgstr ""
 
 #. translators: 1. Source file path. 2. Destination file path.
-#: includes/Dashboard.php:300
+#: includes/Dashboard.php:302
 msgid "Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring"
 msgstr ""
 
-#: includes/Dashboard.php:311
+#: includes/Dashboard.php:313
 msgid "WP Content Directory"
-msgstr ""
-
-#: includes/Dashboard.php:314
-#: includes/Dashboard.php:325
-msgid "Writable"
 msgstr ""
 
 #: includes/Dashboard.php:316
 #: includes/Dashboard.php:327
+msgid "Writable"
+msgstr ""
+
+#: includes/Dashboard.php:318
+#: includes/Dashboard.php:329
 msgid "Not Writable"
 msgstr ""
 
-#: includes/Dashboard.php:322
+#: includes/Dashboard.php:324
 msgid "Drop-In"
 msgstr ""
 
-#: includes/Dashboard.php:338
+#: includes/Dashboard.php:340
 msgid "Save Changes"
 msgstr ""
 
@@ -179,12 +179,12 @@ msgid "$id expected to be an integer, got %s."
 msgstr ""
 
 #. translators: 1. PHP Argument Type.
-#: includes/Monitors/Activity_Monitor_Base.php:148
+#: includes/Monitors/Activity_Monitor_Base.php:145
 msgid "$data expected to be an array or object, got %s."
 msgstr ""
 
 #. translators: 1. Method Name.
-#: includes/Monitors/Activity_Monitor_Base.php:176
+#: includes/Monitors/Activity_Monitor_Base.php:173
 msgid "%s must be overridden by the subClass"
 msgstr ""
 

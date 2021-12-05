@@ -123,7 +123,7 @@ final class RoxWP_Site_Monitor {
 	public static function isDropInInstalled() {
 		$data = RoxWP_Site_Monitor::getDropInData();
 
-		return false !== $data && $data['Name'] === 'Roxwp Site Error Logger Drop-in';
+		return isset( $data['Name'] ) && $data['Name'] === 'Roxwp Site Error Logger Drop-in';
 	}
 
 	/**
@@ -164,6 +164,9 @@ final class RoxWP_Site_Monitor {
 		$oldVersion = self::dropInVersion();
 
 		if ( self::dropInNeedUpdate() ) {
+			// reset cache.
+			self::$errorHandlerData = [];
+
 			self::removeDropIn();
 
 			$file = file_get_contents( self::$errorHandlerDist );

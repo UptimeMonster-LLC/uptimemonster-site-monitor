@@ -130,7 +130,9 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			'name'      => $this->strip_activity_name( $name ),
 			'timestamp' => roxwp_get_current_time(),
 			'actor'     => roxwp_get_current_actor(),
-			'extra'     => [ 'wp_version' => get_bloginfo( 'version' ) ],
+			'extra'     => [
+				'wp_version' => get_bloginfo( 'version' )
+			],
 		];
 
 		if ( $data ) {
@@ -146,6 +148,14 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 						gettype( $data )
 					)
 				);
+			}
+
+			if ( isset( $data['include_installed'] ) ) {
+				unset( $data['include_installed'] );
+				$data['installed'] = [
+					'plugins' => roxwp_get_all_plugins(),
+					'themes'  => roxwp_get_all_themes(),
+				];
 			}
 
 			$log['extra'] = array_merge( $log['extra'], $data );

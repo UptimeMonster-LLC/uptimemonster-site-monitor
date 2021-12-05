@@ -50,7 +50,8 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 			Activity_Monitor_Base::ITEM_ACTIVATED,
 			0,
 			'monitor',
-			__( 'Site Monitor Activated', 'rwp-site-mon' )
+			__( 'Site Monitor Activated', 'rwp-site-mon' ),
+			[ 'include_installed' => true ]
 		);
 		roxwp_restore_locale();
 	}
@@ -76,11 +77,13 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 		}
 
 		roxwp_switch_to_english();
+
 		if ( $installed ) {
-			$name = $old ? __( 'Error Logger Drop-In Updated', 'rwp-site-mon' ) : __( 'Error Logger Drop-In Installed', 'rwp-site-mon' );
+			$name = $old ? __( '“Error Logger” Drop-In Updated', 'rwp-site-mon' ) : __( '“Error Logger” Drop-In Installed', 'rwp-site-mon' );
 		} else {
-			$name = __( 'Failed to install error logger.', 'rwp-site-mon' );
+			$name = __( 'Failed To Install “Error Logger” Drop-In.', 'rwp-site-mon' );
 		}
+
 		roxwp_restore_locale();
 
 		$data = [ 'version' => RoxWP_Site_Monitor::dropInVersion() ];

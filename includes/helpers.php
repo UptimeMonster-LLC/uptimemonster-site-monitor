@@ -199,7 +199,12 @@ function roxwp_get_plugin_data( $plugin_file ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
 
-	return get_plugin_data( $plugin_file, false, false );
+	// Get Data.
+	$plugin_data = get_plugin_data( $plugin_file, false, false );
+	// Set Installation status
+	$plugin_data['Status'] = (int) is_plugin_active( $plugin_file );
+
+	return $plugin_data;
 }
 
 function roxwp_get_all_plugins() {
@@ -209,9 +214,41 @@ function roxwp_get_all_plugins() {
 
 	roxwp_switch_to_english();
 
-	$data = array_merge( get_plugins(), get_mu_plugins(), get_dropins() );
+	$plugins   = get_plugins();
+	$muPlugins = get_mu_plugins();
+	$dropins   = get_dropins();
+
+	foreach ( $plugins as $slug => &$plugin ) {
+		$plugin['Type']   = 'plugin';
+		$plugin['Status'] = (int) is_plugin_active( $slug );
+		if ( isset( $plugin['Tags'] ) ) {
+			unset( $plugin['Tags'] );
+		}
+	}
+
+	foreach ( $muPlugins as $slug => &$plugin ) {
+		$plugin['Type']   = 'mu';
+		$plugin['Status'] = 1;
+		if ( isset( $plugin['Tags'] ) ) {
+			unset( $plugin['Tags'] );
+		}
+	}
+
+	foreach ( $dropins as $slug => &$plugin ) {
+		$plugin['Type']   = 'dropin';
+		$plugin['Status'] = 1;
+		if ( isset( $plugin['Tags'] ) ) {
+			unset( $plugin['Tags'] );
+		}
+	}
+
+	$data = array_merge( $plugins, $muPlugins, $dropins );
 
 	roxwp_restore_locale();
+
+	if ( isset( $data['fatal-error-handler.php'] ) || isset( $data['roxwp-site-monitor/roxwp-site-monitor.php'] ) ) {
+		$data['fatal-error-handler.php']['isRoxMon'] = true;
+	}
 
 	return $data;
 }
@@ -253,9 +290,9 @@ function roxwp_get_theme_data_headers( $theme ) {
 		'Version',
 		'Template',
 		'Status',
-		'Tags',
-		'TextDomain',
-		'DomainPath',
+		//'Tags',
+		//'TextDomain',
+		//'DomainPath',
 		'RequiresWP',
 		'RequiresPHP',
 	];
@@ -265,6 +302,9 @@ function roxwp_get_theme_data_headers( $theme ) {
 	foreach ( $headers as $header ) {
 		if ( is_a( $theme, WP_Theme::class ) ) {
 			$data[ $header ] = $theme->get( $header );
+			if ( 'Status' === $header ) {
+				$data['Status'] = $theme->get_stylesheet() === get_stylesheet();
+			}
 		} else {
 			$data[ $header ] = '';
 		}
