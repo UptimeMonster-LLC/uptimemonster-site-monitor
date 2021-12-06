@@ -68,29 +68,35 @@ class RoxWP_Client {
 	}
 
 	public function send_log( $log ) {
-		return $this->request( 'site/activity/log', $log, 'post' );
+		return $this->request( 'site/activity/log', $log, 'post', [ 'blocking' => false, 'timeout' => 5 ] );
 	}
 
-	public function request( $route, $data = [], $method = 'get' ) {
+	public function request( $route, $data = [], $method = 'get', $args = [] ) {
 		if ( ! $this->hasKeys() ) {
 			return new WP_Error( 'missing-api-keys', __( 'Missing API Keys.', 'rwp-site-mon' ) );
 		}
 
 		list( $algo, $timestamp, $signature ) = $this->signature( $data, $method );
 
-		$args = [
-			'sslverify' => false,
-			'headers'   => [
-				'X-Api-Key'        => $this->api_key,
-				'X-Signature-Algo' => $algo,
-				'X-Api-Signature'  => $signature,
-				'X-Api-Timestamp'  => $timestamp,
-				'Content-Type'     => 'application/json',
-				'Accept'           => 'application/json',
-			],
+		$defaults = [
+			'sslverify' => true,
+			'headers'   => [],
 			'method'    => strtoupper( $method ),
 			'body'      => [],
+			'blocking'  => true,
+			'timeout'   => 15,
 		];
+
+		$args = wp_parse_args( $args, $defaults );
+
+		$args = array_merge( $args['headers'], [
+			'X-Api-Key'        => $this->api_key,
+			'X-Signature-Algo' => $algo,
+			'X-Api-Signature'  => $signature,
+			'X-Api-Timestamp'  => $timestamp,
+			'Content-Type'     => 'application/json',
+			'Accept'           => 'application/json',
+		] );
 
 		if ( ! empty( $data ) ) {
 			$args['body'] = 'get' === $method ? $data : json_encode( $data );
