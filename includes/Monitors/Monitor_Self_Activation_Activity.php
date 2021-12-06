@@ -30,7 +30,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 		add_action( 'roxwp_site_monitor_api_updated', [ $this, 'on_activation' ] );
 		add_action( 'roxwp_site_monitor_activation', [ $this, 'on_activation' ] );
 
-		add_action( 'roxwp_site_monitor_api_deactivated', [ $this, 'on_deactivation' ] );
+		add_action( 'roxwp_site_monitor_api_deactivating', [ $this, 'on_deactivation' ] );
 		add_action( 'roxwp_site_monitor_deactivation', [ $this, 'on_deactivation' ] );
 
 		add_action( 'roxwp_error_logger_installed', [ $this, 'on_error_logger_installed' ], 10, 2 );

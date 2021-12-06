@@ -185,6 +185,7 @@ class Dashboard {
 					if ( empty( $this->loadedKeys ) ) {
 						$this->add_settings_status( __( 'Nothing Changed.', 'rwp-site-mon' ), 'warning' );
 					} else {
+						do_action( 'roxwp_site_monitor_api_deactivating');
 						$this->loadedKeys = null;
 						$this->is_connected( false );
 						delete_option( 'roxwp_site_monitor_api_keys' );
