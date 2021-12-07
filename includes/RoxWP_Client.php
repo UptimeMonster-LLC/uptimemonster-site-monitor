@@ -89,7 +89,7 @@ class RoxWP_Client {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$args = array_merge( $args['headers'], [
+		$args['headers'] = array_merge( $args['headers'], [
 			'X-Api-Key'        => $this->api_key,
 			'X-Signature-Algo' => $algo,
 			'X-Api-Signature'  => $signature,
