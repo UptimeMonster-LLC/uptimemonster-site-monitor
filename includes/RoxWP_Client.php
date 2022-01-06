@@ -23,8 +23,9 @@ class RoxWP_Client {
 
 	protected static $instance;
 
-//	private $api = 'https://rox-wp.test/api/v1';
-	private $api = 'https://staging.roxwp.com/api/v1';
+	private $api = 'https://app.roxwp.com/';
+
+	private $version = 'v1';
 
 	private $api_key;
 
@@ -49,6 +50,10 @@ class RoxWP_Client {
 			$this->api_key    = $api_keys['api_key'];
 			$this->api_secret = $api_keys['api_secret'];
 		}
+	}
+
+	public function get_host(): string {
+		return trailingslashit( apply_filters( 'roxwp_client_app_host', $this->host ) );
 	}
 
 	public function set_api_key( $api_key ) {
@@ -102,12 +107,15 @@ class RoxWP_Client {
 			$args['body'] = 'get' === $method ? $data : json_encode( $data );
 		}
 
-		$route = ltrim( $route, '\\/' );
+		$route      = ltrim( $route, '\\/' );
+		$requestURL = $this->get_host() . 'api/' . $this->version . '/' . $route;
 
-		if ( false !== strpos( $this->api, '.test/' ) ) {
-			$response = wp_remote_request( $this->api . '/' . $route, $args );
+		if ( false !== strpos( $this->get_host(), '.test/' ) ) {
+			$response = wp_remote_request( $requestURL, $args );
+		} elseif ( function_exists( 'vip_safe_wp_remote_request' ) ) {
+			$response = vip_safe_wp_remote_request( $requestURL, '', 3, 5, 20, $args );
 		} else {
-			$response = wp_safe_remote_request( $this->api . '/' . $route, $args );
+			$response = wp_safe_remote_request( $requestURL, $args );
 		}
 
 		if ( is_wp_error( $response ) ) {
