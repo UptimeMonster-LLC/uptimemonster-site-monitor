@@ -9,6 +9,8 @@
  * @license
  */
 
+use AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Site_Monitor;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
@@ -30,7 +32,7 @@ function roxwp_switch_to_english() {
 		// Filter on plugin_locale so other plugin/theme can load the correct locale.
 		add_filter( 'plugin_locale', 'get_locale' );
 
-		\AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Site_Monitor::get_instance()->load_plugin_textdomain();
+		RoxWP_Site_Monitor::get_instance()->load_plugin_textdomain();
 	}
 }
 
@@ -162,7 +164,7 @@ function roxwp_get_user_role( $user ) {
  * @return string
  */
 function roxwp_get_ip_address() {
-	$server_ip_keys = array(
+	$server_ip_keys = [
 		'HTTP_CF_CONNECTING_IP', // CloudFlare
 		'HTTP_TRUE_CLIENT_IP', // CloudFlare Enterprise header
 		'HTTP_CLIENT_IP',
@@ -172,7 +174,7 @@ function roxwp_get_ip_address() {
 		'HTTP_FORWARDED_FOR',
 		'HTTP_FORWARDED',
 		'REMOTE_ADDR',
-	);
+	];
 
 	foreach ( $server_ip_keys as $key ) {
 		if ( isset( $_SERVER[ $key ] ) && filter_var( $_SERVER[ $key ], FILTER_VALIDATE_IP ) ) {
@@ -182,6 +184,26 @@ function roxwp_get_ip_address() {
 
 	// Fallback local ip.
 	return '127.0.0.1';
+}
+/**
+ * Determines if an IP address is valid.
+ *
+ * Handles both IPv4 and IPv6 addresses.
+ *
+ * @param string $ip IP address.
+ *
+ * @return string|false The valid IP address, otherwise false.
+ * @since 4.7.0
+ *
+ */
+function is_ip_address( $ip ) {
+	$ipv4_pattern = '/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/';
+
+	if ( ! preg_match( $ipv4_pattern, $ip ) && ! Requests_IPv6::check_ipv6( $ip ) ) {
+		return false;
+	}
+
+	return $ip;
 }
 
 /**
@@ -226,7 +248,7 @@ function roxwp_get_all_plugins() {
 		}
 	}
 
-	foreach ( $muPlugins as $slug => &$plugin ) {
+	foreach ( $muPlugins as &$plugin ) {
 		$plugin['Type']   = 'mu';
 		$plugin['Status'] = 1;
 		if ( isset( $plugin['Tags'] ) ) {
@@ -234,7 +256,7 @@ function roxwp_get_all_plugins() {
 		}
 	}
 
-	foreach ( $dropins as $slug => &$plugin ) {
+	foreach ( $dropins as &$plugin ) {
 		$plugin['Type']   = 'dropin';
 		$plugin['Status'] = 1;
 		if ( isset( $plugin['Tags'] ) ) {

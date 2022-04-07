@@ -151,6 +151,7 @@ class Dashboard {
 						$client->set_api_key( $api_key );
 						$client->set_api_secret( $api_secret );
 						$response = $client->ping();
+
 						if ( ! is_wp_error( $response ) ) {
 
 							if ( empty( $this->loadedKeys ) ) {

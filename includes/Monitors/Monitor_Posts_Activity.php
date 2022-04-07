@@ -29,6 +29,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		add_action( 'transition_post_status', [ $this, 'log_on_status_change' ], 10, 3 );
 		add_action( 'post_updated', [ $this, 'log_on_change' ] );
 		add_action( 'delete_post', [ $this, 'log_delete' ], 10, 2 );
+
 	}
 
 	protected function maybe_log_activity( $action, $objectId ) {

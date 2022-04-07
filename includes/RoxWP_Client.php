@@ -23,7 +23,7 @@ class RoxWP_Client {
 
 	protected static $instance;
 
-	private $api = 'https://app.roxwp.com/';
+	private $host = 'https://app.roxwp.com/';
 
 	private $version = 'v1';
 
@@ -47,8 +47,8 @@ class RoxWP_Client {
 		$api_keys = get_option( 'roxwp_site_monitor_api_keys', [] );
 
 		if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
-			$this->api_key    = $api_keys['api_key'];
-			$this->api_secret = $api_keys['api_secret'];
+			$this->api_key    = '8f20e940-a463-468e-8103-0fb8599c6a15';//$api_keys['api_key'];
+			$this->api_secret = '8AZMygtasK2QYLEhkClwVTOZU1onesQ8hYSKBgJq88Xj1M4m0u9Ra561a6b0c21a';//$api_keys['api_secret'];
 		}
 	}
 
@@ -110,6 +110,7 @@ class RoxWP_Client {
 		$route      = ltrim( $route, '\\/' );
 		$requestURL = $this->get_host() . 'api/' . $this->version . '/' . $route;
 
+
 		if ( false !== strpos( $this->get_host(), '.test/' ) ) {
 			$response = wp_remote_request( $requestURL, $args );
 		} elseif ( function_exists( 'vip_safe_wp_remote_request' ) ) {
@@ -129,7 +130,6 @@ class RoxWP_Client {
 			$body = $_body;
 			unset( $_body );
 		}
-
 		if ( 200 !== $status ) {
 			$code = isset( $body['code'] ) ? $body['code'] : $status;
 			if ( ! is_array( $body ) ) {
