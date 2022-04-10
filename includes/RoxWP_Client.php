@@ -47,8 +47,8 @@ class RoxWP_Client {
 		$api_keys = get_option( 'roxwp_site_monitor_api_keys', [] );
 
 		if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
-			$this->api_key    = '8f20e940-a463-468e-8103-0fb8599c6a15';//$api_keys['api_key'];
-			$this->api_secret = '8AZMygtasK2QYLEhkClwVTOZU1onesQ8hYSKBgJq88Xj1M4m0u9Ra561a6b0c21a';//$api_keys['api_secret'];
+			$this->api_key    = $api_keys['api_key'];
+			$this->api_secret = $api_keys['api_secret'];
 		}
 	}
 
