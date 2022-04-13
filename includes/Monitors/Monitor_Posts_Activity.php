@@ -25,15 +25,13 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 	protected $check_maybe_log = false;
 
 	public function init() {
-
 		add_action( 'transition_post_status', [ $this, 'log_on_status_change' ], 10, 3 );
 		add_action( 'post_updated', [ $this, 'log_on_change' ] );
 		add_action( 'delete_post', [ $this, 'log_delete' ], 10, 2 );
-
 	}
 
-	protected function maybe_log_activity( $action, $objectId ) {
-		$post = get_post( $objectId );
+	protected function maybe_log_activity( $action, $object_id ) {
+		$post = get_post( $object_id );
 
 		if ( ! $post ) {
 			return false; // Maybe invalid post.
@@ -96,30 +94,30 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		$post = get_post( $post_ID );
 
 		$this->log_activity(
-			Activity_Monitor_Base::ITEM_UPDATED,
+			Activity_Monitor_Base::ITEM_UPDATED, // @phpstan-ignore-line
 			$post_ID,
-			get_post_type( $post_ID ),
-			$this->get_name( $post )
+			get_post_type( $post_ID ), // @phpstan-ignore-line
+			$this->get_name( $post ) // @phpstan-ignore-line
 		);
 	}
 
 	/**
 	 * Log Post Delete.
 	 *
-	 * @param int $postId Post id.
+	 * @param int $post_id Post id.
 	 *
 	 * @throws Exception
 	 */
-	public function log_delete( $postId ) {
-		if ( ! $this->maybe_log_activity( Activity_Monitor_Base::ITEM_DELETED, $postId ) ) {
+	public function log_delete( $post_id ) {
+		if ( ! $this->maybe_log_activity( Activity_Monitor_Base::ITEM_DELETED, $post_id ) ) {
 			return;
 		}
 
 		$this->log_activity(
 			Activity_Monitor_Base::ITEM_DELETED,
-			$postId,
-			get_post_type( $postId ),
-			$this->get_name( $postId )
+			$post_id,
+			get_post_type( $post_id ), // @phpstan-ignore-line
+			$this->get_name( $post_id )
 		);
 	}
 
@@ -155,15 +153,15 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 	/**
 	 * Get Post Name
 	 *
-	 * @param WP_Post|int $post
+	 * @param WP_Post|int|string $post
 	 *
 	 * @return string
 	 */
 	protected function get_name( $post ) {
-		$post = get_post( $post );
+		$post = get_post( $post ); // @phpstan-ignore-line
 
 		/** @noinspection PhpTernaryExpressionCanBeReducedToShortVersionInspection */
-		return $post->post_title ? $post->post_title : 'no_title';
+		return $post->post_title ? $post->post_title : 'no_title'; // @phpstan-ignore-line
 	}
 }
 

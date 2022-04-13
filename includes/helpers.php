@@ -26,7 +26,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function roxwp_switch_to_english() {
 	if ( function_exists( 'switch_to_locale' ) ) {
-		// switch_to_locale( get_locale() );
 		switch_to_locale( 'en_US' );
 
 		// Filter on plugin_locale so other plugin/theme can load the correct locale.
@@ -54,7 +53,7 @@ function roxwp_restore_locale() {
  * @return string
  */
 function roxwp_get_current_time() {
-	return current_time( 'mysql', 1 );
+	return (string) current_time( 'mysql', 1 );
 }
 
 /**
@@ -98,7 +97,7 @@ function roxwp_get_current_actor() {
 		}
 	}
 
-	return $actor;
+	return $actor; // @phpstan-ignore-line
 }
 
 /**
@@ -125,11 +124,11 @@ function roxwp_get_user( $identity, $field = null ) {
 		}
 	}
 
-	return get_user_by( $field, $identity );
+	return get_user_by( (string) $field, $identity );
 }
 
 /**
- * @param WP_User $user
+ * @param WP_User|false $user
  *
  * @return string
  */
@@ -153,7 +152,7 @@ function roxwp_get_user_display_name( $user ) {
  * @return string
  */
 function roxwp_get_user_role( $user ) {
-	return strtolower( key( $user->caps ) );
+	return strtolower( (string) key( $user->caps ) );
 }
 
 /**
@@ -182,25 +181,6 @@ function roxwp_get_ip_address() {
 
 	// Fallback local ip.
 	return '127.0.0.1';
-}
-/**
- * Determines if an IP address is valid.
- *
- * Handles both IPv4 and IPv6 addresses.
- *
- * @param string $ip IP address.
- *
- * @return string|false The valid IP address, otherwise false.
- * @since 4.7.0
- */
-function is_ip_address( $ip ) {
-	$ipv4_pattern = '/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/';
-
-	if ( ! preg_match( $ipv4_pattern, $ip ) && ! Requests_IPv6::check_ipv6( $ip ) ) {
-		return false;
-	}
-
-	return $ip;
 }
 
 /**
@@ -232,9 +212,9 @@ function roxwp_get_all_plugins() {
 
 	roxwp_switch_to_english();
 
-	$plugins   = get_plugins();
-	$muPlugins = get_mu_plugins();
-	$dropins   = get_dropins();
+	$plugins    = get_plugins();
+	$mu_plugins = get_mu_plugins();
+	$dropins    = get_dropins();
 
 	foreach ( $plugins as $slug => &$plugin ) {
 		$plugin['Type']   = 'plugin';
@@ -244,7 +224,7 @@ function roxwp_get_all_plugins() {
 		}
 	}
 
-	foreach ( $muPlugins as &$plugin ) {
+	foreach ( $mu_plugins as &$plugin ) {
 		$plugin['Type']   = 'mu';
 		$plugin['Status'] = 1;
 		if ( isset( $plugin['Tags'] ) ) {
@@ -260,7 +240,7 @@ function roxwp_get_all_plugins() {
 		}
 	}
 
-	$data = array_merge( $plugins, $muPlugins, $dropins );
+	$data = array_merge( $plugins, $mu_plugins, $dropins );
 
 	roxwp_restore_locale();
 
@@ -288,7 +268,7 @@ function roxwp_get_all_themes() {
 	}
 
 	return array_map(
-		function( $theme ) {
+		function ( $theme ) {
 			return roxwp_get_theme_data_headers( $theme );
 		},
 		$themes
@@ -311,9 +291,6 @@ function roxwp_get_theme_data_headers( $theme ) {
 		'Version',
 		'Template',
 		'Status',
-		// 'Tags',
-		// 'TextDomain',
-		// 'DomainPath',
 		'RequiresWP',
 		'RequiresPHP',
 	];

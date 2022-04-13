@@ -22,7 +22,6 @@ class Monitor_Options_Activity extends Activity_Monitor_Base {
 	protected $check_maybe_log = false;
 
 	public function init() {
-		//add_action( 'added_option', [ $this, 'log_on_change' ], 10, 1 );
 		add_action( 'updated_option', [ $this, 'log_on_change' ], 10, 2 );
 	}
 
@@ -41,7 +40,6 @@ class Monitor_Options_Activity extends Activity_Monitor_Base {
 	}
 
 	public function log_on_change( $option, $old, $new = null ) {
-
 		$action = 'added_option' === current_filter() ? Activity_Monitor_Base::ITEM_CREATED : Activity_Monitor_Base::ITEM_UPDATED;
 
 		if ( ! $this->maybe_log_option( $action, $option, $old, $new ) ) {

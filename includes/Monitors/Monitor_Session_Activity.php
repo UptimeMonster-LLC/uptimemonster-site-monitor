@@ -24,15 +24,13 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 	protected $check_maybe_log = false;
 
 	public function init() {
-
 		add_action( 'wp_login', [ $this, 'on_login' ] );
 		add_action( 'wp_login_failed', [ $this, 'on_login_failed' ] );
 		add_action( 'clear_auth_cookie', [ $this, 'on_logout' ] );
 	}
 
-	protected function maybe_log_activity( $action, $objectId ) {
-
-		$user = roxwp_get_user( $objectId );
+	protected function maybe_log_activity( $action, $object_id ) {
+		$user = roxwp_get_user( $object_id );
 
 		/**
 		 * Should report activity?
@@ -49,13 +47,13 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 	protected function log_user( $action, $user, $extra = [] ) {
 		$user = roxwp_get_user( $user );
 
-		if ( ! $this->maybe_log_activity( $action, $user ) ) {
+		if ( ! $user || ! $this->maybe_log_activity( $action, $user ) ) {
 			return;
 		}
 
 		$this->log_activity(
 			$action,
-			$user->ID,
+			$user->ID, // @phpstan-ignore-line
 			'session',
 			roxwp_get_user_display_name( $user ),
 			array_merge( [
@@ -74,7 +72,6 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 	}
 
 	public function on_login_failed( $username ) {
-
 		$this->log_user(
 			Activity_Monitor_Base::ITEM_LOGIN_FAILED,
 			$username
@@ -84,14 +81,12 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 	public function on_logout() {
 		$user = wp_get_current_user();
 
-		if ( empty( $user ) || ! $user->exists() ) {
-			return;
+		if ( $user && $user->exists() ) {
+			$this->log_user(
+				Activity_Monitor_Base::ITEM_LOGGED_OUT,
+				$user
+			);
 		}
-
-		$this->log_user(
-			Activity_Monitor_Base::ITEM_LOGGED_OUT,
-			$user
-		);
 	}
 }
 

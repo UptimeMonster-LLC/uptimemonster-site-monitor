@@ -29,7 +29,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		// @TODO find way to log update failed.
 	}
 
-	protected function maybe_log_activity( $action, $objectId ) {
+	protected function maybe_log_activity( $action, $object_id ) {
 
 		/**
 		 * Should report activity?
@@ -45,7 +45,6 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		global $pagenow;
 
 		if ( 'wp_maybe_auto_update' === current_filter() ) {
-
 			roxwp_switch_to_english();
 			/* translators: 1. WordPress Version. */
 			$name = __( 'WordPress Auto Upgrading From %s', 'roxwp-site-mon' );
@@ -66,10 +65,10 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		$action = isset( $_GET['action'] ) ? $_GET['action'] : 'upgrade-core';
+		$action = isset( $_GET['action'] ) ? $_GET['action'] : 'upgrade-core'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended
 
 		if ( 'do-core-upgrade' === $action || 'do-core-reinstall' === $action ) {
-			if ( isset( $_POST['upgrade'] ) ) {
+			if ( isset( $_POST['upgrade'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 				$action = 'do-core-upgrade' === $action ? Activity_Monitor_Base::ITEM_UPGRADING : Activity_Monitor_Base::ITEM_REINSTALLING;
 				roxwp_switch_to_english();
 				/* translators: 1. WordPress Version. */

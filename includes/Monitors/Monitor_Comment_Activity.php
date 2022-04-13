@@ -20,7 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Monitor_Comment_Activity extends Monitor_Posts_Activity {
 
 	public function init() {
-
 		add_action( 'wp_insert_comment', [ $this, 'log_on_change' ], 10, 2 );
 		add_action( 'edit_comment', [ $this, 'log_on_change' ], 10, 2 );
 		add_action( 'trash_comment', [ $this, 'log_on_change' ], 10, 2 );
@@ -31,7 +30,7 @@ class Monitor_Comment_Activity extends Monitor_Posts_Activity {
 		add_action( 'transition_comment_status', [ $this, 'log_on_status_change' ], 10, 3 );
 	}
 
-	protected function maybe_log_activity( $action, $objectId ) {
+	protected function maybe_log_activity( $action, $object_id ) {
 		/**
 		 * Should report activity for comment?
 		 *
@@ -39,38 +38,38 @@ class Monitor_Comment_Activity extends Monitor_Posts_Activity {
 		 * @param int|object $object
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_comment_activity', true, get_comment( $objectId ), $action );
+		return (bool) apply_filters( 'roxwp_should_log_comment_activity', true, get_comment( $object_id ), $action );
 	}
 
 	protected function detect_action( $comment ) {
 		$action = Activity_Monitor_Base::ITEM_CREATED;
 
 		switch ( current_filter() ) {
-			case 'wp_insert_comment' :
+			case 'wp_insert_comment':
 				$action = 1 === (int) $comment->comment_approved ? Activity_Monitor_Base::ITEM_APPROVED : Activity_Monitor_Base::ITEM_PENDING;
 				break;
 
-			case 'edit_comment' :
+			case 'edit_comment':
 				$action = Activity_Monitor_Base::ITEM_UPDATED;
 				break;
 
-			case 'delete_comment' :
+			case 'delete_comment':
 				$action = Activity_Monitor_Base::ITEM_DELETED;
 				break;
 
-			case 'trash_comment' :
+			case 'trash_comment':
 				$action = Activity_Monitor_Base::ITEM_TRASHED;
 				break;
 
-			case 'untrash_comment' :
+			case 'untrash_comment':
 				$action = Activity_Monitor_Base::ITEM_RESTORED;
 				break;
 
-			case 'spam_comment' :
+			case 'spam_comment':
 				$action = Activity_Monitor_Base::ITEM_SPAMMED;
 				break;
 
-			case 'unspam_comment' :
+			case 'unspam_comment':
 				$action = Activity_Monitor_Base::ITEM_UNSPAMMED;
 				break;
 		}
@@ -79,12 +78,11 @@ class Monitor_Comment_Activity extends Monitor_Posts_Activity {
 	}
 
 	/**
-	 * @param $status
+	 * @param string|int $status
 	 *
 	 * @return string
 	 */
 	protected function translate_comment_status( $status ) {
-
 		$action = Activity_Monitor_Base::ITEM_PENDING;
 
 		switch ( $status ) {
@@ -113,14 +111,13 @@ class Monitor_Comment_Activity extends Monitor_Posts_Activity {
 	 */
 	protected function log_data( $action, $comment ) {
 		if ( $this->maybe_log_activity( $action, $comment ) ) {
-			parent::log_activity( $action, $comment->comment_ID, 'comment', $this->get_name( $comment->comment_post_ID ) );
+			parent::log_activity( $action, $comment->comment_ID, 'comment', $this->get_name( $comment->comment_post_ID ) ); // @phpstan-ignore-line
 		}
 	}
 
-	public function log_on_change( $comment_ID, $comment = null ) {
-
+	public function log_on_change( $comment_id, $comment = null ) {
 		if ( null === $comment ) {
-			$comment = get_comment( $comment_ID );
+			$comment = get_comment( $comment_id );
 		}
 
 		$this->log_data( $this->detect_action( $comment ), $comment );
@@ -131,7 +128,7 @@ class Monitor_Comment_Activity extends Monitor_Posts_Activity {
 	 * @param int|string $old_status The old comment status.
 	 * @param WP_Comment $comment Comment object.
 	 */
-	public function log_on_status_change( $new_status, $old_status, $comment ) {
+	public function log_on_status_change( $new_status, $old_status, $comment ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound, Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed @phpstan-ignore-line,Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
 		// @TODO this method might cause duplicate data, test needed.
 		$this->log_data( $this->translate_comment_status( $new_status ), $comment );
 	}

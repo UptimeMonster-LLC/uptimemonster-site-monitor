@@ -68,16 +68,16 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 * Log Activity.
 	 *
 	 * @param string $action Log Type
-	 * @param int    $objectId Object Id
+	 * @param int|string $object_id Object Id
 	 * @param string $subtype Object Type
 	 * @param string $name Object Name.
-	 * @param array  $data [Optional] Extra data.
+	 * @param array|object  $data [Optional] Extra data.
 	 *
 	 * @return void
 	 *
 	 * @throws Exception
 	 */
-	protected function log_activity( $action, $objectId, $subtype, $name, $data = null ) {
+	protected function log_activity( $action, $object_id, $subtype, $name, $data = null ) {
 		if ( ! $this->activity ) {
 			$this->activity = str_replace( [ __NAMESPACE__, 'Monitor_', '_Activity' ], '', get_called_class() );
 			$this->activity = ltrim( $this->activity, '\\' );
@@ -87,7 +87,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			throw new InvalidArgumentException(
 				sprintf(
 				/* translators: 1. PHP Argument Type. */
-					esc_html__( '$subtype expected to be a string, got %s.', 'rwp-site-mon' ),
+					esc_html__( '$subtype expected to be a string, got %s.', 'roxwp-site-mon' ),
 					gettype( $subtype )
 				)
 			);
@@ -97,27 +97,27 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			throw new InvalidArgumentException(
 				sprintf(
 				/* translators: 1. PHP Argument Type. */
-					esc_html__( '$name expected to be a string, got %s.', 'rwp-site-mon' ),
+					esc_html__( '$name expected to be a string, got %s.', 'roxwp-site-mon' ),
 					gettype( $name )
 				)
 			);
 		}
 
-		$_objectId = absint( $objectId );
+		$_object_id = absint( $object_id );
 
-		if ( strlen( $_objectId ) !== strlen( $objectId ) ) {
+		if ( strlen( (string) $_object_id ) !== strlen( (string) $object_id ) ) {
 			throw new InvalidArgumentException(
 				sprintf(
 				/* translators: 1. PHP Argument Type. */
-					esc_html__( '$id expected to be an integer, got %s.', 'rwp-site-mon' ),
-					gettype( $objectId )
+					esc_html__( '$id expected to be an integer, got %s.', 'roxwp-site-mon' ),
+					gettype( $object_id )
 				)
 			);
 		}
 
-		$_objectId = $_objectId ? $_objectId : null;
+		$_object_id = $_object_id ? $_object_id : null;
 
-		if ( $this->check_maybe_log && ! $this->maybe_log_activity( $action, $objectId ) ) {
+		if ( $this->check_maybe_log && ! $this->maybe_log_activity( $action, $object_id ) ) {
 			return;
 		}
 
@@ -125,7 +125,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			'action'    => $action,
 			'activity'  => $this->activity,
 			'subtype'   => $subtype,
-			'object_id' => $_objectId,
+			'object_id' => $_object_id,
 			'name'      => $this->strip_activity_name( $name ),
 			'timestamp' => roxwp_get_current_time(),
 			'actor'     => roxwp_get_current_actor(),
@@ -143,7 +143,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 				throw new InvalidArgumentException(
 					sprintf(
 					/* translators: 1. PHP Argument Type. */
-						esc_html__( '$data expected to be an array or object, got %s.', 'rwp-site-mon' ),
+						esc_html__( '$data expected to be an array or object, got %s.', 'roxwp-site-mon' ),
 						gettype( $data )
 					)
 				);
@@ -166,44 +166,22 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	}
 
 	/**
-	 * this should be overridden by the subClass.
+	 * This should be overridden by the subClass.
 	 *
 	 * @param string $action
-	 * @param mixed  $objectId
+	 * @param mixed  $object_id
 	 *
 	 * @return bool
 	 *
 	 * @throws Exception
 	 */
-	protected function maybe_log_activity( $action, $objectId ) {
+	protected function maybe_log_activity( $action, $object_id ) {
 		throw new Exception(
 			sprintf(
 			/* translators: 1. Method Name. */
-				esc_html__( '%s must be overridden by the subClass', 'rwp-site-mon' ),
+				esc_html__( '%s must be overridden by the subClass', 'roxwp-site-mon' ),
 				__METHOD__
 			)
-		);
-	}
-
-	/**
-	 * Cloning is forbidden.
-	 */
-	public function __clone() {
-		_doing_it_wrong(
-			__FUNCTION__,
-			__( 'Cloning is forbidden.', 'rwp-site-mon' ),
-			'1.0.0'
-		);
-	}
-
-	/**
-	 * Unserializing instances of this class is forbidden.
-	 */
-	public function __wakeup() {
-		_doing_it_wrong(
-			__FUNCTION__,
-			__( 'Unserializing instances of this class is forbidden.', 'rwp-site-mon' ),
-			'1.0.0'
 		);
 	}
 }

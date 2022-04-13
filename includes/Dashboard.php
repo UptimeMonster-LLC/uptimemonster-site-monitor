@@ -28,7 +28,7 @@ class Dashboard {
 		add_action( 'admin_menu', [ $this, 'register_menu' ] );
 		add_action( 'admin_init', [ $this, 'handle_post' ] );
 
-		add_filter( 'plugin_action_links_' . RWP_SM_PLUGIN_BASENAME, [ $this, 'plugin_action_links' ] );
+		add_filter( 'plugin_action_links_' . ROXWP_SM_PLUGIN_BASENAME, [ $this, 'plugin_action_links' ] ); // @phpstan-ignore-line
 	}
 
 	public function admin_notice() {
@@ -48,15 +48,15 @@ class Dashboard {
 	}
 
 	public function plugin_action_links( $links ) {
-		$links[] = sprintf( '<a href="%s">%s</a>', $this->get_page_url(), esc_html__( 'Settings', 'rwp-site-mon' ) );
+		$links[] = sprintf( '<a href="%s">%s</a>', $this->get_page_url(), esc_html__( 'Settings', 'roxwp-site-mon' ) );
 
 		return $links;
 	}
 
 	public function register_menu() {
 		add_options_page(
-			__( 'RoxWP API Settings', 'rwp-site-mon' ),
-			__( 'RoxWP Settings', 'rwp-site-mon' ),
+			__( 'RoxWP API Settings', 'roxwp-site-mon' ),
+			__( 'RoxWP Settings', 'roxwp-site-mon' ),
 			'manage_options',
 			'roxwp-settings',
 			[ $this, 'settings_page' ]
@@ -74,18 +74,18 @@ class Dashboard {
 		set_transient( 'rwp-setting-status', $data, 60 );
 	}
 
-	protected $loadedKeys;
+	protected $loaded_keys;
 
 	protected function get_api_keys() {
-		if ( null === $this->loadedKeys ) {
+		if ( null === $this->loaded_keys ) {
 			$api_keys = get_option( 'roxwp_site_monitor_api_keys', [] );
 
 			if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
-				$this->loadedKeys = $api_keys;
+				$this->loaded_keys = $api_keys;
 			}
 		}
 
-		return $this->loadedKeys;
+		return $this->loaded_keys;
 	}
 
 	public function get_page_url() {
@@ -99,11 +99,11 @@ class Dashboard {
 	public function handle_post() {
 		if ( 'yes' === get_option( 'roxwp_need_setup' ) ) {
 			if ( empty( $this->installed_on() ) ) {
-				$this->add_settings_status( __( 'Thank you for installing RoxWP Site Monitor.', 'rwp-site-mon' ) );
-				$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'rwp-site-mon' ) );
+				$this->add_settings_status( __( 'Thank you for installing RoxWP Site Monitor.', 'roxwp-site-mon' ) );
+				$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'roxwp-site-mon' ) );
 			}
 
-			$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'rwp-site-mon' ) );
+			$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'roxwp-site-mon' ) );
 
 			update_option( 'roxwp_need_setup', 'no' );
 
@@ -111,11 +111,11 @@ class Dashboard {
 			die();
 		}
 
-		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && 'install-drop-in' === $_GET['action'] ) {
-			if ( wp_verify_nonce( $_GET['_wpnonce'], 'roxwp-install-drop-in' ) ) {
+		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && 'install-drop-in' === $_GET['action'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( wp_verify_nonce( $_GET['_wpnonce'], 'roxwp-install-drop-in' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				RoxWP_Site_Monitor::maybe_install_drop_in();
 
-				$this->add_settings_status( __( 'Error Logger Drop-In Updated.', 'rwp-site-mon' ), 'success' );
+				$this->add_settings_status( __( 'Error Logger Drop-In Updated.', 'roxwp-site-mon' ), 'success' );
 
 				wp_safe_redirect( $this->get_page_url() );
 				die();
@@ -128,17 +128,17 @@ class Dashboard {
 
 			$api_key    = isset( $_POST['roxwp']['api_key'] ) ? sanitize_text_field( $_POST['roxwp']['api_key'] ) : '';
 			$api_secret = isset( $_POST['roxwp']['api_secret'] ) ? sanitize_text_field( $_POST['roxwp']['api_secret'] ) : '';
-			$newKeys    = [
+			$new_keys   = [
 				'api_key'    => $api_key,
 				'api_secret' => $api_secret,
 			];
 
 			if ( $api_key && ! $api_secret || $api_secret && ! $api_key ) {
-				$this->add_settings_status( __( 'Both api key & secret required.', 'rwp-site-mon' ), 'error' );
+				$this->add_settings_status( __( 'Both api key & secret required.', 'roxwp-site-mon' ), 'error' );
 			} else {
 				if ( $api_key && $api_secret ) {
-					if ( $newKeys === $this->loadedKeys ) {
-						$this->add_settings_status( __( 'Nothing Changed.', 'rwp-site-mon' ), 'warning' );
+					if ( $new_keys === $this->loaded_keys ) {
+						$this->add_settings_status( __( 'Nothing Changed.', 'roxwp-site-mon' ), 'warning' );
 					} else {
 						$client = RoxWP_Client::get_instance();
 						$client->set_api_key( $api_key );
@@ -146,42 +146,42 @@ class Dashboard {
 						$response = $client->ping();
 
 						if ( ! is_wp_error( $response ) ) {
-							if ( empty( $this->loadedKeys ) ) {
-								$message = __( 'Api connected.', 'rwp-site-mon' );
+							if ( empty( $this->loaded_keys ) ) {
+								$message = __( 'Api connected.', 'roxwp-site-mon' );
 							} else {
-								$message = __( 'Api keys updated.', 'rwp-site-mon' );
+								$message = __( 'Api keys updated.', 'roxwp-site-mon' );
 							}
 
 							$this->is_connected( false );
 
-							$this->loadedKeys = $newKeys;
+							$this->loaded_keys = $new_keys;
 
-							update_option( 'roxwp_site_monitor_api_keys', $newKeys );
+							update_option( 'roxwp_site_monitor_api_keys', $new_keys );
 
 							$this->add_settings_status( $message );
 
 							do_action( 'roxwp_site_monitor_api_updated' );
 						} else {
-							if ( empty( $this->loadedKeys ) ) {
+							if ( empty( $this->loaded_keys ) ) {
 								/* translators: 1. Error Details. */
-								$message = __( 'Error connecting to RoxWP Server with following error: %s.', 'rwp-site-mon' );
+								$message = __( 'Error connecting to RoxWP Server with following error: %s.', 'roxwp-site-mon' );
 							} else {
 								/* translators: 1. Error Details. */
-								$message = __( 'Error updating api keys with following error: %s.', 'rwp-site-mon' );
+								$message = __( 'Error updating api keys with following error: %s.', 'roxwp-site-mon' );
 							}
 
 							$this->add_settings_status( sprintf( $message, $response->get_error_message() ), 'error' );
 						}
 					}
 				} else {
-					if ( empty( $this->loadedKeys ) ) {
-						$this->add_settings_status( __( 'Nothing Changed.', 'rwp-site-mon' ), 'warning' );
+					if ( empty( $this->loaded_keys ) ) {
+						$this->add_settings_status( __( 'Nothing Changed.', 'roxwp-site-mon' ), 'warning' );
 					} else {
 						do_action( 'roxwp_site_monitor_api_deactivating' );
-						$this->loadedKeys = null;
+						$this->loaded_keys = null;
 						$this->is_connected( false );
 						delete_option( 'roxwp_site_monitor_api_keys' );
-						$this->add_settings_status( __( 'Api keys removed.', 'rwp-site-mon' ), 'warning' );
+						$this->add_settings_status( __( 'Api keys removed.', 'roxwp-site-mon' ), 'warning' );
 
 						do_action( 'roxwp_site_monitor_api_deactivated' );
 					}
@@ -198,30 +198,30 @@ class Dashboard {
 			return false;
 		}
 
-		$cacheKey = 'roxwp-is-connected';
+		$cache_key = 'roxwp-is-connected';
 
 		if ( ! $cached ) {
-			delete_transient( $cacheKey );
+			delete_transient( $cache_key );
 			$is_connected = false;
 		} else {
-			$is_connected = get_transient( $cacheKey );
+			$is_connected = get_transient( $cache_key );
 		}
 
 		if ( ! $is_connected ) {
 			$response     = $client->ping();
 			$is_connected = ( ! is_wp_error( $response ) && 'pong' === $response ) ? 'yes' : 'no';
 
-			set_transient( $cacheKey, $is_connected, 5 * MINUTE_IN_SECONDS );
+			set_transient( $cache_key, $is_connected, 5 * MINUTE_IN_SECONDS );
 		}
 
-		return $is_connected === 'yes';
+		return 'yes' === $is_connected;
 	}
 
 	public function settings_page() {
-		$keys       = $this->get_api_keys();
-		$api_key    = isset( $keys['api_key'] ) ? $keys['api_key'] : '';
-		$api_secret = isset( $keys['api_secret'] ) ? $keys['api_secret'] : '';
-		$installUrl = wp_nonce_url(
+		$keys        = $this->get_api_keys();
+		$api_key     = isset( $keys['api_key'] ) ? $keys['api_key'] : '';
+		$api_secret  = isset( $keys['api_secret'] ) ? $keys['api_secret'] : '';
+		$install_url = wp_nonce_url(
 			add_query_arg( [ 'action' => 'install-drop-in' ], $this->get_page_url() ),
 			'roxwp-install-drop-in'
 		);
@@ -229,7 +229,7 @@ class Dashboard {
 		<div class="wrap">
 			<h1 class="wp-heading-inline">
 				<i class="dashicons dashicons-superhero" style="font-size:1.5em;display:inline-block;width:30px;height:30px;margin:-1px 10px 0 0;"></i>
-				<?php echo get_admin_page_title(); ?>
+				<?php echo esc_html(get_admin_page_title()); ?>
 			</h1>
 			<hr class="wp-header-end">
 			<form method="post" action="<?php echo esc_url( $this->get_page_url() ); ?>">
@@ -238,7 +238,7 @@ class Dashboard {
 					<tbody>
 					<tr>
 						<th scope="row">
-							<label for="roxwp-api-key"><?php esc_html_e( 'Api Key', 'rwp-site-mon' ); ?></label>
+							<label for="roxwp-api-key"><?php esc_html_e( 'Api Key', 'roxwp-site-mon' ); ?></label>
 						</th>
 						<td>
 							<input name="roxwp[api_key]" type="text" id="roxwp-api-key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="off">
@@ -247,7 +247,7 @@ class Dashboard {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="roxwp-api-secret"><?php esc_html_e( 'Api Secret', 'rwp-site-mon' ); ?></label>
+							<label for="roxwp-api-secret"><?php esc_html_e( 'Api Secret', 'roxwp-site-mon' ); ?></label>
 						</th>
 						<td>
 							<input name="roxwp[api_secret]" type="password" id="roxwp-api-secret" value="<?php echo esc_attr( $api_secret ); ?>" class="regular-text" autocomplete="off">
@@ -255,47 +255,47 @@ class Dashboard {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label><?php esc_html_e( 'Error Logging Drop-in', 'rwp-site-mon' ); ?></label>
+							<label><?php esc_html_e( 'Error Logging Drop-in', 'roxwp-site-mon' ); ?></label>
 						</th>
 						<td>
 							<table>
 								<tbody>
 								<tr>
-									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Status:', 'rwp-site-mon' ); ?></strong></th>
+									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Status:', 'roxwp-site-mon' ); ?></strong></th>
 									<td style="padding:0;">
 									<?php
 
-									if ( RoxWP_Site_Monitor::isDropInInstalled() ) {
-										if ( RoxWP_Site_Monitor::dropInNeedUpdate() ) {
+									if ( RoxWP_Site_Monitor::is_drop_in_installed() ) {
+										if ( RoxWP_Site_Monitor::drop_in_need_update() ) {
 											printf(
 												/* translators: 1. New Version Number, 2. Update URL */
-												__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'rwp-site-mon' ),
-												RoxWP_Site_Monitor::dropInVersion( false ),
-												esc_url( $installUrl )
+												__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'roxwp-site-mon' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+												esc_html( RoxWP_Site_Monitor::drop_in_version( false ) ),
+												esc_url( $install_url )
 											);
 										} else {
 											printf(
 											/* translators: 1. Error handler drop-in version. */
-												esc_html__( 'Installed (Version %s)', 'rwp-site-mon' ),
-												RoxWP_Site_Monitor::dropInVersion()
+												esc_html__( 'Installed (Version %s)', 'roxwp-site-mon' ),
+												esc_html( RoxWP_Site_Monitor::drop_in_version() )
 											);
 										}
 									} else {
 										?>
 											<p class="help">
 											<?php
-											if ( RoxWP_Site_Monitor::isWPContentWritable() ) {
+											if ( RoxWP_Site_Monitor::is_wp_content_writable() ) {
 												printf(
 													/* translators: 1. Installation URL */
-													__( 'Click <a href="%s">here</a> to install the drop-in.', 'rwp-site-mon' ),
-													esc_url( $installUrl )
+													__( 'Click <a href="%s">here</a> to install the drop-in.', 'roxwp-site-mon' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													esc_url( $install_url )
 												);
 											} else {
 												printf(
 													/* translators: 1. Source file path. 2. Destination file path. */
-													__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'rwp-site-mon' ),
-													RoxWP_Site_Monitor::getDropInDistFile(),
-													RoxWP_Site_Monitor::getDropInFile()
+													__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'roxwp-site-mon' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													esc_html( RoxWP_Site_Monitor::get_drop_in_dist_file() ),
+													esc_html( RoxWP_Site_Monitor::get_drop_in_file() )
 												);
 											}
 											?>
@@ -306,26 +306,26 @@ class Dashboard {
 										</td>
 								</tr>
 								<tr>
-									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'WP Content Directory', 'rwp-site-mon' ); ?></strong></th>
+									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'WP Content Directory', 'roxwp-site-mon' ); ?></strong></th>
 									<td style="padding:0;">
 									<?php
-									if ( RoxWP_Site_Monitor::isWPContentWritable() ) {
-										esc_html_e( 'Writable', 'rwp-site-mon' );
+									if ( RoxWP_Site_Monitor::is_wp_content_writable() ) {
+										esc_html_e( 'Writable', 'roxwp-site-mon' );
 									} else {
-										esc_html_e( 'Not Writable', 'rwp-site-mon' );
+										esc_html_e( 'Not Writable', 'roxwp-site-mon' );
 									}
 									?>
 										</td>
 								</tr>
-								<?php if ( RoxWP_Site_Monitor::isDropInInstalled() ) { ?>
+								<?php if ( RoxWP_Site_Monitor::is_drop_in_installed() ) { ?>
 									<tr>
-										<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Drop-In', 'rwp-site-mon' ); ?></strong></th>
+										<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Drop-In', 'roxwp-site-mon' ); ?></strong></th>
 										<td style="padding:0;">
 										<?php
-										if ( RoxWP_Site_Monitor::isDropInWritable() ) {
-											esc_html_e( 'Writable', 'rwp-site-mon' );
+										if ( RoxWP_Site_Monitor::is_drop_in_writable() ) {
+											esc_html_e( 'Writable', 'roxwp-site-mon' );
 										} else {
-											esc_html_e( 'Not Writable', 'rwp-site-mon' );
+											esc_html_e( 'Not Writable', 'roxwp-site-mon' );
 										}
 										?>
 											</td>
@@ -337,7 +337,7 @@ class Dashboard {
 					</tr>
 					</tbody>
 				</table>
-				<?php submit_button( __( 'Save Changes', 'rwp-site-mon' ), 'primary', 'rwp-settings-save' ); ?>
+				<?php submit_button( __( 'Save Changes', 'roxwp-site-mon' ), 'primary', 'rwp-settings-save' ); ?>
 			</form>
 		</div>
 		<?php

@@ -28,9 +28,8 @@ class Monitor_Nav_Menu_Activity extends Activity_Monitor_Base {
 		add_action( 'wp_delete_nav_menu', [ $this, 'log_on_delete' ] );
 	}
 
-	protected function maybe_log_activity( $action, $objectId ) {
-
-		$menu = wp_get_nav_menu_object( $objectId );
+	protected function maybe_log_activity( $action, $object_id ) {
+		$menu = wp_get_nav_menu_object( $object_id );
 
 		/**
 		 * Should report activity?
@@ -46,26 +45,26 @@ class Monitor_Nav_Menu_Activity extends Activity_Monitor_Base {
 		return 'wp_create_nav_menu' === current_filter() ? Activity_Monitor_Base::ITEM_CREATED : Activity_Monitor_Base::ITEM_UPDATED;
 	}
 
-	public function log_on_delete( $menuId ) {
-		$menu = wp_get_nav_menu_object( $menuId );
-		if ( $this->maybe_log_activity( Activity_Monitor_Base::ITEM_DELETED, $menuId ) ) {
+	public function log_on_delete( $menu_id ) {
+		$menu = wp_get_nav_menu_object( $menu_id );
+		if ( $menu && $this->maybe_log_activity( Activity_Monitor_Base::ITEM_DELETED, $menu_id ) ) {
 			$this->log_activity(
 				Activity_Monitor_Base::ITEM_DELETED,
-				$menuId,
+				$menu_id,
 				'menu',
 				$menu->name
 			);
 		}
 	}
 
-	public function log_on_change( $menuId ) {
-		$menu = wp_get_nav_menu_object( $menuId );
+	public function log_on_change( $menu_id ) {
+		$menu   = wp_get_nav_menu_object( $menu_id );
 		$action = $this->detect_action();
 
-		if ( $this->maybe_log_activity( $action, $menuId ) ) {
+		if ( $menu && $this->maybe_log_activity( $action, $menu_id ) ) {
 			$this->log_activity(
 				$this->detect_action(),
-				$menuId,
+				$menu_id,
 				'menu',
 				$menu->name
 			);

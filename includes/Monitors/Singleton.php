@@ -20,14 +20,14 @@ trait Singleton {
 	/**
 	 * Singleton instance ref.
 	 *
-	 * @var static
+	 * @var self
 	 */
 	protected static $instance;
 
 	/**
 	 * Create one instance of this class, stores and return that.
 	 *
-	 * @return static
+	 * @return self
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -44,20 +44,21 @@ trait Singleton {
 	 *
 	 * @return void
 	 */
-	protected function __construct() {}
+	protected function __construct() {
+	}
 
 	/**
 	 * Cloning is forbidden.
 	 */
 	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, __( 'Cloning is forbidden.', 'rwp-site-mon' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cloning is forbidden.', 'roxwp-site-mon' ), '1.0.0' );
 	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'rwp-site-mon' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Unserializing instances of this class is forbidden.', 'roxwp-site-mon' ), '1.0.0' );
 	}
 }
 

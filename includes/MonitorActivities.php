@@ -41,7 +41,7 @@ class MonitorActivities {
 	/**
 	 * List of activity monitor.
 	 *
-	 * @var Activity_Monitor_Base[]
+	 * @var string[]
 	 */
 	protected $monitors = [
 		Monitor_Self_Activation_Activity::class,
@@ -76,7 +76,7 @@ class MonitorActivities {
 			/**
 			 * @var Activity_Monitor_Base $monitor
 			 */
-			$monitor = call_user_func( [ $monitor, 'get_instance' ] );
+			$monitor = call_user_func( [ $monitor, 'get_instance' ] ); // @phpstan-ignore-line
 			$monitor->init();
 		}
 	}

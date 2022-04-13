@@ -23,14 +23,14 @@ class Monitor_Attachment_Activity extends Monitor_Posts_Activity {
 		add_action( 'delete_attachment', [ $this, 'log_on_deleted' ], 10, 1 );
 	}
 
-	protected function maybe_log_activity( $action, $objectId ) {
+	protected function maybe_log_activity( $action, $object_id ) {
 		/**
 		 * Should report activity for attachment?
 		 *
 		 * @param bool $status
-		 * @param int|object $objectId
+		 * @param int|object $object_id
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_attachment_activity', true, $action, $objectId );
+		return (bool) apply_filters( 'roxwp_should_log_attachment_activity', true, $action, $object_id );
 	}
 
 	protected function log_data( $action, $attachment_id ) {

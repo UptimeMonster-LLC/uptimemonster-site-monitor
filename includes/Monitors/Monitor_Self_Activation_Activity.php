@@ -26,7 +26,6 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 	protected $check_maybe_log = false;
 
 	public function init() {
-
 		add_action( 'roxwp_site_monitor_api_updated', [ $this, 'on_activation' ] );
 		add_action( 'roxwp_site_monitor_activation', [ $this, 'on_activation' ] );
 
@@ -36,7 +35,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 		add_action( 'roxwp_error_logger_installed', [ $this, 'on_error_logger_installed' ], 10, 2 );
 	}
 
-	protected function maybe_log_activity( $action = '', $objectId = '' ) {
+	protected function maybe_log_activity( $action = '', $object_id = '' ) {
 		return get_option( 'roxwp_site_monitor_api_keys' );
 	}
 
@@ -50,7 +49,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 			Activity_Monitor_Base::ITEM_ACTIVATED,
 			0,
 			'monitor',
-			__( 'Site Monitor Activated', 'rwp-site-mon' ),
+			__( 'Site Monitor Activated', 'roxwp-site-mon' ),
 			[ 'include_installed' => true ]
 		);
 		roxwp_restore_locale();
@@ -66,7 +65,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 			Activity_Monitor_Base::ITEM_DEACTIVATED,
 			0,
 			'monitor',
-			__( 'Site Monitor Deactivated', 'rwp-site-mon' )
+			__( 'Site Monitor Deactivated', 'roxwp-site-mon' )
 		);
 		roxwp_restore_locale();
 	}
@@ -79,14 +78,14 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 		roxwp_switch_to_english();
 
 		if ( $installed ) {
-			$name = $old ? __( '“Error Logger” Drop-In Updated', 'rwp-site-mon' ) : __( '“Error Logger” Drop-In Installed', 'rwp-site-mon' );
+			$name = $old ? __( '“Error Logger” Drop-In Updated', 'roxwp-site-mon' ) : __( '“Error Logger” Drop-In Installed', 'roxwp-site-mon' );
 		} else {
-			$name = __( 'Failed To Install “Error Logger” Drop-In.', 'rwp-site-mon' );
+			$name = __( 'Failed To Install “Error Logger” Drop-In.', 'roxwp-site-mon' );
 		}
 
 		roxwp_restore_locale();
 
-		$data = [ 'version' => RoxWP_Site_Monitor::dropInVersion() ];
+		$data = [ 'version' => RoxWP_Site_Monitor::drop_in_version() ];
 
 		if ( $old ) {
 			$data['previous'] = $old;

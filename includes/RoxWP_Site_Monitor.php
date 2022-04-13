@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-/** @define "RWP_SM_PLUGIN_PATH" "./" */
+/** @define "ROXWP_SM_PLUGIN_PATH" "./" */
 
 /**
  * Site Monitor.
@@ -25,11 +25,11 @@ final class RoxWP_Site_Monitor {
 
 	use Singleton;
 
-	protected static $errorHandlerDist;
+	protected static $error_handler_dist;
 
-	protected static $errorHandler;
+	protected static $error_handler;
 
-	protected static $errorHandlerData = [];
+	protected static $error_handler_data = [];
 
 	/**
 	 * Main Constructor
@@ -39,11 +39,11 @@ final class RoxWP_Site_Monitor {
 		// Check if autoloader exists, include it or show error with admin notice ui.
 
 		// DropIns
-		self::$errorHandlerDist = RWP_SM_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl';
-		self::$errorHandler     = WP_CONTENT_DIR . '/fatal-error-handler.php';
+		self::$error_handler_dist = ROXWP_SM_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl'; // @phpstan-ignore-line
+		self::$error_handler      = WP_CONTENT_DIR . '/fatal-error-handler.php'; // @phpstan-ignore-line
 
-		register_activation_hook( RWP_SM_PLUGIN_FILE, array( __CLASS__, 'install' ) );
-		register_deactivation_hook( RWP_SM_PLUGIN_FILE, array( __CLASS__, 'uninstall' ) );
+		register_activation_hook( ROXWP_SM_PLUGIN_FILE, array( __CLASS__, 'install' ) );
+		register_deactivation_hook( ROXWP_SM_PLUGIN_FILE, array( __CLASS__, 'uninstall' ) );
 
 		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
@@ -67,41 +67,41 @@ final class RoxWP_Site_Monitor {
 			update_option( 'roxwp_first_installed', roxwp_get_current_time() );
 		}
 
-		update_option( 'roxwp_site_monitor_version', RWP_SM_PLUGIN_VERSION );
+		update_option( 'roxwp_site_monitor_version', ROXWP_SM_PLUGIN_VERSION );
 
 		do_action( 'roxwp_site_monitor_activation' );
 	}
 
 	public static function maybe_install_drop_in() {
-		self::installDropIn();
+		self::install_drop_in();
 	}
 
 	public static function uninstall() {
-		self::removeDropIn();
+		self::remove_drop_in();
 		do_action( 'roxwp_site_monitor_deactivation' );
 	}
 
-	public static function getDropInData( $installed = true ) {
+	public static function get_drop_in_data( $installed = true ) {
 		$which = $installed ? 'installed' : 'dist';
-		if ( ! isset( self::$errorHandlerData[ $which ] ) ) {
-			self::$errorHandlerData[ $which ] = roxwp_get_plugin_data( $installed ? self::$errorHandler : self::$errorHandlerDist );
+		if ( ! isset( self::$error_handler_data[ $which ] ) ) {
+			self::$error_handler_data[ $which ] = roxwp_get_plugin_data( $installed ? self::$error_handler : self::$error_handler_dist );
 		}
 
-		return self::$errorHandlerData[ $which ];
+		return self::$error_handler_data[ $which ];
 	}
 
-	public static function getDropInFile() {
-		return self::$errorHandler;
+	public static function get_drop_in_file() {
+		return self::$error_handler;
 	}
 
-	public static function getDropInDistFile() {
-		return self::$errorHandlerDist;
+	public static function get_drop_in_dist_file() {
+		return self::$error_handler_dist;
 	}
 
-	public static function isDropInInstalled() {
-		$data = self::getDropInData();
+	public static function is_drop_in_installed() {
+		$data = self::get_drop_in_data();
 
-		return isset( $data['Name'] ) && $data['Name'] === 'Roxwp Site Error Logger Drop-in';
+		return isset( $data['Name'] ) && 'Roxwp Site Error Logger Drop-in' === $data['Name'];
 	}
 
 	/**
@@ -109,57 +109,57 @@ final class RoxWP_Site_Monitor {
 	 *
 	 * @return string
 	 */
-	public static function dropInVersion( $installed = true ) {
+	public static function drop_in_version( $installed = true ) {
 		if ( $installed ) {
-			if ( ! self::isDropInInstalled() ) {
+			if ( ! self::is_drop_in_installed() ) {
 				return null;
 			}
 
-			return self::getDropInData()['Version'];
+			return self::get_drop_in_data()['Version'];
 		}
 
-		return self::getDropInData( false )['Version'];
+		return self::get_drop_in_data( false )['Version'];
 	}
 
-	public static function isWPContentWritable() {
-		return is_writable( WP_CONTENT_DIR );
+	public static function is_wp_content_writable() {
+		return is_writable( WP_CONTENT_DIR ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_is_writable @phpstan-ignore-line,WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_is_writable
 	}
 
-	public static function isDropInWritable() {
-		return is_writable( self::$errorHandler );
+	public static function is_drop_in_writable() {
+		return is_writable( self::$error_handler ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_is_writable
 	}
 
-	public static function dropInNeedUpdate() {
-		if ( ! self::isDropInInstalled() ) {
+	public static function drop_in_need_update() {
+		if ( ! self::is_drop_in_installed() ) {
 			return true;
 		}
 
-		return version_compare( self::dropInVersion(), self::dropInVersion( false ), '<' );
+		return version_compare( self::drop_in_version(), self::drop_in_version( false ), '<' );
 	}
 
-	protected static function installDropIn() {
-		$oldVersion = self::dropInVersion();
+	protected static function install_drop_in() {
+		$old_version = self::drop_in_version();
 
-		if ( self::dropInNeedUpdate() ) {
+		if ( self::drop_in_need_update() ) {
 			// reset cache.
-			self::$errorHandlerData = array();
+			self::$error_handler_data = array();
 
-			self::removeDropIn();
+			self::remove_drop_in();
 
-			$file = file_get_contents( self::$errorHandlerDist );
-			$fp   = @fopen( self::$errorHandler, 'w' );
+			$file = file_get_contents( self::$error_handler_dist ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
+			$fp   = @fopen( self::$error_handler, 'w' ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged,WordPress.WP.AlternativeFunctions.file_system_read_fopen
 			if ( $fp ) {
-				fputs( $fp, $file );
+				fputs( $fp, (string) $file ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_fputs
 				fclose( $fp );
 			}
 
-			do_action( 'roxwp_error_logger_installed', $oldVersion, self::isDropInInstalled() );
+			do_action( 'roxwp_error_logger_installed', $old_version, self::is_drop_in_installed() );
 		}
 	}
 
-	protected static function removeDropIn() {
-		if ( file_exists( self::$errorHandler ) ) {
-			@unlink( self::$errorHandler );
+	protected static function remove_drop_in() {
+		if ( file_exists( self::$error_handler ) ) {
+			@unlink( self::$error_handler ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
 		}
 	}
 
@@ -174,12 +174,12 @@ final class RoxWP_Site_Monitor {
 	 */
 	public function load_plugin_textdomain() {
 		$locale = determine_locale();
-		$locale = apply_filters( 'plugin_locale', $locale, 'rwp-site-mon' );
+		$locale = apply_filters( 'plugin_locale', $locale, 'roxwp-site-mon' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
-		unload_textdomain( 'rwp-site-mon' );
+		unload_textdomain( 'roxwp-site-mon' );
 
-		load_textdomain( 'rwp-site-mon', WP_LANG_DIR . '/roxwp-site-monitor/roxwp-site-monitor-' . $locale . '.mo' );
-		load_plugin_textdomain( 'rwp-site-mon', false, plugin_basename( dirname( RWP_SM_PLUGIN_FILE ) ) . '/languages' );
+		load_textdomain( 'roxwp-site-mon', WP_LANG_DIR . '/roxwp-site-monitor/roxwp-site-monitor-' . $locale . '.mo' ); // @phpstan-ignore-line
+		load_plugin_textdomain( 'roxwp-site-mon', false, plugin_basename( dirname( ROXWP_SM_PLUGIN_FILE ) ) . '/languages' );
 	}
 }
 

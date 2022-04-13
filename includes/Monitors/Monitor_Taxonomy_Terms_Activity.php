@@ -30,9 +30,8 @@ class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {
 		add_action( 'delete_term', [ $this, 'log_on_change' ], 10, 5 );
 	}
 
-	protected function maybe_log_activity( $action, $objectId ) {
-
-		$term   = get_term( $objectId );
+	protected function maybe_log_activity( $action, $object_id ) {
+		$term   = get_term( $object_id );
 		$status = ! is_wp_error( $term ) && 'nav_menu' !== $term->taxonomy;
 
 		/**
@@ -49,7 +48,7 @@ class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {
 		if ( 'edited_term' === current_filter() ) {
 			$action = Activity_Monitor_Base::ITEM_UPDATED;
 		} elseif ( 'delete_term' === current_filter() ) {
-			$action  = Activity_Monitor_Base::ITEM_DELETED;
+			$action = Activity_Monitor_Base::ITEM_DELETED;
 		} else {
 			$action = Activity_Monitor_Base::ITEM_CREATED;
 		}
@@ -57,7 +56,7 @@ class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {
 		return $action;
 	}
 
-	public function log_on_change( $term_id, $tt_id, $taxonomy, $deleted_term = null ) {
+	public function log_on_change( $term_id, $tt_id, $taxonomy, $deleted_term = null ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
 		if ( 'delete_term' === current_filter() ) {
 			$term = $deleted_term;
 		} else {

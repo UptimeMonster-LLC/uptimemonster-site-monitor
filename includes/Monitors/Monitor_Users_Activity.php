@@ -28,13 +28,12 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 		add_action( 'profile_update', [ $this, 'on_updated' ], 10, 2 );
 		add_action( 'deleted_user', [ $this, 'on_deleted' ], 10, 3 );
 
-		add_action( 'make_spam_user', [ $this, 'on_spammed'] );
-		add_action( 'make_ham_user', [ $this, 'on_unspammed'] );
+		add_action( 'make_spam_user', [ $this, 'on_spammed' ] );
+		add_action( 'make_ham_user', [ $this, 'on_unspammed' ] );
 	}
 
-	protected function maybe_log_activity( $action, $objectId ) {
-
-		$user = roxwp_get_user( $objectId );
+	protected function maybe_log_activity( $action, $object_id ) {
+		$user = roxwp_get_user( $object_id );
 
 		/**
 		 * Should report activity?
@@ -77,24 +76,26 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 	 * @param WP_User $old_user_data
 	 */
 	public function on_updated( $user, $old_user_data ) {
-		$this->log_user( Activity_Monitor_Base::ITEM_REGISTERED, $user, [ 'old' => $old_user_data->to_array(), ] );
+		$this->log_user( Activity_Monitor_Base::ITEM_REGISTERED, $user, [ 'old' => $old_user_data->to_array() ] );
 	}
 
-	public function on_deleted( $id, $reassign, $user ) {
+	public function on_deleted( $id, $reassign, $user ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
 		$reassign = roxwp_get_user( $reassign );
-		$this->log_user(
-			Activity_Monitor_Base::ITEM_DELETED,
-			$user,
-			[
-				'old'           => $user->to_array(),
-				'reassigned_to' => [
-					'id'       => $reassign->ID,
-					'name'     => roxwp_get_user_display_name( $reassign ),
-					'email'    => $reassign->user_email,
-					'username' => $reassign->user_login,
-				],
-			]
-		);
+		if ( $reassign ) {
+			$this->log_user(
+				Activity_Monitor_Base::ITEM_DELETED,
+				$user,
+				[
+					'old'           => $user->to_array(),
+					'reassigned_to' => [
+						'id'       => $reassign->ID,
+						'name'     => roxwp_get_user_display_name( $reassign ),
+						'email'    => $reassign->user_email,
+						'username' => $reassign->user_login,
+					],
+				]
+			);
+		}
 	}
 
 	public function on_spammed( $user ) {

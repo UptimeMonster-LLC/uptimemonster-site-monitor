@@ -24,7 +24,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 
 	protected $check_maybe_log = false;
 
-	protected $_plugin = [];
+	protected $plugin = [];
 
 	public function init() {
 		add_action( 'activated_plugin', [ $this, 'on_plugin_activated' ], 10, 2 );
@@ -37,8 +37,6 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		// Plugin Editor Actions.
 		add_action( 'wp_ajax_edit-theme-plugin-file', [ $this, 'on_plugin_file_modify' ], -1 );
 		add_filter( 'wp_redirect', [ $this, 'on_plugin_file_modify' ], -1 );
-
-		// $plugin_file `directory_name/main_file.php`
 	}
 
 	protected function maybe_log_plugin( $action, $plugin, $file = null ) {
@@ -92,26 +90,24 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 	 * @param string $plugin
 	 */
 	public function on_before_delete( $plugin ) {
-
 		if ( ! $this->maybe_log_plugin( Activity_Monitor_Base::ITEM_DELETED, $plugin ) ) {
 			return;
 		}
 
 		// cache plugin data
-		$data = $this->get_plugin_data( $plugin );
-		$hash = md5( $plugin );
+		$data           = $this->get_plugin_data( $plugin );
+		$hash           = md5( $plugin );
 		$data['Status'] = 2;
 
 		set_transient( 'roxwp_plugin_data_' . $hash, $data, 60 );
 	}
 
 	public function on_plugin_deleted( $plugin, $deleted ) {
-
 		$hash = md5( $plugin );
 
 		$data = get_transient( 'roxwp_plugin_data_' . $hash );
 		if ( $data ) {
-			$this->_plugin[$hash] = $data;
+			$this->plugin[ $hash ] = $data;
 		}
 
 		delete_transient( 'roxwp_plugin_data_' . $hash );
@@ -133,14 +129,13 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 			$path = $upgrader->plugin_info();
 			if ( $path ) {
 
-				// @XXX may be we can remove this.
-				$hash = md5( $path );
-				$this->_plugin[ $hash ] = roxwp_get_plugin_data( $upgrader->skin->result['local_destination'] . '/' . $path, false, false );
+				// @XXX maybe we can remove this.
+				$hash                  = md5( $path );
+				$this->plugin[ $hash ] = roxwp_get_plugin_data( $upgrader->skin->result['local_destination'] . '/' . $path, false, false ); // @phpstan-ignore-line
 
 				$this->log_plugin( Activity_Monitor_Base::ITEM_INSTALLED, $path );
 				return;
 			}
-
 		}
 
 		if ( isset( $extra['action'] ) && 'update' === $extra['action'] ) {
@@ -162,10 +157,10 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 
 	protected function is_plugin_file_modified( $location = null ) {
 		return (
-			'edit-theme-plugin-file' === $_POST['action'] ||
+			'edit-theme-plugin-file' === $_POST['action'] || // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.NonceVerification.Recommended,WordPress.Security.NonceVerification.Missing
 			(
 				'wp_redirect' === current_filter() &&
-				false !== strpos( $location, 'plugin-editor.php' ) && 'update' === $_REQUEST['action']
+				false !== strpos( $location, 'plugin-editor.php' ) && 'update' === $_REQUEST['action'] // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.NonceVerification.Recommended
 			)
 		);
 	}
@@ -176,20 +171,19 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 	 * @see wp_edit_theme_plugin_file()
 	 */
 	public function on_plugin_file_modify( $location = null ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( ! empty( $_POST ) && isset( $_POST['action'], $_POST['plugin'], $_POST['file'] ) && ! empty( $_POST['plugin'] ) ) {
-
 			if ( $this->is_plugin_file_modified( $location ) ) {
-
 				$_POST  = wp_unslash( $_POST );
 				$plugin = sanitize_text_field( $_POST['plugin'] );
 				$file   = sanitize_text_field( $_POST['file'] );
-				$_file  = WP_PLUGIN_DIR . $plugin;
+				$_file  = WP_PLUGIN_DIR . $plugin; // @phpstan-ignore-line
+				// phpcs:enable
 
 				if ( $this->maybe_log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $plugin, $file ) && file_exists( $_file ) ) {
-
 					roxwp_switch_to_english();
 					/* translators: 1. Plugin Name, 2. File path. */
-					$name = $plugin === $file ? __( 'Modified main file (%2$s) of “%1%s” plugin' ) : __( 'Modified file (%2$s) of “%1%s” plugin');
+					$name = $plugin === $file ? __( 'Modified main file (%2$s) of “%1$s” plugin', 'roxwp-site-mon' ) : __( 'Modified file (%2$s) of “%1$s” plugin', 'roxwp-site-mon' );
 					roxwp_restore_locale();
 
 					$extra = [
@@ -213,22 +207,19 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 	}
 
 	protected function get_plugin_data( $plugin_file, $header = null ) {
-
 		$hash = md5( $plugin_file );
 
-		if ( ! isset( $this->_plugin[ $hash ] ) ) {
+		if ( ! isset( $this->plugin[ $hash ] ) ) {
+			$real_file = WP_PLUGIN_DIR . '/' . $plugin_file; // @phpstan-ignore-line
 
-			$real_file = WP_PLUGIN_DIR . '/' . $plugin_file;
-
-			$this->_plugin[ $hash ] = roxwp_get_plugin_data( $real_file );
-
+			$this->plugin[ $hash ] = roxwp_get_plugin_data( $real_file );
 		}
 
 		if ( $header ) {
-			return isset( $this->_plugin[ $hash ][ $header ] ) ? $this->_plugin[ $hash ][ $header ] : null;
+			return isset( $this->plugin[ $hash ][ $header ] ) ? $this->plugin[ $hash ][ $header ] : null;
 		}
 
-		return $this->_plugin[ $hash ];
+		return $this->plugin[ $hash ];
 	}
 }
 

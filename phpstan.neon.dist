@@ -11,6 +11,6 @@ parameters:
     paths:
         - includes/
     excludePaths:
-
+        - vendor/
     scanFiles:
         - roxwp-site-monitor.php

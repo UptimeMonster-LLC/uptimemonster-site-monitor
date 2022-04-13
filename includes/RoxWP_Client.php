@@ -125,7 +125,7 @@ class RoxWP_Client {
 			'post',
 			[
 				'blocking' => false,
-				'timeout'  => 5,
+				'timeout'  => 5, // phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
 			]
 		);
 	}
@@ -142,7 +142,7 @@ class RoxWP_Client {
 	 */
 	public function request( $route, $data = [], $method = 'get', $args = [] ) {
 		if ( ! $this->has_keys() ) {
-			return new WP_Error( 'missing-api-keys', __( 'Missing API Keys.', 'rwp-site-mon' ) );
+			return new WP_Error( 'missing-api-keys', __( 'Missing API Keys.', 'roxwp-site-mon' ) );
 		}
 
 		list( $algo, $timestamp, $signature ) = $this->signature( $data, $method );
@@ -180,8 +180,7 @@ class RoxWP_Client {
 		if ( false !== strpos( $this->get_host(), '.test/' ) ) {
 			$response = wp_remote_request( $request_url, $args );
 		} elseif ( function_exists( 'vip_safe_wp_remote_request' ) ) {
-			// vip_safe_wp_remote_get( $url, $fallback_value = '', $threshold = 3, $timeout = 1, $retry = 20, $args = [] )
-			$response = vip_safe_wp_remote_request( $request_url, '', 3, 5, 20, $args );
+			$response = vip_safe_wp_remote_request( $request_url, '', 3, 5, 20, $args ); // @phpstan-ignore-line
 		} else {
 			$response = wp_safe_remote_request( $request_url, $args );
 		}
@@ -208,7 +207,7 @@ class RoxWP_Client {
 			}
 
 			if ( ! $message ) {
-				$message = __( 'Something went wrong', 'rwp-site-mon' );
+				$message = __( 'Something went wrong', 'roxwp-site-mon' );
 			}
 
 			return new WP_Error( $code, $message, $body );

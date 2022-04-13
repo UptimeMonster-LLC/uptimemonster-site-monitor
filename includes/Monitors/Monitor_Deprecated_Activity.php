@@ -28,13 +28,10 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 
 		// sometime gettext function might unavailable, as deprecation function can trigger early stage of wp loading.
 		// no gettext used in this monitor.
-
 		add_action( 'deprecated_function_run', [ $this, 'log_deprecated_function' ], 10, 3 );
 		add_action( 'deprecated_constructor_run', [ $this, 'log_deprecated_class' ], 10, 3 );
 		add_action( 'deprecated_argument_run', [ $this, 'log_deprecated_argument' ], 10, 3 );
 		add_action( 'deprecated_hook_run', [ $this, 'log_deprecated_hook' ], 10, 4 );
-
-		// $plugin_file `directory_name/main_file.php`
 	}
 
 	protected function maybe_log_deprecated( $which ) {
@@ -54,18 +51,9 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 		}
 
 		if ( $replacement ) {
-			$message = sprintf(
-				'%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.',
-				$function,
-				$version,
-				$replacement
-			);
+			$message = sprintf( '%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', $function, $version, $replacement );
 		} else {
-			$message = sprintf(
-				'%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.',
-				$function,
-				$version
-			);
+			$message = sprintf( '%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.', $function, $version );
 		}
 
 		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'function', $message, compact( $function, $replacement, $version ) );
@@ -77,20 +65,9 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 		}
 
 		if ( $parent_class ) {
-			$message = sprintf(
-				'The called constructor method for %1$s in %2$s is <strong>deprecated</strong> since version %3$s! Use %4$s instead.',
-				$class,
-				$parent_class,
-				$version,
-				'<code>__construct()</code>'
-			);
+			$message = sprintf( 'The called constructor method for %1$s in %2$s is <strong>deprecated</strong> since version %3$s! Use %4$s instead.', $class, $parent_class, $version, '<code>__construct()</code>' );
 		} else {
-			$message = sprintf(
-				'The called constructor method for %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.',
-				$class,
-				$version,
-				'<code>__construct()</code>'
-			);
+			$message = sprintf( 'The called constructor method for %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', $class, $version, '<code>__construct()</code>' );
 		}
 
 		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'class', $message, compact( $class, $version, $parent_class ) );
@@ -102,18 +79,9 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 		}
 
 		if ( $message ) {
-			$message = sprintf(
-				'%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s! %3$s',
-				$function,
-				$version,
-				$message
-			);
+			$message = sprintf( '%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s! %3$s', $function, $version, $message );
 		} else {
-			$message = sprintf(
-				'%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s with no alternative available.',
-				$function,
-				$version
-			);
+			$message = sprintf( '%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s with no alternative available.', $function, $version );
 		}
 
 		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'argument', $message, compact( $function, $version ) );
@@ -125,18 +93,9 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 		}
 
 		if ( $replacement ) {
-			$message = sprintf(
-				           '%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.',
-				           $hook,
-				           $version,
-				           $replacement
-			           ) . $message;
+			$message = sprintf( '%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', $hook, $version, $replacement ) . $message;
 		} else {
-			$message = sprintf(
-				           '%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.',
-				           $hook,
-				           $version
-			           ) . $message;
+			$message = sprintf( '%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.', $hook, $version ) . $message;
 		}
 
 		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'hook', $message, compact( $hook, $replacement, $version ) );
