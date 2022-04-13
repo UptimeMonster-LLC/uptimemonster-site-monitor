@@ -11,6 +11,7 @@
 
 namespace AbsolutePlugins\RoxwpSiteMonitor;
 
+use AbsolutePlugins\RoxwpSiteMonitor\Monitors\Singleton;
 use AbsolutePlugins\RoxwpSiteMonitor\Monitors\Activity_Monitor_Base;
 use AbsolutePlugins\RoxwpSiteMonitor\Monitors\Monitor_Self_Activation_Activity;
 use AbsolutePlugins\RoxwpSiteMonitor\Monitors\Monitor_Attachment_Activity;
@@ -35,6 +36,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class MonitorActivities {
 
+	use Singleton;
+
+	/**
+	 * List of activity monitor.
+	 *
+	 * @var Activity_Monitor_Base[]
+	 */
 	protected $monitors = [
 		Monitor_Self_Activation_Activity::class,
 
@@ -60,16 +68,9 @@ class MonitorActivities {
 		Monitor_WP_Export_Content_Activity::class,
 	];
 
-	protected static $instance;
-
-	public static function get_instance() {
-		if ( null === self::$instance ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
-	}
-
+	/**
+	 * Activity Constructor.
+	 */
 	protected function __construct() {
 		foreach ( $this->monitors as $monitor ) {
 			/**

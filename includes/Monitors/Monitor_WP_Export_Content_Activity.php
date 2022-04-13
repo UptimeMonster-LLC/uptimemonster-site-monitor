@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Monitor_WP_Export_Content_Activity extends Activity_Monitor_Base {
 
-	use Activity_Monitor_Trait;
+	use Singleton;
 
 	public function init() {
 		add_action( 'export_wp', [ $this, 'log_on_export' ] );

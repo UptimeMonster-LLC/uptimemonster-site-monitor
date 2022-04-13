@@ -1,11 +1,14 @@
 <?php
 /**
  * Initialize Monitoring.
+ *
  * @package RoxwpSiteMonitor
  * @version 1.0.0
  */
 
 namespace AbsolutePlugins\RoxwpSiteMonitor;
+
+use AbsolutePlugins\RoxwpSiteMonitor\Monitors\Singleton;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -20,12 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class RoxWP_Site_Monitor {
 
-	/**
-	 * Singleton instance ref.
-	 *
-	 * @var RoxWP_Site_Monitor
-	 */
-	protected static $instance;
+	use Singleton;
 
 	protected static $errorHandlerDist;
 
@@ -34,40 +32,20 @@ final class RoxWP_Site_Monitor {
 	protected static $errorHandlerData = [];
 
 	/**
-	 * Create one instance of this class, stores and return that.
-	 *
-	 * @return RoxWP_Site_Monitor
-	 */
-	public static function get_instance() {
-		if ( null === self::$instance ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
-	}
-
-	/**
-	 * Construct
+	 * Main Constructor
 	 */
 	protected function __construct() {
-
-		if ( ! file_exists( RWP_SM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
-			add_action( 'admin_notices', [ __CLASS__, 'dependency_notice' ] );
-			return;
-		}
-
-		require_once RWP_SM_PLUGIN_PATH . 'vendor/autoload.php';
 
 		// Check if autoloader exists, include it or show error with admin notice ui.
 
 		// DropIns
-		self::$errorHandlerDist    = RWP_SM_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl';
-		self::$errorHandler        = WP_CONTENT_DIR . '/fatal-error-handler.php';
+		self::$errorHandlerDist = RWP_SM_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl';
+		self::$errorHandler     = WP_CONTENT_DIR . '/fatal-error-handler.php';
 
-		register_activation_hook( RWP_SM_PLUGIN_FILE, [ __CLASS__, 'install' ] );
-		register_deactivation_hook( RWP_SM_PLUGIN_FILE, [ __CLASS__, 'uninstall' ] );
+		register_activation_hook( RWP_SM_PLUGIN_FILE, array( __CLASS__, 'install' ) );
+		register_deactivation_hook( RWP_SM_PLUGIN_FILE, array( __CLASS__, 'uninstall' ) );
 
-		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ] );
+		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
 		// Start monitoring activities.
 		MonitorActivities::get_instance();
@@ -80,7 +58,7 @@ final class RoxWP_Site_Monitor {
 		// @TODO move installation to another file.
 		self::maybe_install_drop_in();
 
-		$api_keys = get_option( 'roxwp_site_monitor_api_keys', [] );
+		$api_keys = get_option( 'roxwp_site_monitor_api_keys', array() );
 		if ( empty( $api_keys ) ) {
 			update_option( 'roxwp_need_setup', 'yes' );
 		}
@@ -95,7 +73,7 @@ final class RoxWP_Site_Monitor {
 	}
 
 	public static function maybe_install_drop_in() {
-		RoxWP_Site_Monitor::installDropIn();
+		self::installDropIn();
 	}
 
 	public static function uninstall() {
@@ -121,7 +99,7 @@ final class RoxWP_Site_Monitor {
 	}
 
 	public static function isDropInInstalled() {
-		$data = RoxWP_Site_Monitor::getDropInData();
+		$data = self::getDropInData();
 
 		return isset( $data['Name'] ) && $data['Name'] === 'Roxwp Site Error Logger Drop-in';
 	}
@@ -137,10 +115,10 @@ final class RoxWP_Site_Monitor {
 				return null;
 			}
 
-			return RoxWP_Site_Monitor::getDropInData()['Version'];
+			return self::getDropInData()['Version'];
 		}
 
-		return RoxWP_Site_Monitor::getDropInData( false )['Version'];
+		return self::getDropInData( false )['Version'];
 	}
 
 	public static function isWPContentWritable() {
@@ -160,12 +138,11 @@ final class RoxWP_Site_Monitor {
 	}
 
 	protected static function installDropIn() {
-
 		$oldVersion = self::dropInVersion();
 
 		if ( self::dropInNeedUpdate() ) {
 			// reset cache.
-			self::$errorHandlerData = [];
+			self::$errorHandlerData = array();
 
 			self::removeDropIn();
 
@@ -203,37 +180,6 @@ final class RoxWP_Site_Monitor {
 
 		load_textdomain( 'rwp-site-mon', WP_LANG_DIR . '/roxwp-site-monitor/roxwp-site-monitor-' . $locale . '.mo' );
 		load_plugin_textdomain( 'rwp-site-mon', false, plugin_basename( dirname( RWP_SM_PLUGIN_FILE ) ) . '/languages' );
-	}
-
-	public static function dependency_notice() {
-		// @TODO change the download url & anchor text to wp.org after public release.
-
-		$install_dir = str_replace( ABSPATH, '', dirname( RWP_SM_PLUGIN_FILE ) );
-		?>
-		<div class="notice notice-warning notice-alt">
-			<p><?php printf(
-					/* translators: 1. Download link for production build, 2. composer install command, 3. Plugin installation path for running composer install.. */
-					esc_html__( "It seems that you have downloaded the development version of this plugin from github or other sources. Please download it from %1\$s or run %2\$s command within %3\$s directory.", 'rwp-site-mon' ),
-					'<a href="https://absoluteplugins.com/wordpress-plugins/roxwp-site-monitor/" target="_blank" rel="noopener">AbsolutePlugins.com</a>',
-					'<code>composer install</code>',
-					'<code>' . esc_html( $install_dir ) . '</code>'
-				); ?></p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Cloning is forbidden.
-	 */
-	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, __( 'Cloning is forbidden.', 'rwp-site-mon' ), '1.0.0' );
-	}
-
-	/**
-	 * Unserializing instances of this class is forbidden.
-	 */
-	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'rwp-site-mon' ), '1.0.0' );
 	}
 }
 

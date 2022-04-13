@@ -45,9 +45,35 @@ if ( ! defined( 'RWP_SM_PLUGIN_URL' ) ) {
 	define( 'RWP_SM_PLUGIN_URL', plugin_dir_url( RWP_SM_PLUGIN_FILE ) );
 }
 
-if ( ! class_exists( 'AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Site_Monitor', false ) ) {
-	require_once RWP_SM_PLUGIN_PATH . 'class-roxwp_site_monitor.php';
+if ( ! file_exists( RWP_SM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
+	function roxWP_dependency_notice() {
+
+		$install_dir = str_replace( ABSPATH, '', dirname( RWP_SM_PLUGIN_FILE ) );
+		?>
+		<div class="notice notice-warning notice-alt">
+			<p>
+				<?php
+				printf(
+				/* translators: 1. Download link for production build, 2. composer install command, 3. Plugin installation path for running composer install.. */
+					esc_html__( 'It seems that you have downloaded the development version of this plugin from github or other sources. Please download it from %1$s or run %2$s command within %3$s directory.', 'rwp-site-mon' ),
+					'<a href="https://absoluteplugins.com/wordpress-plugins/roxwp-site-monitor/" target="_blank" rel="noopener">AbsolutePlugins.com</a>',
+					'<code>composer install</code>',
+					'<code>' . esc_html( $install_dir ) . '</code>'
+				);
+				?>
+			</p>
+		</div>
+		<?php
+	}
+	add_action( 'admin_notices', 'roxWP_dependency_notice' );
+	return;
 }
+
+require_once RWP_SM_PLUGIN_PATH . 'vendor/autoload.php';
+
+
+
+require_once RWP_SM_PLUGIN_PATH . 'includes/helpers.php';
 
 /**
  * @return RoxWP_Site_Monitor

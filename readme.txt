@@ -7,10 +7,35 @@ Stable tag: 1.0.5
 Requires PHP: 5.6
 License: GPL-3.0-or-later
 
-WordPress Site Activity Monitor For RoxWP
+WordPress Site Activity Monitor Bridge Plugin For RoxWP
 
 == Description ==
+Track and analyse all the activities happening on your website with RoxWP Site Monitor plugin. RoxWP Site Monitor is a powerful, flexible and effective WordPress website monitoring plugin for RoxWP. RoxWP is an external web application that will monitor your website uptime, downtime, security and other basic functions through this plugin.
 
+RoxWP Site Monitor will monitor your website 24*7 so that you can identify and fix issues before they affect your users across the globe. You need to activate the plugin with an API key to connect with the web application and it will monitor each and everything on your WordPress website. You can select different monitoring intervals including every minute. The plugin will provide you with a detailed website health report.
+
+
+RoxWP Site Monitor will monitor the following things:
+
+WordPress - Core update, Cron logs,
+Pages - Add, edit, delete
+Posts -  Add, edit, delete
+Category - Add, edit, delete
+Tags - Add, edit, delete
+Plugins - Installed, activate, deactivate, update & delete
+Themes - Installed, activate, deactivate, update & delete
+Errors Logs - Show error type and time
+Users - Registered, delete, edit
+User Activity - Login, logout, login failed
+User Profile - Update name, email, password and others
+
+The plugin also reports -
+
+Website activity Date and time
+User details who make the change
+Source IP address
+
+The plugin does not require any setup or configuration, you just need to add the API key to connect the plugin.
 
 
 == Installation ==
@@ -25,7 +50,7 @@ Automatic installation is the easiest option -- WordPress handles the file trans
 = Manual installation =
 
 1. Download this plugin's .zip file and extract it.
-2. Upload the extracted directory (`roxwp-site-monitor`) to the `/wp-content/plugins/` directory on your web server with your favorite ftp/sftp client.
+2. Upload the extracted directory (`roxwp-site-monitor`) to the `/wp-content/plugins/` directory on your web server with your favourite ftp/sftp client.
 3. Activate the plugin through the 'Plugins' menu in WordPress
 
 The WordPress codex contains more [instructions on how to do this here](https://wordpress.org/support/article/managing-plugins/#:~:text=Manual%20Plugin%20Installation,-%23).
@@ -35,13 +60,34 @@ Automatic updates should work smoothly, but we still recommend you back up your 
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
+= What are the requirements? =
 
-An answer to that question.
+The requirements are -
 
-= What about foo bar? =
+= Where can I view my website log? =
 
-Answer to foo bar dilemma.
+You can view log using the RoxWp web application.
+
+= Can I export logs? =
+
+Yes, you can export your website log as pdf, csv and xlsx format.
+
+= Do I need a subscription to use the plugin? =
+
+Yes, you need an active subscription package for using this plugin. The starter package is free you can get basic features from the starter package. For advanced features and functionalities you need to buy the pro package. See the package details from here - https://roxwp.com/homepage/
+
+= Where can I suggest a new feature or report a bug? =
+
+You can use the WordPress support forum to suggest new features and report any bugs or errors.
+
+= How will I be alerted if my site has a security problem? =
+
+You will get alert notification through email, WhatsApp, push notifications and SMS based on your subscription package.
+
+
+= Will RoxWP Site Monitor slow down my website? =
+
+The plugin doesn't affect your website speed and performance.
 
 == Screenshots ==
 

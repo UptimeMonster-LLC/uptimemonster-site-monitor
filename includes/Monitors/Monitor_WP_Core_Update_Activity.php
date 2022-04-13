@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 
-	use Activity_Monitor_Trait;
+	use Singleton;
 
 	public function init() {
 		add_action( 'admin_head', [ $this, 'log_on_update_start' ] );

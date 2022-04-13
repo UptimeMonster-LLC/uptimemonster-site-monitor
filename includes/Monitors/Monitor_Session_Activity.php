@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Monitor_Session_Activity extends Activity_Monitor_Base {
 
-	use Activity_Monitor_Trait;
+	use Singleton;
 
 	protected $check_maybe_log = false;
 

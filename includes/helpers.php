@@ -21,12 +21,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Switch to english language (en_US) so we can understand and analyse the data.
  *
  * Must restore language after uses.
- * @see roxwp_restore_locale()
  *
+ * @see roxwp_restore_locale()
  */
 function roxwp_switch_to_english() {
 	if ( function_exists( 'switch_to_locale' ) ) {
-//		switch_to_locale( get_locale() );
+		// switch_to_locale( get_locale() );
 		switch_to_locale( 'en_US' );
 
 		// Filter on plugin_locale so other plugin/theme can load the correct locale.
@@ -105,12 +105,11 @@ function roxwp_get_current_actor() {
  * Get User by identity.
  *
  * @param WP_User|int|string $identity User's identity (username, email or id)
- * @param string|int $field Optional. Field
+ * @param string|int         $field Optional. Field
  *
  * @return false|WP_User
  */
 function roxwp_get_user( $identity, $field = null ) {
-
 	if ( $identity instanceof WP_User ) {
 		return $identity;
 	}
@@ -125,7 +124,6 @@ function roxwp_get_user( $identity, $field = null ) {
 			}
 		}
 	}
-
 
 	return get_user_by( $field, $identity );
 }
@@ -194,7 +192,6 @@ function roxwp_get_ip_address() {
  *
  * @return string|false The valid IP address, otherwise false.
  * @since 4.7.0
- *
  */
 function is_ip_address( $ip ) {
 	$ipv4_pattern = '/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/';
@@ -212,7 +209,6 @@ function is_ip_address( $ip ) {
  * @return array|false
  */
 function roxwp_get_plugin_data( $plugin_file ) {
-
 	if ( ! is_readable( $plugin_file ) ) {
 		return false;
 	}
@@ -291,9 +287,12 @@ function roxwp_get_all_themes() {
 		return [];
 	}
 
-	return array_map( function( $theme ) {
-		return roxwp_get_theme_data_headers( $theme );
-	}, $themes );
+	return array_map(
+		function( $theme ) {
+			return roxwp_get_theme_data_headers( $theme );
+		},
+		$themes
+	);
 }
 
 /**
@@ -312,9 +311,9 @@ function roxwp_get_theme_data_headers( $theme ) {
 		'Version',
 		'Template',
 		'Status',
-		//'Tags',
-		//'TextDomain',
-		//'DomainPath',
+		// 'Tags',
+		// 'TextDomain',
+		// 'DomainPath',
 		'RequiresWP',
 		'RequiresPHP',
 	];
