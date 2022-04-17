@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-04-10T07:30:08+00:00\n"
+"POT-Creation-Date: 2022-04-17T07:55:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: roxwp-site-mon\n"
@@ -34,189 +34,227 @@ msgstr ""
 msgid "https://absoluteplugins.com/"
 msgstr ""
 
-#. translators: 1. Download link for production build, 2. composer install command, 3. Plugin installation path for running composer install..
-#: class-roxwp_site_monitor.php:216
-msgid "It seems that you have downloaded the development version of this plugin from github or other sources. Please download it from %1$s or run %2$s command within %3$s directory."
-msgstr ""
-
-#: class-roxwp_site_monitor.php:229
-#: includes/Monitors/Activity_Monitor_Base.php:195
-msgid "Cloning is forbidden."
-msgstr ""
-
-#: class-roxwp_site_monitor.php:236
-#: includes/Monitors/Activity_Monitor_Base.php:206
-msgid "Unserializing instances of this class is forbidden."
-msgstr ""
-
-#: includes/Dashboard.php:58
+#: includes/Dashboard.php:54
 msgid "Settings"
 msgstr ""
 
-#: includes/Dashboard.php:65
+#: includes/Dashboard.php:61
 msgid "RoxWP API Settings"
 msgstr ""
 
-#: includes/Dashboard.php:66
+#: includes/Dashboard.php:62
 msgid "RoxWP Settings"
 msgstr ""
 
-#: includes/Dashboard.php:112
+#: includes/Dashboard.php:105
 msgid "Thank you for installing RoxWP Site Monitor."
 msgstr ""
 
-#: includes/Dashboard.php:113
-#: includes/Dashboard.php:116
+#: includes/Dashboard.php:106
+#: includes/Dashboard.php:109
 msgid "Please update the api keys to activate it properly."
 msgstr ""
 
-#: includes/Dashboard.php:128
+#: includes/Dashboard.php:121
 msgid "Error Logger Drop-In Updated."
 msgstr ""
 
-#: includes/Dashboard.php:144
+#: includes/Dashboard.php:140
 msgid "Both api key & secret required."
 msgstr ""
 
-#: includes/Dashboard.php:148
-#: includes/Dashboard.php:187
+#: includes/Dashboard.php:144
+#: includes/Dashboard.php:181
 msgid "Nothing Changed."
 msgstr ""
 
-#: includes/Dashboard.php:158
+#: includes/Dashboard.php:153
 msgid "Api connected."
 msgstr ""
 
-#: includes/Dashboard.php:160
+#: includes/Dashboard.php:155
 msgid "Api keys updated."
 msgstr ""
 
 #. translators: 1. Error Details.
-#: includes/Dashboard.php:176
+#: includes/Dashboard.php:170
 msgid "Error connecting to RoxWP Server with following error: %s."
 msgstr ""
 
 #. translators: 1. Error Details.
-#: includes/Dashboard.php:179
+#: includes/Dashboard.php:173
 msgid "Error updating api keys with following error: %s."
 msgstr ""
 
-#: includes/Dashboard.php:193
+#: includes/Dashboard.php:187
 msgid "Api keys removed."
 msgstr ""
 
-#: includes/Dashboard.php:251
+#: includes/Dashboard.php:244
 msgid "Api Key"
 msgstr ""
 
-#: includes/Dashboard.php:260
+#: includes/Dashboard.php:253
 msgid "Api Secret"
 msgstr ""
 
-#: includes/Dashboard.php:268
+#: includes/Dashboard.php:261
 msgid "Error Logging Drop-in"
 msgstr ""
 
-#: includes/Dashboard.php:274
+#: includes/Dashboard.php:268
 msgid "Status:"
 msgstr ""
 
 #. translators: 1. New Version Number, 2. Update URL
-#: includes/Dashboard.php:281
+#: includes/Dashboard.php:276
 msgid "A newer version (Version %1$s) of the drop-in available. Click <a href=\"%2$s\">here</a> to update."
 msgstr ""
 
 #. translators: 1. Error handler drop-in version.
-#: includes/Dashboard.php:288
+#: includes/Dashboard.php:283
 msgid "Installed (Version %s)"
 msgstr ""
 
 #. translators: 1. Installation URL
-#: includes/Dashboard.php:298
+#: includes/Dashboard.php:294
 msgid "Click <a href=\"%s\">here</a> to install the drop-in."
 msgstr ""
 
 #. translators: 1. Source file path. 2. Destination file path.
-#: includes/Dashboard.php:304
+#: includes/Dashboard.php:300
 msgid "Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring"
 msgstr ""
 
-#: includes/Dashboard.php:315
+#: includes/Dashboard.php:314
 msgid "WP Content Directory"
 msgstr ""
 
-#: includes/Dashboard.php:318
-#: includes/Dashboard.php:329
+#: includes/Dashboard.php:319
+#: includes/Dashboard.php:333
 msgid "Writable"
 msgstr ""
 
-#: includes/Dashboard.php:320
-#: includes/Dashboard.php:331
+#: includes/Dashboard.php:321
+#: includes/Dashboard.php:335
 msgid "Not Writable"
 msgstr ""
 
-#: includes/Dashboard.php:326
+#: includes/Dashboard.php:329
 msgid "Drop-In"
 msgstr ""
 
-#: includes/Dashboard.php:342
+#: includes/Dashboard.php:347
 msgid "Save Changes"
 msgstr ""
 
 #. translators: 1. PHP Argument Type.
-#: includes/Monitors/Activity_Monitor_Base.php:91
+#: includes/Monitors/Activity_Monitor_Base.php:90
 msgid "$subtype expected to be a string, got %s."
 msgstr ""
 
 #. translators: 1. PHP Argument Type.
-#: includes/Monitors/Activity_Monitor_Base.php:101
+#: includes/Monitors/Activity_Monitor_Base.php:100
 msgid "$name expected to be a string, got %s."
 msgstr ""
 
 #. translators: 1. PHP Argument Type.
-#: includes/Monitors/Activity_Monitor_Base.php:113
+#: includes/Monitors/Activity_Monitor_Base.php:112
 msgid "$id expected to be an integer, got %s."
 msgstr ""
 
 #. translators: 1. PHP Argument Type.
-#: includes/Monitors/Activity_Monitor_Base.php:147
+#: includes/Monitors/Activity_Monitor_Base.php:146
 msgid "$data expected to be an array or object, got %s."
 msgstr ""
 
 #. translators: 1. Method Name.
-#: includes/Monitors/Activity_Monitor_Base.php:183
+#: includes/Monitors/Activity_Monitor_Base.php:182
 msgid "%s must be overridden by the subClass"
 msgstr ""
 
-#: includes/Monitors/Monitor_Self_Activation_Activity.php:53
+#. translators: 1. Plugin Name, 2. File path.
+#: includes/Monitors/Monitor_Plugins_Activity.php:187
+msgid "Modified main file (%2$s) of “%1$s” plugin"
+msgstr ""
+
+#. translators: 1. Plugin Name, 2. File path.
+#: includes/Monitors/Monitor_Plugins_Activity.php:187
+msgid "Modified file (%2$s) of “%1$s” plugin"
+msgstr ""
+
+#: includes/Monitors/Monitor_Self_Activation_Activity.php:52
 msgid "Site Monitor Activated"
 msgstr ""
 
-#: includes/Monitors/Monitor_Self_Activation_Activity.php:69
+#: includes/Monitors/Monitor_Self_Activation_Activity.php:68
 msgid "Site Monitor Deactivated"
 msgstr ""
 
-#: includes/Monitors/Monitor_Self_Activation_Activity.php:82
+#: includes/Monitors/Monitor_Self_Activation_Activity.php:81
 msgid "“Error Logger” Drop-In Updated"
 msgstr ""
 
-#: includes/Monitors/Monitor_Self_Activation_Activity.php:82
+#: includes/Monitors/Monitor_Self_Activation_Activity.php:81
 msgid "“Error Logger” Drop-In Installed"
 msgstr ""
 
-#: includes/Monitors/Monitor_Self_Activation_Activity.php:84
+#: includes/Monitors/Monitor_Self_Activation_Activity.php:83
 msgid "Failed To Install “Error Logger” Drop-In."
 msgstr ""
 
-#. translators: 1. New theme name, 2. Old theme name.
-#: includes/Monitors/Monitor_Themes_Activity.php:78
+#. translators: %1$s New Theme Name, %2$s: Old Theme Name
+#: includes/Monitors/Monitor_Themes_Activity.php:79
 msgid "Switched to %1$s theme from %2$s"
 msgstr ""
 
-#: includes/RoxWP_Client.php:81
+#. translators: %1$s. Theme Name, %2$s. File path.
+#: includes/Monitors/Monitor_Themes_Activity.php:301
+msgid "Modified file (%2$s) of “%1$s” theme"
+msgstr ""
+
+#. translators: 1. WordPress Version.
+#: includes/Monitors/Monitor_WP_Core_Update_Activity.php:53
+msgid "WordPress Auto Upgrading From %s"
+msgstr ""
+
+#. translators: 1. WordPress Version.
+#: includes/Monitors/Monitor_WP_Core_Update_Activity.php:78
+msgid "WordPress Upgrading From %s"
+msgstr ""
+
+#. translators: 1. WordPress Version.
+#: includes/Monitors/Monitor_WP_Core_Update_Activity.php:78
+msgid "WordPress Reinstalling %s"
+msgstr ""
+
+#. translators: 1. WordPress Updated Version.
+#: includes/Monitors/Monitor_WP_Core_Update_Activity.php:99
+msgid "WordPress Auto Updated to %s"
+msgstr ""
+
+#. translators: 1. WordPress Updated Version.
+#: includes/Monitors/Monitor_WP_Core_Update_Activity.php:99
+msgid "WordPress Updated to %s"
+msgstr ""
+
+#: includes/Monitors/Singleton.php:54
+msgid "Cloning is forbidden."
+msgstr ""
+
+#: includes/Monitors/Singleton.php:61
+msgid "Unserializing instances of this class is forbidden."
+msgstr ""
+
+#: includes/RoxWP_Client.php:145
 msgid "Missing API Keys."
 msgstr ""
 
-#: includes/RoxWP_Client.php:144
+#: includes/RoxWP_Client.php:210
 msgid "Something went wrong"
+msgstr ""
+
+#. translators: 1. Download link for production build, 2. composer install command, 3. Plugin installation path for running composer install..
+#: roxwp-site-monitor.php:62
+msgid "It seems that you have downloaded the development version of this plugin from github or other sources. Please download it from %1$s or run %2$s command within %3$s directory."
 msgstr ""

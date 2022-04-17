@@ -75,9 +75,10 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 		}
 
 		roxwp_switch_to_english();
-		$name = sprintf( __( 'Switched to %1$s theme from %2$s', 'roxwp-site-mon' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-			$new_theme->get( 'Name' ), //phpstan-ignore-line
-			$old_theme->get( 'Name' ) //phpstan-ignore-line
+		/* translators: %1$s New Theme Name, %2$s: Old Theme Name */
+		$name = sprintf( __( 'Switched to %1$s theme from %2$s', 'roxwp-site-mon' ),
+			$new_theme->get( 'Name' ), // @phpstan-ignore-line
+			$old_theme->get( 'Name' ) // @phpstan-ignore-line
 		);
 		roxwp_restore_locale();
 
