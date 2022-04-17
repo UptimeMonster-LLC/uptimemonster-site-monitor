@@ -30,7 +30,7 @@ class Dashboard {
 
 		add_filter( 'plugin_action_links_' . ROXWP_SM_PLUGIN_BASENAME, [  // @phpstan-ignore-line
 			$this,
-			'plugin_action_links'
+			'plugin_action_links',
 		] );
 	}
 
@@ -231,8 +231,7 @@ class Dashboard {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline">
-				<i class="dashicons dashicons-superhero"
-				   style="font-size:1.5em;display:inline-block;width:30px;height:30px;margin:-1px 10px 0 0;"></i>
+				<i class="dashicons dashicons-superhero" style="font-size:1.5em;display:inline-block;width:30px;height:30px;margin:-1px 10px 0 0;"></i>
 				<?php echo esc_html( get_admin_page_title() ); ?>
 			</h1>
 			<hr class="wp-header-end">
@@ -245,10 +244,8 @@ class Dashboard {
 							<label for="roxwp-api-key"><?php esc_html_e( 'Api Key', 'roxwp-site-mon' ); ?></label>
 						</th>
 						<td>
-							<input name="roxwp[api_key]" type="text" id="roxwp-api-key"
-								   value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="off">
-							<i class="dashicons dashicons-<?php echo $this->is_connected() ? 'yes-alt' : 'warning'; ?>"
-							   style="position: relative;color:<?php echo $this->is_connected() ? '#067815' : '#a39622'; ?>;font-size: 1.7em;display:inline-block;width:30px;height:30px;margin:0 10px 0 0;top:3px;"></i>
+							<input name="roxwp[api_key]" type="text" id="roxwp-api-key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="off">
+							<i class="dashicons dashicons-<?php echo $this->is_connected() ? 'yes-alt' : 'warning'; ?>" style="position: relative;color:<?php echo $this->is_connected() ? '#067815' : '#a39622'; ?>;font-size: 1.7em;display:inline-block;width:30px;height:30px;margin:0 10px 0 0;top:3px;"></i>
 						</td>
 					</tr>
 					<tr>
@@ -256,9 +253,7 @@ class Dashboard {
 							<label for="roxwp-api-secret"><?php esc_html_e( 'Api Secret', 'roxwp-site-mon' ); ?></label>
 						</th>
 						<td>
-							<input name="roxwp[api_secret]" type="password" id="roxwp-api-secret"
-								   value="<?php echo esc_attr( $api_secret ); ?>" class="regular-text"
-								   autocomplete="off">
+							<input name="roxwp[api_secret]" type="password" id="roxwp-api-secret" value="<?php echo esc_attr( $api_secret ); ?>" class="regular-text" autocomplete="off">
 						</td>
 					</tr>
 					<tr>

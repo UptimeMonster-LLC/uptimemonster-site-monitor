@@ -78,10 +78,16 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function on_registered( $user ) {
 		try {
 			$this->log_user( Activity_Monitor_Base::ITEM_REGISTERED, $user );
 		} catch ( Exception $e ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				throw $e;
+			}
 		}
 	}
 
