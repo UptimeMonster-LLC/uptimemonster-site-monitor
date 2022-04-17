@@ -52,8 +52,8 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 		add_action( 'customize_save', [ $this, 'on_theme_customized' ] );
 
 		// Theme Editor Actions.
-		add_action( 'wp_ajax_edit-theme-plugin-file', [ $this, 'on_theme_file_modify' ], -1 );
-		add_filter( 'wp_redirect', [ $this, 'on_theme_file_modify' ], -1 );
+		add_action( 'wp_ajax_edit-theme-plugin-file', [ $this, 'on_theme_file_modify' ], - 1 );
+		add_filter( 'wp_redirect', [ $this, 'on_theme_file_modify' ], - 1 );
 	}
 
 	protected function maybe_log_theme( $action, $theme, $file = null ) {
@@ -76,9 +76,9 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 		roxwp_switch_to_english();
 		$name = sprintf( __( 'Switched to %1$s theme from %2$s', 'roxwp-site-mon' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-			$new_theme->get( 'Name' ),
-			$old_theme->get( 'Name' )
-		); // @phpstan-ignore-link
+			$new_theme->get( 'Name' ), //phpstan-ignore-line
+			$old_theme->get( 'Name' ) //phpstan-ignore-line
+		);
 		roxwp_restore_locale();
 
 		$this->log_activity(
@@ -208,6 +208,8 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 	/**
 	 * @param Theme_Upgrader $upgrader
 	 * @param array $extra
+	 *
+	 * @throws Exception
 	 */
 	public function on_theme_install_or_update( $upgrader, $extra ) {
 		if ( ! isset( $extra['type'] ) || 'theme' !== $extra['type'] ) {
@@ -237,7 +239,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 			if ( isset( $extra['bulk'] ) && true == $extra['bulk'] ) {
 				$slugs = $extra['themes'];
 			} else {
-				$slugs = array( $upgrader->skin->theme );
+				$slugs = array( $upgrader->skin->theme ); // @phpstan-ignore-line
 			}
 
 			foreach ( $slugs as $slug ) {
@@ -290,7 +292,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 				$_POST = wp_unslash( $_POST );
 				$theme = sanitize_text_field( $_POST['theme'] );
 				$file  = sanitize_text_field( $_POST['file'] );
-				$_file = WP_PLUGIN_DIR . $theme;
+				$_file = WP_PLUGIN_DIR . $theme; // @phpstan-ignore-line
 
 				if ( $this->maybe_log_theme( Activity_Monitor_Base::ITEM_UPDATED, $theme, $file ) && file_exists( $_file ) ) {
 					roxwp_switch_to_english();

@@ -86,6 +86,9 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		);
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function log_on_change( $post_ID ) {
 		if ( ! $this->maybe_log_activity( Activity_Monitor_Base::ITEM_UPDATED, $post_ID ) ) {
 			return;
@@ -94,7 +97,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		$post = get_post( $post_ID );
 
 		$this->log_activity(
-			Activity_Monitor_Base::ITEM_UPDATED, // @phpstan-ignore-line
+			Activity_Monitor_Base::ITEM_UPDATED,
 			$post_ID,
 			get_post_type( $post_ID ), // @phpstan-ignore-line
 			$this->get_name( $post ) // @phpstan-ignore-line
@@ -153,7 +156,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 	/**
 	 * Get Post Name
 	 *
-	 * @param WP_Post|int|string $post
+	 * @param WP_Post|int|string|null $post
 	 *
 	 * @return string
 	 */

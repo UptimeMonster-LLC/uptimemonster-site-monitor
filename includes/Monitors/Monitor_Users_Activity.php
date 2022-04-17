@@ -9,6 +9,7 @@
 
 namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
 
+use Exception;
 use WP_User;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,6 +48,14 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 		return (bool) apply_filters( 'roxwp_should_log_users_activity', false !== $user, $user, $action );
 	}
 
+	/**
+	 * @param string $action
+	 * @param WP_User $user
+	 * @param array $extra
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
 	protected function log_user( $action, $user, $extra = [] ) {
 		$user = roxwp_get_user( $user );
 
@@ -54,26 +63,33 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		$this->log_activity(
-			$action,
-			$user->ID,
-			'user',
-			roxwp_get_user_display_name( $user ),
-			array_merge( [
-				'username' => $user->user_login,
-				'role'     => roxwp_get_user_role( $user ),
-				'email'    => $user->user_email,
-			], $extra )
-		);
+		if ( ! empty( $user ) ) {
+			$this->log_activity(
+				$action,
+				$user->ID,
+				'user',
+				roxwp_get_user_display_name( $user ),
+				array_merge( [
+					'username' => $user->user_login,
+					'role'     => roxwp_get_user_role( $user ),
+					'email'    => $user->user_email,
+				], $extra )
+			);
+		}
 	}
 
 	public function on_registered( $user ) {
-		$this->log_user( Activity_Monitor_Base::ITEM_REGISTERED, $user );
+		try {
+			$this->log_user( Activity_Monitor_Base::ITEM_REGISTERED, $user );
+		} catch ( Exception $e ) {
+		}
 	}
 
 	/**
-	 * @param $user
+	 * @param WP_User $user
 	 * @param WP_User $old_user_data
+	 *
+	 * @throws Exception
 	 */
 	public function on_updated( $user, $old_user_data ) {
 		$this->log_user( Activity_Monitor_Base::ITEM_REGISTERED, $user, [ 'old' => $old_user_data->to_array() ] );

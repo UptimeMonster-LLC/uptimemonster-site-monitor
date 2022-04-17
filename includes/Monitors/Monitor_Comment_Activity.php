@@ -108,10 +108,12 @@ class Monitor_Comment_Activity extends Monitor_Posts_Activity {
 	/**
 	 * @param string $action
 	 * @param WP_Comment $comment
+	 *
+	 * @throws \Exception
 	 */
 	protected function log_data( $action, $comment ) {
 		if ( $this->maybe_log_activity( $action, $comment ) ) {
-			parent::log_activity( $action, $comment->comment_ID, 'comment', $this->get_name( $comment->comment_post_ID ) ); // @phpstan-ignore-line
+			parent::log_activity( $action, $comment->comment_ID, 'comment', $this->get_name( $comment->comment_post_ID ) );
 		}
 	}
 

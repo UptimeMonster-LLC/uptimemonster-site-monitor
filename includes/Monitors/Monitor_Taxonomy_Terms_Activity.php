@@ -9,6 +9,7 @@
 
 namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
 
+use Exception;
 use WP_Error;
 use WP_Term;
 
@@ -32,7 +33,7 @@ class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {
 
 	protected function maybe_log_activity( $action, $object_id ) {
 		$term   = get_term( $object_id );
-		$status = ! is_wp_error( $term ) && 'nav_menu' !== $term->taxonomy;
+		$status = ! is_wp_error( $term ) && isset( $term->taxonomy ) && 'nav_menu' !== $term->taxonomy;
 
 		/**
 		 * Should report activity?
@@ -56,6 +57,9 @@ class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {
 		return $action;
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function log_on_change( $term_id, $tt_id, $taxonomy, $deleted_term = null ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
 		if ( 'delete_term' === current_filter() ) {
 			$term = $deleted_term;
@@ -65,7 +69,7 @@ class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {
 
 		$action = $this->detect_action();
 
-		if ( ! $this->maybe_log_activity( $action, $term_id ) || 'nav_menu' !== $term->taxonomy ) {
+		if ( ! $this->maybe_log_activity( $action, $term_id ) && 'nav_menu' !== $term->taxonomy ) {
 			return;
 		}
 

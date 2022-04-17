@@ -28,7 +28,10 @@ class Dashboard {
 		add_action( 'admin_menu', [ $this, 'register_menu' ] );
 		add_action( 'admin_init', [ $this, 'handle_post' ] );
 
-		add_filter( 'plugin_action_links_' . ROXWP_SM_PLUGIN_BASENAME, [ $this, 'plugin_action_links' ] ); // @phpstan-ignore-line
+		add_filter( 'plugin_action_links_' . ROXWP_SM_PLUGIN_BASENAME, [  // @phpstan-ignore-line
+			$this,
+			'plugin_action_links'
+		] );
 	}
 
 	public function admin_notice() {
@@ -228,8 +231,9 @@ class Dashboard {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline">
-				<i class="dashicons dashicons-superhero" style="font-size:1.5em;display:inline-block;width:30px;height:30px;margin:-1px 10px 0 0;"></i>
-				<?php echo esc_html(get_admin_page_title()); ?>
+				<i class="dashicons dashicons-superhero"
+				   style="font-size:1.5em;display:inline-block;width:30px;height:30px;margin:-1px 10px 0 0;"></i>
+				<?php echo esc_html( get_admin_page_title() ); ?>
 			</h1>
 			<hr class="wp-header-end">
 			<form method="post" action="<?php echo esc_url( $this->get_page_url() ); ?>">
@@ -241,8 +245,10 @@ class Dashboard {
 							<label for="roxwp-api-key"><?php esc_html_e( 'Api Key', 'roxwp-site-mon' ); ?></label>
 						</th>
 						<td>
-							<input name="roxwp[api_key]" type="text" id="roxwp-api-key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="off">
-							<i class="dashicons dashicons-<?php echo $this->is_connected() ? 'yes-alt' : 'warning'; ?>" style="position: relative;color:<?php echo $this->is_connected() ? '#067815' : '#a39622'; ?>;font-size: 1.7em;display:inline-block;width:30px;height:30px;margin:0 10px 0 0;top:3px;"></i>
+							<input name="roxwp[api_key]" type="text" id="roxwp-api-key"
+								   value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="off">
+							<i class="dashicons dashicons-<?php echo $this->is_connected() ? 'yes-alt' : 'warning'; ?>"
+							   style="position: relative;color:<?php echo $this->is_connected() ? '#067815' : '#a39622'; ?>;font-size: 1.7em;display:inline-block;width:30px;height:30px;margin:0 10px 0 0;top:3px;"></i>
 						</td>
 					</tr>
 					<tr>
@@ -250,7 +256,9 @@ class Dashboard {
 							<label for="roxwp-api-secret"><?php esc_html_e( 'Api Secret', 'roxwp-site-mon' ); ?></label>
 						</th>
 						<td>
-							<input name="roxwp[api_secret]" type="password" id="roxwp-api-secret" value="<?php echo esc_attr( $api_secret ); ?>" class="regular-text" autocomplete="off">
+							<input name="roxwp[api_secret]" type="password" id="roxwp-api-secret"
+								   value="<?php echo esc_attr( $api_secret ); ?>" class="regular-text"
+								   autocomplete="off">
 						</td>
 					</tr>
 					<tr>
@@ -261,74 +269,78 @@ class Dashboard {
 							<table>
 								<tbody>
 								<tr>
-									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Status:', 'roxwp-site-mon' ); ?></strong></th>
+									<th scope="row" style="padding:0;">
+										<strong><?php esc_html_e( 'Status:', 'roxwp-site-mon' ); ?></strong></th>
 									<td style="padding:0;">
-									<?php
+										<?php
 
-									if ( RoxWP_Site_Monitor::is_drop_in_installed() ) {
-										if ( RoxWP_Site_Monitor::drop_in_need_update() ) {
-											printf(
-												/* translators: 1. New Version Number, 2. Update URL */
-												__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'roxwp-site-mon' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-												esc_html( RoxWP_Site_Monitor::drop_in_version( false ) ),
-												esc_url( $install_url )
-											);
-										} else {
-											printf(
-											/* translators: 1. Error handler drop-in version. */
-												esc_html__( 'Installed (Version %s)', 'roxwp-site-mon' ),
-												esc_html( RoxWP_Site_Monitor::drop_in_version() )
-											);
-										}
-									} else {
-										?>
-											<p class="help">
-											<?php
-											if ( RoxWP_Site_Monitor::is_wp_content_writable() ) {
+										if ( RoxWP_Site_Monitor::is_drop_in_installed() ) {
+											if ( RoxWP_Site_Monitor::drop_in_need_update() ) {
 												printf(
-													/* translators: 1. Installation URL */
-													__( 'Click <a href="%s">here</a> to install the drop-in.', 'roxwp-site-mon' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+												/* translators: 1. New Version Number, 2. Update URL */
+													__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'roxwp-site-mon' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													esc_html( RoxWP_Site_Monitor::drop_in_version( false ) ),
 													esc_url( $install_url )
 												);
 											} else {
 												printf(
-													/* translators: 1. Source file path. 2. Destination file path. */
-													__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'roxwp-site-mon' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-													esc_html( RoxWP_Site_Monitor::get_drop_in_dist_file() ),
-													esc_html( RoxWP_Site_Monitor::get_drop_in_file() )
+												/* translators: 1. Error handler drop-in version. */
+													esc_html__( 'Installed (Version %s)', 'roxwp-site-mon' ),
+													esc_html( RoxWP_Site_Monitor::drop_in_version() )
 												);
 											}
+										} else {
 											?>
-												</p>
+											<p class="help">
+												<?php
+												if ( RoxWP_Site_Monitor::is_wp_content_writable() ) {
+													printf(
+													/* translators: 1. Installation URL */
+														__( 'Click <a href="%s">here</a> to install the drop-in.', 'roxwp-site-mon' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+														esc_url( $install_url )
+													);
+												} else {
+													printf(
+													/* translators: 1. Source file path. 2. Destination file path. */
+														__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'roxwp-site-mon' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+														esc_html( RoxWP_Site_Monitor::get_drop_in_dist_file() ),
+														esc_html( RoxWP_Site_Monitor::get_drop_in_file() )
+													);
+												}
+												?>
+											</p>
 											<?php
-									}
-									?>
-										</td>
+										}
+										?>
+									</td>
 								</tr>
 								<tr>
-									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'WP Content Directory', 'roxwp-site-mon' ); ?></strong></th>
+									<th scope="row" style="padding:0;">
+										<strong><?php esc_html_e( 'WP Content Directory', 'roxwp-site-mon' ); ?></strong>
+									</th>
 									<td style="padding:0;">
-									<?php
-									if ( RoxWP_Site_Monitor::is_wp_content_writable() ) {
-										esc_html_e( 'Writable', 'roxwp-site-mon' );
-									} else {
-										esc_html_e( 'Not Writable', 'roxwp-site-mon' );
-									}
-									?>
-										</td>
-								</tr>
-								<?php if ( RoxWP_Site_Monitor::is_drop_in_installed() ) { ?>
-									<tr>
-										<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Drop-In', 'roxwp-site-mon' ); ?></strong></th>
-										<td style="padding:0;">
 										<?php
-										if ( RoxWP_Site_Monitor::is_drop_in_writable() ) {
+										if ( RoxWP_Site_Monitor::is_wp_content_writable() ) {
 											esc_html_e( 'Writable', 'roxwp-site-mon' );
 										} else {
 											esc_html_e( 'Not Writable', 'roxwp-site-mon' );
 										}
 										?>
-											</td>
+									</td>
+								</tr>
+								<?php if ( RoxWP_Site_Monitor::is_drop_in_installed() ) { ?>
+									<tr>
+										<th scope="row" style="padding:0;">
+											<strong><?php esc_html_e( 'Drop-In', 'roxwp-site-mon' ); ?></strong></th>
+										<td style="padding:0;">
+											<?php
+											if ( RoxWP_Site_Monitor::is_drop_in_writable() ) {
+												esc_html_e( 'Writable', 'roxwp-site-mon' );
+											} else {
+												esc_html_e( 'Not Writable', 'roxwp-site-mon' );
+											}
+											?>
+										</td>
 									</tr>
 								<?php } ?>
 								</tbody>

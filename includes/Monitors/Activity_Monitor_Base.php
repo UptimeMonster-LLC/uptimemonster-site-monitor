@@ -25,30 +25,30 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	/**
 	 * Log Actions.
 	 */
-	const ITEM_INSTALLING   = 'installing';
-	const ITEM_INSTALLED    = 'installed';
-	const ITEM_UNINSTALLED  = 'uninstalled';
+	const ITEM_INSTALLING = 'installing';
+	const ITEM_INSTALLED = 'installed';
+	const ITEM_UNINSTALLED = 'uninstalled';
 	const ITEM_REINSTALLING = 'reinstalling';
-	const ITEM_ACTIVATED    = 'activated';
-	const ITEM_DEACTIVATED  = 'deactivated';
-	const ITEM_UPGRADING    = 'upgrading';
-	const ITEM_CREATED      = 'created';
-	const ITEM_UPDATED      = 'updated';
-	const ITEM_TRASHED      = 'trashed';
-	const ITEM_RESTORED     = 'restored';
-	const ITEM_DELETED      = 'deleted';
-	const ITEM_APPROVED     = 'approved';
-	const ITEM_UNAPPROVED   = 'unapproved';
-	const ITEM_PENDING      = 'pending';
-	const ITEM_SPAMMED      = 'spammed';
-	const ITEM_UNSPAMMED    = 'unspammed';
-	const ITEM_EXPORTED     = 'exported';
-	const ITEM_REGISTERED   = 'registered';
-	const ITEM_LOGGED_IN    = 'logged_in';
-	const ITEM_LOGGED_OUT   = 'logged_out';
+	const ITEM_ACTIVATED = 'activated';
+	const ITEM_DEACTIVATED = 'deactivated';
+	const ITEM_UPGRADING = 'upgrading';
+	const ITEM_CREATED = 'created';
+	const ITEM_UPDATED = 'updated';
+	const ITEM_TRASHED = 'trashed';
+	const ITEM_RESTORED = 'restored';
+	const ITEM_DELETED = 'deleted';
+	const ITEM_APPROVED = 'approved';
+	const ITEM_UNAPPROVED = 'unapproved';
+	const ITEM_PENDING = 'pending';
+	const ITEM_SPAMMED = 'spammed';
+	const ITEM_UNSPAMMED = 'unspammed';
+	const ITEM_EXPORTED = 'exported';
+	const ITEM_REGISTERED = 'registered';
+	const ITEM_LOGGED_IN = 'logged_in';
+	const ITEM_LOGGED_OUT = 'logged_out';
 	const ITEM_LOGIN_FAILED = 'login_failed';
-	const ITEM_DEPRECATED   = 'deprecated';
-	const ITEM_ERROR_LOG    = 'error_log';
+	const ITEM_DEPRECATED = 'deprecated';
+	const ITEM_ERROR_LOG = 'error_log';
 
 	protected $activity;
 
@@ -70,8 +70,8 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 * @param string $action Log Type
 	 * @param int|string $object_id Object Id
 	 * @param string $subtype Object Type
-	 * @param string $name Object Name.
-	 * @param array|object  $data [Optional] Extra data.
+	 * @param array|string|false $name Object Name.
+	 * @param array|object $data [Optional] Extra data.
 	 *
 	 * @return void
 	 *
@@ -169,7 +169,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 * This should be overridden by the subClass.
 	 *
 	 * @param string $action
-	 * @param mixed  $object_id
+	 * @param mixed $object_id
 	 *
 	 * @return bool
 	 *

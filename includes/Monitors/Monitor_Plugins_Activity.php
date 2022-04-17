@@ -35,8 +35,8 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		add_action( 'upgrader_process_complete', [ $this, 'on_plugin_install_or_update' ], 10, 2 );
 
 		// Plugin Editor Actions.
-		add_action( 'wp_ajax_edit-theme-plugin-file', [ $this, 'on_plugin_file_modify' ], -1 );
-		add_filter( 'wp_redirect', [ $this, 'on_plugin_file_modify' ], -1 );
+		add_action( 'wp_ajax_edit-theme-plugin-file', [ $this, 'on_plugin_file_modify' ], - 1 );
+		add_filter( 'wp_redirect', [ $this, 'on_plugin_file_modify' ], - 1 );
 	}
 
 	protected function maybe_log_plugin( $action, $plugin, $file = null ) {
@@ -47,7 +47,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		 * @param bool $status
 		 * @param string $plugin
 		 * @param string $action
-		 * @param string $file   file path if one is being modified.
+		 * @param string $file file path if one is being modified.
 		 */
 		return (bool) apply_filters( 'roxwp_should_log_plugins_activity', true, $plugin, $action, $file );
 	}
@@ -134,6 +134,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 				$this->plugin[ $hash ] = roxwp_get_plugin_data( $upgrader->skin->result['local_destination'] . '/' . $path, false, false ); // @phpstan-ignore-line
 
 				$this->log_plugin( Activity_Monitor_Base::ITEM_INSTALLED, $path );
+
 				return;
 			}
 		}

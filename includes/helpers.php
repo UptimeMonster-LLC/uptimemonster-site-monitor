@@ -104,7 +104,7 @@ function roxwp_get_current_actor() {
  * Get User by identity.
  *
  * @param WP_User|int|string $identity User's identity (username, email or id)
- * @param string|int         $field Optional. Field
+ * @param string|int $field Optional. Field
  *
  * @return false|WP_User
  */
@@ -133,14 +133,14 @@ function roxwp_get_user( $identity, $field = null ) {
  * @return string
  */
 function roxwp_get_user_display_name( $user ) {
-	$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) );
+	$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) ); // @phpstan-ignore-line
 
 	if ( empty( $name ) ) {
-		$name = $user->display_name;
+		$name = $user->display_name; // @phpstan-ignore-line
 	}
 
 	if ( empty( $name ) ) {
-		$name = $user->user_nicename;
+		$name = $user->user_nicename; // @phpstan-ignore-line
 	}
 
 	return $name;

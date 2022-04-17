@@ -110,11 +110,7 @@ final class RoxWP_Site_Monitor {
 	 * @return string
 	 */
 	public static function drop_in_version( $installed = true ) {
-		if ( $installed ) {
-			if ( ! self::is_drop_in_installed() ) {
-				return null;
-			}
-
+		if ( $installed && self::is_drop_in_installed()) {
 			return self::get_drop_in_data()['Version'];
 		}
 

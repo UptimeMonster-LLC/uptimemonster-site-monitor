@@ -41,6 +41,9 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		return (bool) apply_filters( 'roxwp_should_log_wp_core_update_activity', true, null, $action );
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function log_on_update_start() {
 		global $pagenow;
 
@@ -72,7 +75,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 				$action = 'do-core-upgrade' === $action ? Activity_Monitor_Base::ITEM_UPGRADING : Activity_Monitor_Base::ITEM_REINSTALLING;
 				roxwp_switch_to_english();
 				/* translators: 1. WordPress Version. */
-				$name = 'do-core-upgrade' === $action ? __( 'WordPress Upgrading From %s', 'roxwp-site-mon' ) : __( 'WordPress Reinstalling %s', 'roxwp-site-mon' );
+				$name = 'do-core-upgrade' == $action ? __( 'WordPress Upgrading From %s', 'roxwp-site-mon' ) : __( 'WordPress Reinstalling %s', 'roxwp-site-mon' );
 				roxwp_restore_locale();
 
 				$version = get_bloginfo( 'version' );
