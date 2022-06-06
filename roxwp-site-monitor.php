@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Roxwp Site Monitor
+ * Plugin Name: RoxWP Site Monitor
  * Plugin URI: https://absoluteplugins.com/wordpress-plugins/roxwp-site-monitor/
  * Description: WordPress Site Activity Monitor For RoxWP
  * Author: AbsolutePlugins
