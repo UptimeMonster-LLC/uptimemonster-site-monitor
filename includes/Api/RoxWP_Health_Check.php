@@ -36,7 +36,7 @@ class RoxWP_Health_Check {
 			array(
 				array(
 					'methods' => \WP_REST_Server::READABLE,
-					'callback' => array( $this, 'send_debug_data' ),
+					'callback' => array( $this, 'send_debug_info' ),
 					'permission_callback' => array( $this, 'get_route_access' ),
 					'args' => array(),
 				),
@@ -51,7 +51,7 @@ class RoxWP_Health_Check {
 			array(
 				array(
 					'methods' => \WP_REST_Server::READABLE,
-					'callback' => array( $this, 'get_site_health_info' ),
+					'callback' => array( $this, 'send_site_health_info' ),
 					'permission_callback' => array( $this, 'get_route_access' ),
 					'args' => array(),
 				),
@@ -65,7 +65,7 @@ class RoxWP_Health_Check {
 	 *
 	 * @return void
 	 */
-	public function send_debug_data( $request ){
+	public function send_debug_info( $request ){
 
 		$debug_data =   RoxWP_Debug_Data::debug_data();
 
@@ -90,7 +90,7 @@ class RoxWP_Health_Check {
 	 *
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 */
-	public function get_site_health_info( $request ){
+	public function send_site_health_info( $request ){
 
 		if ( ! class_exists( 'WP_Debug_Data' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
@@ -115,9 +115,20 @@ class RoxWP_Health_Check {
 					'get_test_%s',
 					$test['test']
 				);
+				$exclude_tests = [
+					'get_test_wordpress_version',
+					'get_test_plugin_version',
+					'get_test_theme_version',
+					'get_test_php_version',
+					'get_test_plugin_theme_auto_updates',
+					'detect_plugin_theme_auto_update_issues',
+				];
+				if( in_array( $test_function, $exclude_tests  ) ) {
+					continue;
+				}
 
-				if ( method_exists( $this, $test_function ) && is_callable( array( $this, $test_function ) ) ) {
-					$results[] = $this->perform_test( array( $this, $test_function ) );
+				if ( method_exists( $site_health, $test_function ) && is_callable( array( $site_health, $test_function ) ) ) {
+					$results[] = $this->perform_test( array( $site_health, $test_function ) );
 					continue;
 				}
 			}
@@ -179,7 +190,6 @@ class RoxWP_Health_Check {
 			}
 		}
 
-		return rest_ensure_response( $results );
 
 		$log = [
 			'action'    => 'debug_data',
@@ -189,7 +199,7 @@ class RoxWP_Health_Check {
 			'name'      => null,
 			'timestamp' => roxwp_get_current_time(),
 			'actor'     => roxwp_get_current_actor(),
-			'extra'     => $tests,
+			'extra'     => $results,
 		];
 
 		RoxWP_Client::get_instance()->send_log( $log );
@@ -198,8 +208,12 @@ class RoxWP_Health_Check {
 
 	}
 
-
-	private function perform_test($callback){
+	/**
+	 * @param $callback
+	 *
+	 * @return mixed|void
+	 */
+	private function perform_test( $callback ){
 
 		return apply_filters( 'site_status_test_result', call_user_func( $callback ) );
 	}
@@ -213,12 +227,10 @@ class RoxWP_Health_Check {
 	{
 		$has_access = RoxWP_Client::get_instance()->has_keys();
 
-		if( user_can( $this->current_user, 'manage_options') &&  $has_access ){
+		if(  $has_access ){
 
 			return true;
 		}
-
-		return false;
 	}
 
 
