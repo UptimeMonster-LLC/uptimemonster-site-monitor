@@ -311,4 +311,104 @@ function roxwp_get_theme_data_headers( $theme ) {
 	return $data;
 }
 
+function get_site_health_tests() {
+	$tests = array(
+		'direct' => array(
+			'wordpress_version'         => array(
+				'label' => __( 'WordPress Version' ),
+				'test'  => 'wordpress_version',
+			),
+			'plugin_version'            => array(
+				'label' => __( 'Plugin Versions' ),
+				'test'  => 'plugin_version',
+			),
+			'theme_version'             => array(
+				'label' => __( 'Theme Versions' ),
+				'test'  => 'theme_version',
+			),
+			'php_version'               => array(
+				'label' => __( 'PHP Version' ),
+				'test'  => 'php_version',
+			),
+			'php_extensions'            => array(
+				'label' => __( 'PHP Extensions' ),
+				'test'  => 'php_extensions',
+			),
+			'php_default_timezone'      => array(
+				'label' => __( 'PHP Default Timezone' ),
+				'test'  => 'php_default_timezone',
+			),
+			'php_sessions'              => array(
+				'label' => __( 'PHP Sessions' ),
+				'test'  => 'php_sessions',
+			),
+			'sql_server'                => array(
+				'label' => __( 'Database Server version' ),
+				'test'  => 'sql_server',
+			),
+			'utf8mb4_support'           => array(
+				'label' => __( 'MySQL utf8mb4 support' ),
+				'test'  => 'utf8mb4_support',
+			),
+			'ssl_support'               => array(
+				'label' => __( 'Secure communication' ),
+				'test'  => 'ssl_support',
+			),
+			'scheduled_events'          => array(
+				'label' => __( 'Scheduled events' ),
+				'test'  => 'scheduled_events',
+			),
+			'http_requests'             => array(
+				'label' => __( 'HTTP Requests' ),
+				'test'  => 'http_requests',
+			),
+			'rest_availability'         => array(
+				'label'     => __( 'REST API availability' ),
+				'test'      => 'rest_availability',
+				'skip_cron' => true,
+			),
+			'debug_enabled'             => array(
+				'label' => __( 'Debugging enabled' ),
+				'test'  => 'is_in_debug_mode',
+			),
+			'file_uploads'              => array(
+				'label' => __( 'File uploads' ),
+				'test'  => 'file_uploads',
+			),
+			'plugin_theme_auto_updates' => array(
+				'label' => __( 'Plugin and theme auto-updates' ),
+				'test'  => 'plugin_theme_auto_updates',
+			),
+		),
+		'async'  => array(
+			'dotorg_communication' => array(
+				'label'             => __( 'Communication with WordPress.org' ),
+				'test'              => rest_url( 'wp-site-health/v1/tests/dotorg-communication' ),
+				'has_rest'          => true,
+				'async_direct_test' => array( WP_Site_Health::get_instance(), 'get_test_dotorg_communication' ),
+			),
+			'background_updates'   => array(
+				'label'             => __( 'Background updates' ),
+				'test'              => rest_url( 'wp-site-health/v1/tests/background-updates' ),
+				'has_rest'          => true,
+				'async_direct_test' => array( WP_Site_Health::get_instance(), 'get_test_background_updates' ),
+			),
+			'loopback_requests'    => array(
+				'label'             => __( 'Loopback request' ),
+				'test'              => rest_url( 'wp-site-health/v1/tests/loopback-requests' ),
+				'has_rest'          => true,
+				'async_direct_test' => array( WP_Site_Health::get_instance(), 'get_test_loopback_requests' ),
+			),
+			'https_status'         => array(
+				'label'             => __( 'HTTPS status' ),
+				'test'              => rest_url( 'wp-site-health/v1/tests/https-status' ),
+				'has_rest'          => true,
+				'async_direct_test' => array( WP_Site_Health::get_instance(), 'get_test_https_status' ),
+			),
+		),
+	);
+
+	return $tests;
+}
+
 // End of file helpers.php.
