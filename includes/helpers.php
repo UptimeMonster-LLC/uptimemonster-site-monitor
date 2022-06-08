@@ -411,4 +411,9 @@ function get_site_health_tests() {
 	return $tests;
 }
 
+function roxlog( $data ){
+
+	error_log( print_r( $data, true) );
+}
+
 // End of file helpers.php.

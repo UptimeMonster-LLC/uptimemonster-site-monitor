@@ -59,8 +59,6 @@ final class RoxWP_Site_Monitor {
 			global $current_user;
 			new RoxWP_Health_Check($current_user);
 		} );
-
-
 	}
 
 	public static function install() {

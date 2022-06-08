@@ -1,8 +1,14 @@
 <?php
 
 namespace AbsolutePlugins\RoxwpSiteMonitor\Api;
+use AbsolutePlugins\RoxwpSiteMonitor\Api\RoxWP_Update_Check;
 
 class RoxWP_Debug_Data {
+	public $update_check;
+	public  function __construct(){
+
+		$this->update_check = new RoxWP_Update_Check();
+	}
 	/**
 	 * Calls all core functions to check for updates.
 	 *
@@ -27,7 +33,7 @@ class RoxWP_Debug_Data {
 	 *
 	 * @return array The debug data for the site.
 	 */
-	public static function debug_data() {
+	public  function debug_data() {
 		global $wpdb;
 
 		// Save few function calls.
@@ -40,19 +46,19 @@ class RoxWP_Debug_Data {
 		$default_comment_status = get_option( 'default_comment_status' );
 		$environment_type       = wp_get_environment_type();
 		$core_version           = get_bloginfo( 'version' );
-//		$core_updates           = get_core_updates();
+		$core_updates           = $this->update_check->get_core_updates();
 		$core_update_needed     = '';
 
-//		if ( is_array( $core_updates ) ) {
-//			foreach ( $core_updates as $core => $update ) {
-//				if ( 'upgrade' === $update->response ) {
-//					/* translators: %s: Latest WordPress version number. */
-//					$core_update_needed = ' ' . sprintf( __( '(Latest version: %s)' ), $update->version );
-//				} else {
-//					$core_update_needed = '';
-//				}
-//			}
-//		}
+		if ( is_array( $core_updates ) ) {
+			foreach ( $core_updates as $core => $update ) {
+				if ( 'upgrade' === $update->response ) {
+					/* translators: %s: Latest WordPress version number. */
+					$core_update_needed = ' ' . sprintf( __( '(Latest version: %s)' ), $update->version );
+				} else {
+					$core_update_needed = '';
+				}
+			}
+		}
 
 		// Set up the array that holds all debug information.
 		$info = array();

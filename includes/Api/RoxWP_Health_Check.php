@@ -4,6 +4,7 @@ namespace AbsolutePlugins\RoxwpSiteMonitor\Api;
 
 use AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Client;
 use AbsolutePlugins\RoxwpSiteMonitor\Api\RoxWP_Debug_Data;
+use AbsolutePlugins\RoxwpSiteMonitor\Api\RoxWP_Update_Check;
 
 /**
  * Class RoxWP_Health_Check
@@ -16,6 +17,7 @@ class RoxWP_Health_Check {
 	protected $woocommerce;
 	protected $version;
 	public $current_user;
+	protected $site_healths = [];
 
 
 	public function __construct( $current_user = null)
@@ -58,7 +60,37 @@ class RoxWP_Health_Check {
 
 			)
 		);
+
+		// Register site analytics route.
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/site_analytics',
+			array(
+				array(
+					'methods' => \WP_REST_Server::READABLE,
+					'callback' => array( $this, 'site_analytics' ),
+					'permission_callback' => array( $this, 'get_route_access' ),
+					'args' => array(),
+				),
+
+			)
+		);
 	}
+
+	public  function site_analytics( $request ){
+
+		$response['status'] = true;
+		$analytics = get_transient( 'Api-site-status-result' );
+
+
+
+		$response['data'] = $analytics;
+
+
+
+		return rest_ensure_response($response);
+	}
+
 
 	/**
 	 * @param $request
@@ -67,22 +99,14 @@ class RoxWP_Health_Check {
 	 */
 	public function send_debug_info( $request ){
 
-		$debug_data =   RoxWP_Debug_Data::debug_data();
+		$debug_data =   new RoxWP_Debug_Data();
+		$debug_info = $debug_data->debug_data();
 
-		$log = [
-			'action'    => 'debug_data',
-			'activity'  => null,
-			'subtype'   => null,
-			'object_id' => null,
-			'name'      => null,
-			'timestamp' => roxwp_get_current_time(),
-			'actor'     => roxwp_get_current_actor(),
-			'extra'     => $debug_data,
-		];
+		$response['status'] = true;
+		$response['data']   = $debug_info;
 
-		RoxWP_Client::get_instance()->send_log( $log );
+		return rest_ensure_response( $response );
 
-		do_action( 'roxwp_debug_data', $log );
 	}
 
 	/**
@@ -92,132 +116,27 @@ class RoxWP_Health_Check {
 	 */
 	public function send_site_health_info( $request ){
 
-		if ( ! class_exists( 'WP_Debug_Data' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
-		}
-		if ( ! class_exists( 'WP_Site_Health' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-site-health.php';
-		}
+		$update_check = new RoxWP_Update_Check();
+		$this->site_healths = $update_check->get_site_health();
 
-		$site_health =  \WP_Site_Health::get_instance();
-
-		$tests = $site_health::get_tests();
-
-		$results = [];
-
-		foreach ( $tests['direct'] as $test ) {
-			if ( ! empty( $test['skip_cron'] ) ) {
-				continue;
-			}
-
-			if ( is_string( $test['test'] ) ) {
-				$test_function = sprintf(
-					'get_test_%s',
-					$test['test']
-				);
-				$exclude_tests = [
-					'get_test_wordpress_version',
-					'get_test_plugin_version',
-					'get_test_theme_version',
-					'get_test_php_version',
-					'get_test_plugin_theme_auto_updates',
-					'detect_plugin_theme_auto_update_issues',
-				];
-				if( in_array( $test_function, $exclude_tests  ) ) {
-					continue;
-				}
-
-				if ( method_exists( $site_health, $test_function ) && is_callable( array( $site_health, $test_function ) ) ) {
-					$results[] = $this->perform_test( array( $site_health, $test_function ) );
-					continue;
-				}
-			}
-
-			if ( is_callable( $test['test'] ) ) {
-				$results[] = $this->perform_test( $test['test'] );
+		$response['status'] = true;
+		$site_status = [];
+		foreach ( $this->site_healths as $result ) {
+			if ( 'critical' === $result['status'] ) {
+				$site_status['critical']++;
+			} elseif ( 'recommended' === $result['status'] ) {
+				$site_status['recommended']++;
+			} else {
+				$site_status['good']++;
 			}
 		}
+//		$response['anali']
 
-		foreach ( $tests['async'] as $test ) {
-			if ( ! empty( $test['skip_cron'] ) ) {
-				continue;
-			}
+		$response['data']   = $this->site_healths;
 
-			// Local endpoints may require authentication, so asynchronous tests can pass a direct test runner as well.
-			if ( ! empty( $test['async_direct_test'] ) && is_callable( $test['async_direct_test'] ) ) {
-				// This test is callable, do so and continue to the next asynchronous check.
-				$results[] = $this->perform_test( $test['async_direct_test'] );
-				continue;
-			}
-
-			if ( is_string( $test['test'] ) ) {
-				// Check if this test has a REST API endpoint.
-				if ( isset( $test['has_rest'] ) && $test['has_rest'] ) {
-					$result_fetch = wp_remote_get(
-						$test['test'],
-						array(
-							'body' => array(
-								'_wpnonce' => wp_create_nonce( 'wp_rest' ),
-							),
-						)
-					);
-				} else {
-					$result_fetch = wp_remote_post(
-						admin_url( 'admin-ajax.php' ),
-						array(
-							'body' => array(
-								'action'   => $test['test'],
-								'_wpnonce' => wp_create_nonce( 'Api-site-status' ),
-							),
-						)
-					);
-				}
-
-				if ( ! is_wp_error( $result_fetch ) && 200 === wp_remote_retrieve_response_code( $result_fetch ) ) {
-					$result = json_decode( wp_remote_retrieve_body( $result_fetch ), true );
-				} else {
-					$result = false;
-				}
-
-				if ( is_array( $result ) ) {
-					$results[] = $result;
-				} else {
-					$results[] = array(
-						'status' => 'recommended',
-						'label'  => __( 'A test is unavailable' ),
-					);
-				}
-			}
-		}
-
-
-		$log = [
-			'action'    => 'debug_data',
-			'activity'  => null,
-			'subtype'   => null,
-			'object_id' => null,
-			'name'      => null,
-			'timestamp' => roxwp_get_current_time(),
-			'actor'     => roxwp_get_current_actor(),
-			'extra'     => $results,
-		];
-
-		RoxWP_Client::get_instance()->send_log( $log );
-
-		do_action( 'roxwp_site_health_info', $log );
+		return rest_ensure_response( $response );
 
 	}
-
-	/**
-	 * @param $callback
-	 *
-	 * @return mixed|void
-	 */
-	private function perform_test( $callback ){
-
-		return apply_filters( 'site_status_test_result', call_user_func( $callback ) );
-	}
-
 
 
 	/*
@@ -227,7 +146,7 @@ class RoxWP_Health_Check {
 	{
 		$has_access = RoxWP_Client::get_instance()->has_keys();
 
-		if(  $has_access ){
+		if(  $has_access ) {
 
 			return true;
 		}
