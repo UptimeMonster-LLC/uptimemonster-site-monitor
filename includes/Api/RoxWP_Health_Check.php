@@ -17,7 +17,6 @@ class RoxWP_Health_Check {
 	protected $woocommerce;
 	protected $version;
 	public $current_user;
-	protected $site_healths = [];
 
 
 	public function __construct( $current_user = null)
@@ -61,41 +60,14 @@ class RoxWP_Health_Check {
 			)
 		);
 
-		// Register site analytics route.
-		register_rest_route(
-			$this->namespace,
-			$this->rest_base . '/site_analytics',
-			array(
-				array(
-					'methods' => \WP_REST_Server::READABLE,
-					'callback' => array( $this, 'site_analytics' ),
-					'permission_callback' => array( $this, 'get_route_access' ),
-					'args' => array(),
-				),
 
-			)
-		);
-	}
-
-	public  function site_analytics( $request ){
-
-		$response['status'] = true;
-		$analytics = get_transient( 'Api-site-status-result' );
-
-
-
-		$response['data'] = $analytics;
-
-
-
-		return rest_ensure_response($response);
 	}
 
 
 	/**
 	 * @param $request
 	 *
-	 * @return void
+	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 */
 	public function send_debug_info( $request ){
 
@@ -120,18 +92,6 @@ class RoxWP_Health_Check {
 		$this->site_healths = $update_check->get_site_health();
 
 		$response['status'] = true;
-		$site_status = [];
-		foreach ( $this->site_healths as $result ) {
-			if ( 'critical' === $result['status'] ) {
-				$site_status['critical']++;
-			} elseif ( 'recommended' === $result['status'] ) {
-				$site_status['recommended']++;
-			} else {
-				$site_status['good']++;
-			}
-		}
-//		$response['anali']
-
 		$response['data']   = $this->site_healths;
 
 		return rest_ensure_response( $response );
