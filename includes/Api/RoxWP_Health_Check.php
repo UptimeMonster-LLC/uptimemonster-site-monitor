@@ -86,7 +86,7 @@ class RoxWP_Health_Check {
 	 *
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 */
-	public function send_site_health_info( $request ){
+	public function send_site_health_info( $request ) {
 
 		$update_check = new RoxWP_Update_Check();
 		$this->site_healths = $update_check->get_site_health();
@@ -102,8 +102,7 @@ class RoxWP_Health_Check {
 	/*
      * Get route access if request is valid.
      */
-	public function get_route_access()
-	{
+	public function get_route_access() {
 		$has_access = RoxWP_Client::get_instance()->has_keys();
 
 		if(  $has_access ) {

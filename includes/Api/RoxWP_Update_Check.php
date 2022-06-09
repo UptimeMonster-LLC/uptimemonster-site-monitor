@@ -4,8 +4,6 @@ namespace AbsolutePlugins\RoxwpSiteMonitor\Api;
 
 class RoxWP_Update_Check {
 
-
-
 	public function get_site_health(){
 		if ( ! class_exists( 'WP_Debug_Data' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';

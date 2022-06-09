@@ -1,6 +1,7 @@
 <?php
 
 namespace AbsolutePlugins\RoxwpSiteMonitor\Api;
+
 use AbsolutePlugins\RoxwpSiteMonitor\Api\RoxWP_Update_Check;
 
 class RoxWP_Debug_Data {
