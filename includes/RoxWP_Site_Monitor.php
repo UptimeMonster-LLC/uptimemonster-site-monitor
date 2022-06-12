@@ -9,7 +9,7 @@
 namespace AbsolutePlugins\RoxwpSiteMonitor;
 
 use AbsolutePlugins\RoxwpSiteMonitor\Monitors\Singleton;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\RoxWP_Health_Check;
+use AbsolutePlugins\RoxwpSiteMonitor\Api\RoxWP_Health_Check_Api;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -54,10 +54,10 @@ final class RoxWP_Site_Monitor {
 		// Plugin Dashboard.
 		Dashboard::get_instance();
 
-
+		// Get site health data.
 		add_action('init', function () {
 			global $current_user;
-			new RoxWP_Health_Check($current_user);
+			new RoxWP_Health_Check_Api( $current_user );
 		} );
 	}
 

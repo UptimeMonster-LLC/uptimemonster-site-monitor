@@ -7,9 +7,9 @@ use AbsolutePlugins\RoxwpSiteMonitor\Api\RoxWP_Debug_Data;
 use AbsolutePlugins\RoxwpSiteMonitor\Api\RoxWP_Update_Check;
 
 /**
- * Class RoxWP_Health_Check
+ * Class RoxWP_Health_Check_Api
  */
-class RoxWP_Health_Check {
+class RoxWP_Health_Check_Api {
 
 
 	protected $namespace;

@@ -376,7 +376,7 @@ class RoxWP_Debug_Data {
 
 		// Conditionally add debug information for multisite setups.
 		if ( is_multisite() ) {
-			$network_query = new WP_Network_Query();
+			$network_query = new \WP_Network_Query();
 			$network_ids   = $network_query->query(
 				array(
 					'fields'        => 'ids',
@@ -599,8 +599,8 @@ class RoxWP_Debug_Data {
 			);
 
 			try {
-				$formats = Imagick::queryFormats( '*' );
-			} catch ( Exception $e ) {
+				$formats = \Imagick::queryFormats( '*' );
+			} catch ( \Exception $e ) {
 				$formats = array();
 			}
 
@@ -749,7 +749,7 @@ class RoxWP_Debug_Data {
 			if ( \WP_Site_Health::get_instance()->php_memory_limit !== ini_get( 'memory_limit' ) ) {
 				$info['wp-server']['fields']['memory_limit']       = array(
 					'label' => __( 'PHP memory limit' ),
-					'value' => WP_Site_Health::get_instance()->php_memory_limit,
+					'value' => \WP_Site_Health::get_instance()->php_memory_limit,
 				);
 				$info['wp-server']['fields']['admin_memory_limit'] = array(
 					'label' => __( 'PHP memory limit (only for admin screens)' ),
@@ -810,13 +810,13 @@ class RoxWP_Debug_Data {
 		);
 
 		// Pretty permalinks.
-//		$pretty_permalinks_supported = got_url_rewrite();
-//
-//		$info['wp-server']['fields']['pretty_permalinks'] = array(
-//			'label' => __( 'Are pretty permalinks supported?' ),
-//			'value' => ( $pretty_permalinks_supported ? __( 'Yes' ) : __( 'No' ) ),
-//			'debug' => $pretty_permalinks_supported,
-//		);
+		$pretty_permalinks_supported = $this->update_check->got_url_rewrite();
+
+		$info['wp-server']['fields']['pretty_permalinks'] = array(
+			'label' => __( 'Are pretty permalinks supported?' ),
+			'value' => ( $pretty_permalinks_supported ? __( 'Yes' ) : __( 'No' ) ),
+			'debug' => $pretty_permalinks_supported,
+		);
 
 		// Check if a .htaccess file exists.
 		if ( is_file( ABSPATH . '.htaccess' ) ) {
@@ -965,109 +965,109 @@ class RoxWP_Debug_Data {
 
 		// List all available plugins.
 		$plugins        = get_plugins();
-//		$plugin_updates = get_plugin_updates();
+		$plugin_updates = $this->update_check->get_plugin_updates();
 		$transient      = get_site_transient( 'update_plugins' );
 
 		$auto_updates = array();
 
-//		$auto_updates_enabled = wp_is_auto_update_enabled_for_type( 'plugin' );
+		$auto_updates_enabled =  $this->update_check->wp_is_auto_update_enabled_for_type( 'plugin' );
 
-//		if ( $auto_updates_enabled ) {
-//			$auto_updates = (array) get_site_option( 'auto_update_plugins', array() );
-//		}
+		if ( $auto_updates_enabled ) {
+			$auto_updates = (array) get_site_option( 'auto_update_plugins', array() );
+		}
 
-//		foreach ( $plugins as $plugin_path => $plugin ) {
-//			$plugin_part = ( is_plugin_active( $plugin_path ) ) ? 'wp-plugins-active' : 'wp-plugins-inactive';
-//
-//			$plugin_version = $plugin['Version'];
-//			$plugin_author  = $plugin['Author'];
-//
-//			$plugin_version_string       = __( 'No version or author information is available.' );
-//			$plugin_version_string_debug = 'author: (undefined), version: (undefined)';
-//
-//			if ( ! empty( $plugin_version ) && ! empty( $plugin_author ) ) {
-//				/* translators: 1: Plugin version number. 2: Plugin author name. */
-//				$plugin_version_string       = sprintf( __( 'Version %1$s by %2$s' ), $plugin_version, $plugin_author );
-//				$plugin_version_string_debug = sprintf( 'version: %s, author: %s', $plugin_version, $plugin_author );
-//			} else {
-//				if ( ! empty( $plugin_author ) ) {
-//					/* translators: %s: Plugin author name. */
-//					$plugin_version_string       = sprintf( __( 'By %s' ), $plugin_author );
-//					$plugin_version_string_debug = sprintf( 'author: %s, version: (undefined)', $plugin_author );
-//				}
-//
-//				if ( ! empty( $plugin_version ) ) {
-//					/* translators: %s: Plugin version number. */
-//					$plugin_version_string       = sprintf( __( 'Version %s' ), $plugin_version );
-//					$plugin_version_string_debug = sprintf( 'author: (undefined), version: %s', $plugin_version );
-//				}
-//			}
-//
-//			if ( array_key_exists( $plugin_path, $plugin_updates ) ) {
-//				/* translators: %s: Latest plugin version number. */
-//				$plugin_version_string       .= ' ' . sprintf( __( '(Latest version: %s)' ), $plugin_updates[ $plugin_path ]->update->new_version );
-//				$plugin_version_string_debug .= sprintf( ' (latest version: %s)', $plugin_updates[ $plugin_path ]->update->new_version );
-//			}
-//
-//			if ( $auto_updates_enabled ) {
-//				if ( isset( $transient->response[ $plugin_path ] ) ) {
-//					$item = $transient->response[ $plugin_path ];
-//				} elseif ( isset( $transient->no_update[ $plugin_path ] ) ) {
-//					$item = $transient->no_update[ $plugin_path ];
-//				} else {
-//					$item = array(
-//						'id'            => $plugin_path,
-//						'slug'          => '',
-//						'plugin'        => $plugin_path,
-//						'new_version'   => '',
-//						'url'           => '',
-//						'package'       => '',
-//						'icons'         => array(),
-//						'banners'       => array(),
-//						'banners_rtl'   => array(),
-//						'tested'        => '',
-//						'requires_php'  => '',
-//						'compatibility' => new stdClass(),
-//					);
-//					$item = wp_parse_args( $plugin, $item );
-//				}
-//
-//				$auto_update_forced = wp_is_auto_update_forced_for_item( 'plugin', null, (object) $item );
-//
-//				if ( ! is_null( $auto_update_forced ) ) {
-//					$enabled = $auto_update_forced;
-//				} else {
-//					$enabled = in_array( $plugin_path, $auto_updates, true );
-//				}
-//
-//				if ( $enabled ) {
-//					$auto_updates_string = __( 'Auto-updates enabled' );
-//				} else {
-//					$auto_updates_string = __( 'Auto-updates disabled' );
-//				}
-//
-//				/**
-//				 * Filters the text string of the auto-updates setting for each plugin in the Site Health debug data.
-//				 *
-//				 * @since 5.5.0
-//				 *
-//				 * @param string $auto_updates_string The string output for the auto-updates column.
-//				 * @param string $plugin_path         The path to the plugin file.
-//				 * @param array  $plugin              An array of plugin data.
-//				 * @param bool   $enabled             Whether auto-updates are enabled for this item.
-//				 */
-//				$auto_updates_string = apply_filters( 'plugin_auto_update_debug_string', $auto_updates_string, $plugin_path, $plugin, $enabled );
-//
-//				$plugin_version_string       .= ' | ' . $auto_updates_string;
-//				$plugin_version_string_debug .= ', ' . $auto_updates_string;
-//			}
-//
-//			$info[ $plugin_part ]['fields'][ sanitize_text_field( $plugin['Name'] ) ] = array(
-//				'label' => $plugin['Name'],
-//				'value' => $plugin_version_string,
-//				'debug' => $plugin_version_string_debug,
-//			);
-//		}
+		foreach ( $plugins as $plugin_path => $plugin ) {
+			$plugin_part = ( is_plugin_active( $plugin_path ) ) ? 'wp-plugins-active' : 'wp-plugins-inactive';
+
+			$plugin_version = $plugin['Version'];
+			$plugin_author  = $plugin['Author'];
+
+			$plugin_version_string       = __( 'No version or author information is available.' );
+			$plugin_version_string_debug = 'author: (undefined), version: (undefined)';
+
+			if ( ! empty( $plugin_version ) && ! empty( $plugin_author ) ) {
+				/* translators: 1: Plugin version number. 2: Plugin author name. */
+				$plugin_version_string       = sprintf( __( 'Version %1$s by %2$s' ), $plugin_version, $plugin_author );
+				$plugin_version_string_debug = sprintf( 'version: %s, author: %s', $plugin_version, $plugin_author );
+			} else {
+				if ( ! empty( $plugin_author ) ) {
+					/* translators: %s: Plugin author name. */
+					$plugin_version_string       = sprintf( __( 'By %s' ), $plugin_author );
+					$plugin_version_string_debug = sprintf( 'author: %s, version: (undefined)', $plugin_author );
+				}
+
+				if ( ! empty( $plugin_version ) ) {
+					/* translators: %s: Plugin version number. */
+					$plugin_version_string       = sprintf( __( 'Version %s' ), $plugin_version );
+					$plugin_version_string_debug = sprintf( 'author: (undefined), version: %s', $plugin_version );
+				}
+			}
+
+			if ( array_key_exists( $plugin_path, $plugin_updates ) ) {
+				/* translators: %s: Latest plugin version number. */
+				$plugin_version_string       .= ' ' . sprintf( __( '(Latest version: %s)' ), $plugin_updates[ $plugin_path ]->update->new_version );
+				$plugin_version_string_debug .= sprintf( ' (latest version: %s)', $plugin_updates[ $plugin_path ]->update->new_version );
+			}
+
+			if ( $auto_updates_enabled ) {
+				if ( isset( $transient->response[ $plugin_path ] ) ) {
+					$item = $transient->response[ $plugin_path ];
+				} elseif ( isset( $transient->no_update[ $plugin_path ] ) ) {
+					$item = $transient->no_update[ $plugin_path ];
+				} else {
+					$item = array(
+						'id'            => $plugin_path,
+						'slug'          => '',
+						'plugin'        => $plugin_path,
+						'new_version'   => '',
+						'url'           => '',
+						'package'       => '',
+						'icons'         => array(),
+						'banners'       => array(),
+						'banners_rtl'   => array(),
+						'tested'        => '',
+						'requires_php'  => '',
+						'compatibility' => new \stdClass(),
+					);
+					$item = wp_parse_args( $plugin, $item );
+				}
+
+				$auto_update_forced =  $this->update_check->wp_is_auto_update_forced_for_item( 'plugin', null, (object) $item );
+
+				if ( ! is_null( $auto_update_forced ) ) {
+					$enabled = $auto_update_forced;
+				} else {
+					$enabled = in_array( $plugin_path, $auto_updates, true );
+				}
+
+				if ( $enabled ) {
+					$auto_updates_string = __( 'Auto-updates enabled' );
+				} else {
+					$auto_updates_string = __( 'Auto-updates disabled' );
+				}
+
+				/**
+				 * Filters the text string of the auto-updates setting for each plugin in the Site Health debug data.
+				 *
+				 * @since 5.5.0
+				 *
+				 * @param string $auto_updates_string The string output for the auto-updates column.
+				 * @param string $plugin_path         The path to the plugin file.
+				 * @param array  $plugin              An array of plugin data.
+				 * @param bool   $enabled             Whether auto-updates are enabled for this item.
+				 */
+				$auto_updates_string = apply_filters( 'plugin_auto_update_debug_string', $auto_updates_string, $plugin_path, $plugin, $enabled );
+
+				$plugin_version_string       .= ' | ' . $auto_updates_string;
+				$plugin_version_string_debug .= ', ' . $auto_updates_string;
+			}
+
+			$info[ $plugin_part ]['fields'][ sanitize_text_field( $plugin['Name'] ) ] = array(
+				'label' => $plugin['Name'],
+				'value' => $plugin_version_string,
+				'debug' => $plugin_version_string_debug,
+			);
+		}
 
 		// Populate the section for the currently active theme.
 		global $_wp_theme_features;
@@ -1080,25 +1080,25 @@ class RoxWP_Debug_Data {
 		}
 
 		$active_theme  = wp_get_theme();
-//		$theme_updates = get_theme_updates();
+		$theme_updates = $this->get_theme_updates();
 		$transient     = get_site_transient( 'update_themes' );
 
 		$active_theme_version       = $active_theme->version;
 		$active_theme_version_debug = $active_theme_version;
 
 		$auto_updates         = array();
-//		$auto_updates_enabled = wp_is_auto_update_enabled_for_type( 'theme' );
-//		if ( $auto_updates_enabled ) {
-//			$auto_updates = (array) get_site_option( 'auto_update_themes', array() );
-//		}
+		$auto_updates_enabled =  $this->update_check->wp_is_auto_update_enabled_for_type( 'theme' );
+		if ( $auto_updates_enabled ) {
+			$auto_updates = (array) get_site_option( 'auto_update_themes', array() );
+		}
 
-//		if ( array_key_exists( $active_theme->stylesheet, $theme_updates ) ) {
-//			$theme_update_new_version = $theme_updates[ $active_theme->stylesheet ]->update['new_version'];
-//
-//			/* translators: %s: Latest theme version number. */
-//			$active_theme_version       .= ' ' . sprintf( __( '(Latest version: %s)' ), $theme_update_new_version );
-//			$active_theme_version_debug .= sprintf( ' (latest version: %s)', $theme_update_new_version );
-//		}
+		if ( array_key_exists( $active_theme->stylesheet, $theme_updates ) ) {
+			$theme_update_new_version = $theme_updates[ $active_theme->stylesheet ]->update['new_version'];
+
+			/* translators: %s: Latest theme version number. */
+			$active_theme_version       .= ' ' . sprintf( __( '(Latest version: %s)' ), $theme_update_new_version );
+			$active_theme_version_debug .= sprintf( ' (latest version: %s)', $theme_update_new_version );
+		}
 
 		$active_theme_author_uri = $active_theme->display( 'AuthorURI' );
 
@@ -1158,45 +1158,45 @@ class RoxWP_Debug_Data {
 			),
 		);
 
-//		if ( $auto_updates_enabled ) {
-//			if ( isset( $transient->response[ $active_theme->stylesheet ] ) ) {
-//				$item = $transient->response[ $active_theme->stylesheet ];
-//			} elseif ( isset( $transient->no_update[ $active_theme->stylesheet ] ) ) {
-//				$item = $transient->no_update[ $active_theme->stylesheet ];
-//			} else {
-//				$item = array(
-//					'theme'        => $active_theme->stylesheet,
-//					'new_version'  => $active_theme->version,
-//					'url'          => '',
-//					'package'      => '',
-//					'requires'     => '',
-//					'requires_php' => '',
-//				);
-//			}
-//
-//			$auto_update_forced = wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
-//
-//			if ( ! is_null( $auto_update_forced ) ) {
-//				$enabled = $auto_update_forced;
-//			} else {
-//				$enabled = in_array( $active_theme->stylesheet, $auto_updates, true );
-//			}
-//
-//			if ( $enabled ) {
-//				$auto_updates_string = __( 'Enabled' );
-//			} else {
-//				$auto_updates_string = __( 'Disabled' );
-//			}
-//
-//			/** This filter is documented in wp-admin/includes/class-wp-debug-data.php */
-//			$auto_updates_string = apply_filters( 'theme_auto_update_debug_string', $auto_updates_string, $active_theme, $enabled );
-//
-//			$info['wp-active-theme']['fields']['auto_update'] = array(
-//				'label' => __( 'Auto-updates' ),
-//				'value' => $auto_updates_string,
-//				'debug' => $auto_updates_string,
-//			);
-//		}
+		if ( $auto_updates_enabled ) {
+			if ( isset( $transient->response[ $active_theme->stylesheet ] ) ) {
+				$item = $transient->response[ $active_theme->stylesheet ];
+			} elseif ( isset( $transient->no_update[ $active_theme->stylesheet ] ) ) {
+				$item = $transient->no_update[ $active_theme->stylesheet ];
+			} else {
+				$item = array(
+					'theme'        => $active_theme->stylesheet,
+					'new_version'  => $active_theme->version,
+					'url'          => '',
+					'package'      => '',
+					'requires'     => '',
+					'requires_php' => '',
+				);
+			}
+
+			$auto_update_forced =  $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
+
+			if ( ! is_null( $auto_update_forced ) ) {
+				$enabled = $auto_update_forced;
+			} else {
+				$enabled = in_array( $active_theme->stylesheet, $auto_updates, true );
+			}
+
+			if ( $enabled ) {
+				$auto_updates_string = __( 'Enabled' );
+			} else {
+				$auto_updates_string = __( 'Disabled' );
+			}
+
+			/** This filter is documented in wp-admin/includes/class-wp-debug-data.php */
+			$auto_updates_string = apply_filters( 'theme_auto_update_debug_string', $auto_updates_string, $active_theme, $enabled );
+
+			$info['wp-active-theme']['fields']['auto_update'] = array(
+				'label' => __( 'Auto-updates' ),
+				'value' => $auto_updates_string,
+				'debug' => $auto_updates_string,
+			);
+		}
 
 		$parent_theme = $active_theme->parent();
 
@@ -1204,13 +1204,13 @@ class RoxWP_Debug_Data {
 			$parent_theme_version       = $parent_theme->version;
 			$parent_theme_version_debug = $parent_theme_version;
 
-//			if ( array_key_exists( $parent_theme->stylesheet, $theme_updates ) ) {
-//				$parent_theme_update_new_version = $theme_updates[ $parent_theme->stylesheet ]->update['new_version'];
-//
-//				/* translators: %s: Latest theme version number. */
-//				$parent_theme_version       .= ' ' . sprintf( __( '(Latest version: %s)' ), $parent_theme_update_new_version );
-//				$parent_theme_version_debug .= sprintf( ' (latest version: %s)', $parent_theme_update_new_version );
-//			}
+			if ( array_key_exists( $parent_theme->stylesheet, $theme_updates ) ) {
+				$parent_theme_update_new_version = $theme_updates[ $parent_theme->stylesheet ]->update['new_version'];
+
+				/* translators: %s: Latest theme version number. */
+				$parent_theme_version       .= ' ' . sprintf( __( '(Latest version: %s)' ), $parent_theme_update_new_version );
+				$parent_theme_version_debug .= sprintf( ' (latest version: %s)', $parent_theme_update_new_version );
+			}
 
 			$parent_theme_author_uri = $parent_theme->display( 'AuthorURI' );
 
@@ -1260,7 +1260,7 @@ class RoxWP_Debug_Data {
 					);
 				}
 
-				$auto_update_forced = wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
+				$auto_update_forced =  $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
 
 				if ( ! is_null( $auto_update_forced ) ) {
 					$enabled = $auto_update_forced;
@@ -1326,56 +1326,56 @@ class RoxWP_Debug_Data {
 				}
 			}
 
-//			if ( array_key_exists( $theme_slug, $theme_updates ) ) {
-//				/* translators: %s: Latest theme version number. */
-//				$theme_version_string       .= ' ' . sprintf( __( '(Latest version: %s)' ), $theme_updates[ $theme_slug ]->update['new_version'] );
-//				$theme_version_string_debug .= sprintf( ' (latest version: %s)', $theme_updates[ $theme_slug ]->update['new_version'] );
-//			}
+			if ( array_key_exists( $theme_slug, $theme_updates ) ) {
+				/* translators: %s: Latest theme version number. */
+				$theme_version_string       .= ' ' . sprintf( __( '(Latest version: %s)' ), $theme_updates[ $theme_slug ]->update['new_version'] );
+				$theme_version_string_debug .= sprintf( ' (latest version: %s)', $theme_updates[ $theme_slug ]->update['new_version'] );
+			}
 
-//			if ( $auto_updates_enabled ) {
-//				if ( isset( $transient->response[ $theme_slug ] ) ) {
-//					$item = $transient->response[ $theme_slug ];
-//				} elseif ( isset( $transient->no_update[ $theme_slug ] ) ) {
-//					$item = $transient->no_update[ $theme_slug ];
-//				} else {
-//					$item = array(
-//						'theme'        => $theme_slug,
-//						'new_version'  => $theme->version,
-//						'url'          => '',
-//						'package'      => '',
-//						'requires'     => '',
-//						'requires_php' => '',
-//					);
-//				}
-//
-//				$auto_update_forced = wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
-//
-//				if ( ! is_null( $auto_update_forced ) ) {
-//					$enabled = $auto_update_forced;
-//				} else {
-//					$enabled = in_array( $theme_slug, $auto_updates, true );
-//				}
-//
-//				if ( $enabled ) {
-//					$auto_updates_string = __( 'Auto-updates enabled' );
-//				} else {
-//					$auto_updates_string = __( 'Auto-updates disabled' );
-//				}
-//
-//				/**
-//				 * Filters the text string of the auto-updates setting for each theme in the Site Health debug data.
-//				 *
-//				 * @since 5.5.0
-//				 *
-//				 * @param string   $auto_updates_string The string output for the auto-updates column.
-//				 * @param WP_Theme $theme               An object of theme data.
-//				 * @param bool     $enabled             Whether auto-updates are enabled for this item.
-//				 */
-//				$auto_updates_string = apply_filters( 'theme_auto_update_debug_string', $auto_updates_string, $theme, $enabled );
-//
-//				$theme_version_string       .= ' | ' . $auto_updates_string;
-//				$theme_version_string_debug .= ', ' . $auto_updates_string;
-//			}
+			if ( $auto_updates_enabled ) {
+				if ( isset( $transient->response[ $theme_slug ] ) ) {
+					$item = $transient->response[ $theme_slug ];
+				} elseif ( isset( $transient->no_update[ $theme_slug ] ) ) {
+					$item = $transient->no_update[ $theme_slug ];
+				} else {
+					$item = array(
+						'theme'        => $theme_slug,
+						'new_version'  => $theme->version,
+						'url'          => '',
+						'package'      => '',
+						'requires'     => '',
+						'requires_php' => '',
+					);
+				}
+
+				$auto_update_forced =  $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
+
+				if ( ! is_null( $auto_update_forced ) ) {
+					$enabled = $auto_update_forced;
+				} else {
+					$enabled = in_array( $theme_slug, $auto_updates, true );
+				}
+
+				if ( $enabled ) {
+					$auto_updates_string = __( 'Auto-updates enabled' );
+				} else {
+					$auto_updates_string = __( 'Auto-updates disabled' );
+				}
+
+				/**
+				 * Filters the text string of the auto-updates setting for each theme in the Site Health debug data.
+				 *
+				 * @since 5.5.0
+				 *
+				 * @param string   $auto_updates_string The string output for the auto-updates column.
+				 * @param WP_Theme $theme               An object of theme data.
+				 * @param bool     $enabled             Whether auto-updates are enabled for this item.
+				 */
+				$auto_updates_string = apply_filters( 'theme_auto_update_debug_string', $auto_updates_string, $theme, $enabled );
+
+				$theme_version_string       .= ' | ' . $auto_updates_string;
+				$theme_version_string_debug .= ', ' . $auto_updates_string;
+			}
 
 			$info['wp-themes-inactive']['fields'][ sanitize_text_field( $theme->name ) ] = array(
 				'label' => sprintf(
@@ -1463,6 +1463,26 @@ class RoxWP_Debug_Data {
 		$info = apply_filters( 'debug_information', $info );
 
 		return $info;
+	}
+
+
+	/**
+	 * @since 2.9.0
+	 *
+	 * @return array
+	 */
+	function get_plugin_updates() {
+		$all_plugins     = get_plugins();
+		$upgrade_plugins = array();
+		$current         = get_site_transient( 'update_plugins' );
+		foreach ( (array) $all_plugins as $plugin_file => $plugin_data ) {
+			if ( isset( $current->response[ $plugin_file ] ) ) {
+				$upgrade_plugins[ $plugin_file ]         = (object) $plugin_data;
+				$upgrade_plugins[ $plugin_file ]->update = $current->response[ $plugin_file ];
+			}
+		}
+
+		return $upgrade_plugins;
 	}
 
 	/**
@@ -1705,4 +1725,204 @@ class RoxWP_Debug_Data {
 
 		return $all_sizes;
 	}
+
+
+
+
+
+
+	/**
+	 * Gets and caches the checksums for the given version of WordPress.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param string $version Version string to query.
+	 * @param string $locale  Locale to query.
+	 * @return array|false An array of checksums on success, false on failure.
+	 */
+	public function get_core_checksums( $version, $locale ) {
+		$http_url = 'http://api.wordpress.org/core/checksums/1.0/?' . http_build_query( compact( 'version', 'locale' ), '', '&' );
+		$url      = $http_url;
+
+		$ssl = wp_http_supports( array( 'ssl' ) );
+		if ( $ssl ) {
+			$url = set_url_scheme( $url, 'https' );
+		}
+
+		$options = array(
+			'timeout' => wp_doing_cron() ? 30 : 3,
+		);
+
+		$response = wp_remote_get( $url, $options );
+		if ( $ssl && is_wp_error( $response ) ) {
+			trigger_error(
+				sprintf(
+				/* translators: %s: Support forums URL. */
+					__( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.' ),
+					__( 'https://wordpress.org/support/forums/' )
+				) . ' ' . __( '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)' ),
+				headers_sent() || WP_DEBUG ? E_USER_WARNING : E_USER_NOTICE
+			);
+			$response = wp_remote_get( $http_url, $options );
+		}
+
+		if ( is_wp_error( $response ) || 200 != wp_remote_retrieve_response_code( $response ) ) {
+			return false;
+		}
+
+		$body = trim( wp_remote_retrieve_body( $response ) );
+		$body = json_decode( $body, true );
+
+		if ( ! is_array( $body ) || ! isset( $body['checksums'] ) || ! is_array( $body['checksums'] ) ) {
+			return false;
+		}
+
+		return $body['checksums'];
+	}
+
+
+
+	/**
+	 * @since 2.9.0
+	 *
+	 * @return array
+	 */
+	public function get_theme_updates() {
+		$current = get_site_transient( 'update_themes' );
+
+		if ( ! isset( $current->response ) ) {
+			return array();
+		}
+
+		$update_themes = array();
+		foreach ( $current->response as $stylesheet => $data ) {
+			$update_themes[ $stylesheet ]         = wp_get_theme( $stylesheet );
+			$update_themes[ $stylesheet ]->update = $data;
+		}
+
+		return $update_themes;
+	}
+
+
+	/**
+	 * Prints the JavaScript templates for update admin notices.
+	 *
+	 * Template takes one argument with four values:
+	 *
+	 *     param {object} data {
+	 *         Arguments for admin notice.
+	 *
+	 *         @type string id        ID of the notice.
+	 *         @type string className Class names for the notice.
+	 *         @type string message   The notice's message.
+	 *         @type string type      The type of update the notice is for. Either 'plugin' or 'theme'.
+	 *     }
+	 *
+	 * @since 4.6.0
+	 */
+	public function wp_print_admin_notice_templates() {
+		?>
+		<script id="tmpl-wp-updates-admin-notice" type="text/html">
+			<div <# if ( data.id ) { #>id="{{ data.id }}"<# } #> class="notice {{ data.className }}"><p>{{{ data.message }}}</p></div>
+		</script>
+		<script id="tmpl-wp-bulk-updates-admin-notice" type="text/html">
+			<div id="{{ data.id }}" class="{{ data.className }} notice <# if ( data.errors ) { #>notice-error<# } else { #>notice-success<# } #>">
+				<p>
+					<# if ( data.successes ) { #>
+					<# if ( 1 === data.successes ) { #>
+					<# if ( 'plugin' === data.type ) { #>
+					<?php
+					/* translators: %s: Number of plugins. */
+					printf( __( '%s plugin successfully updated.' ), '{{ data.successes }}' );
+					?>
+					<# } else { #>
+					<?php
+					/* translators: %s: Number of themes. */
+					printf( __( '%s theme successfully updated.' ), '{{ data.successes }}' );
+					?>
+					<# } #>
+					<# } else { #>
+					<# if ( 'plugin' === data.type ) { #>
+					<?php
+					/* translators: %s: Number of plugins. */
+					printf( __( '%s plugins successfully updated.' ), '{{ data.successes }}' );
+					?>
+					<# } else { #>
+					<?php
+					/* translators: %s: Number of themes. */
+					printf( __( '%s themes successfully updated.' ), '{{ data.successes }}' );
+					?>
+					<# } #>
+					<# } #>
+					<# } #>
+					<# if ( data.errors ) { #>
+					<button class="button-link bulk-action-errors-collapsed" aria-expanded="false">
+						<# if ( 1 === data.errors ) { #>
+						<?php
+						/* translators: %s: Number of failed updates. */
+						printf( __( '%s update failed.' ), '{{ data.errors }}' );
+						?>
+						<# } else { #>
+						<?php
+						/* translators: %s: Number of failed updates. */
+						printf( __( '%s updates failed.' ), '{{ data.errors }}' );
+						?>
+						<# } #>
+						<span class="screen-reader-text"><?php _e( 'Show more details' ); ?></span>
+						<span class="toggle-indicator" aria-hidden="true"></span>
+					</button>
+					<# } #>
+				</p>
+				<# if ( data.errors ) { #>
+				<ul class="bulk-action-errors hidden">
+					<# _.each( data.errorMessages, function( errorMessage ) { #>
+					<li>{{ errorMessage }}</li>
+					<# } ); #>
+				</ul>
+				<# } #>
+			</div>
+		</script>
+		<?php
+	}
+
+
+
+
+	/**
+	 * Determines the appropriate auto-update message to be displayed.
+	 *
+	 * @since 5.5.0
+	 *
+	 * @return string The update message to be shown.
+	 */
+	public function wp_get_auto_update_message() {
+		$next_update_time = wp_next_scheduled( 'wp_version_check' );
+
+		// Check if the event exists.
+		if ( false === $next_update_time ) {
+			$message = __( 'Automatic update not scheduled. There may be a problem with WP-Cron.' );
+		} else {
+			$time_to_next_update = human_time_diff( (int) $next_update_time );
+
+			// See if cron is overdue.
+			$overdue = ( time() - $next_update_time ) > 0;
+
+			if ( $overdue ) {
+				$message = sprintf(
+				/* translators: %s: Duration that WP-Cron has been overdue. */
+					__( 'Automatic update overdue by %s. There may be a problem with WP-Cron.' ),
+					$time_to_next_update
+				);
+			} else {
+				$message = sprintf(
+				/* translators: %s: Time until the next update. */
+					__( 'Automatic update scheduled in %s.' ),
+					$time_to_next_update
+				);
+			}
+		}
+
+		return $message;
+	}
+
 }

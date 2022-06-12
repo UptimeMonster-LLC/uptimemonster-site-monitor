@@ -35,13 +35,13 @@ class RoxWP_Update_Check {
 					'get_test_theme_version',
 					'get_test_php_version',
 				];
-				$exclude_tests = [
-					'get_test_plugin_theme_auto_updates',
-				];
-
-				if( in_array( $test_function, $exclude_tests  ) ) {
-					continue;
-				}
+//				$exclude_tests = [
+//					'get_test_plugin_theme_auto_updates',
+//				];
+//
+//				if( in_array( $test_function, $exclude_tests  ) ) {
+//					continue;
+//				}
 
 				if ( in_array( $test_function, $include_test ) && method_exists( $this, $test_function ) && is_callable( array( $this, $test_function ) ) ) {
 					$results[] = $this->perform_test( array( $this, $test_function ) );
@@ -251,7 +251,7 @@ class RoxWP_Update_Check {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-automatic-updater.php';
 		}
 
-		$updater = new WP_Automatic_Updater();
+		$updater = new \WP_Automatic_Updater();
 		$enabled = ! $updater->is_disabled();
 
 		switch ( $type ) {
@@ -293,6 +293,92 @@ class RoxWP_Update_Check {
 		/** This filter is documented in wp-admin/includes/class-wp-automatic-updater.php */
 		return apply_filters( "auto_update_{$type}", $update, $item );
 	}
+
+	/**
+	 * Returns whether the server supports URL rewriting.
+	 *
+	 * Detects Apache's mod_rewrite, IIS 7.0+ permalink support, and nginx.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @global bool $is_nginx
+	 *
+	 * @return bool Whether the server supports URL rewriting.
+	 */
+	function got_url_rewrite() {
+		$got_url_rewrite = ( $this->got_mod_rewrite() || $GLOBALS['is_nginx'] || $this->iis7_supports_permalinks() );
+
+		/**
+		 * Filters whether URL rewriting is available.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param bool $got_url_rewrite Whether URL rewriting is available.
+		 */
+		return apply_filters( 'got_url_rewrite', $got_url_rewrite );
+	}
+
+	/**
+	 * Check if IIS 7+ supports pretty permalinks.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @global bool $is_iis7
+	 *
+	 * @return bool Whether IIS7 supports permalinks.
+	 */
+	function iis7_supports_permalinks() {
+		global $is_iis7;
+
+		$supports_permalinks = false;
+		if ( $is_iis7 ) {
+			/* First we check if the DOMDocument class exists. If it does not exist, then we cannot
+			 * easily update the xml configuration file, hence we just bail out and tell user that
+			 * pretty permalinks cannot be used.
+			 *
+			 * Next we check if the URL Rewrite Module 1.1 is loaded and enabled for the web site. When
+			 * URL Rewrite 1.1 is loaded it always sets a server variable called 'IIS_UrlRewriteModule'.
+			 * Lastly we make sure that PHP is running via FastCGI. This is important because if it runs
+			 * via ISAPI then pretty permalinks will not work.
+			 */
+			$supports_permalinks = class_exists( 'DOMDocument', false ) && isset( $_SERVER['IIS_UrlRewriteModule'] ) && ( 'cgi-fcgi' === PHP_SAPI );
+		}
+
+		/**
+		 * Filters whether IIS 7+ supports pretty permalinks.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param bool $supports_permalinks Whether IIS7 supports permalinks. Default false.
+		 */
+		return apply_filters( 'iis7_supports_permalinks', $supports_permalinks );
+	}
+
+	/**
+	 * Returns whether the server is running Apache with the mod_rewrite module loaded.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return bool Whether the server is running Apache with the mod_rewrite module loaded.
+	 */
+	function got_mod_rewrite() {
+		$got_rewrite = apache_mod_loaded( 'mod_rewrite', true );
+
+		/**
+		 * Filters whether Apache and mod_rewrite are present.
+		 *
+		 * This filter was previously used to force URL rewriting for other servers,
+		 * like nginx. Use the {@see 'got_url_rewrite'} filter in got_url_rewrite() instead.
+		 *
+		 * @since 2.5.0
+		 *
+		 * @see got_url_rewrite()
+		 *
+		 * @param bool $got_rewrite Whether Apache and mod_rewrite are present.
+		 */
+		return apply_filters( 'got_rewrite', $got_rewrite );
+	}
+
 	/**
 	 * Test if the supplied PHP version is supported.
 	 *
@@ -980,7 +1066,7 @@ class RoxWP_Update_Check {
 	 *
 	 * @return array
 	 */
-	function get_plugin_updates() {
+	public function get_plugin_updates() {
 		$all_plugins     = get_plugins();
 		$upgrade_plugins = array();
 		$current         = get_site_transient( 'update_plugins' );
