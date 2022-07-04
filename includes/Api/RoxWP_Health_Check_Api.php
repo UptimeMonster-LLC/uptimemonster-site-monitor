@@ -103,9 +103,13 @@ class RoxWP_Health_Check_Api {
      * Get route access if request is valid.
      */
 	public function get_route_access() {
-		$has_access = RoxWP_Client::get_instance()->has_keys();
 
-		if(  $has_access ) {
+		$api_keys = get_option( 'roxwp_site_monitor_api_keys', []);
+
+		$api_key = $_SERVER['HTTP_API_KEY'];
+		$secret_key = $_SERVER['HTTP_SECRET_KEY'];
+
+		if(  $api_keys['api_key'] === $api_key && $api_keys['api_secret'] === $secret_key) {
 
 			return true;
 		}
