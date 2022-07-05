@@ -1,8 +1,8 @@
 <?php
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Api;
+namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health;
 
-use AbsolutePlugins\RoxwpSiteMonitor\Api\RoxWP_Update_Check;
+use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update_Check;
 
 class RoxWP_Debug_Data {
 	public $update_check;
@@ -1760,7 +1760,7 @@ class RoxWP_Debug_Data {
 				/* translators: %s: Support forums URL. */
 					__( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.' ),
 					__( 'https://wordpress.org/support/forums/' )
-				) . ' ' . __( '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)' ),
+				) . ' RoxWP_Debug_Data.php' . __( '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)' ),
 				headers_sent() || WP_DEBUG ? E_USER_WARNING : E_USER_NOTICE
 			);
 			$response = wp_remote_get( $http_url, $options );

@@ -1,6 +1,6 @@
 <?php
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Api;
+namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health;
 
 class RoxWP_Update_Check {
 
