@@ -40,7 +40,6 @@ class RoxWP_Health_Check_Api {
 					'permission_callback' => array( $this, 'get_route_access' ),
 					'args'                => array(),
 				),
-
 			)
 		);
 
@@ -107,13 +106,12 @@ class RoxWP_Health_Check_Api {
 	 */
 	public function send_site_health_info( $request ) {
 
-		$update_check       = new RoxWP_Update_Check();
-		$this->site_healths = $update_check->get_site_health();
+		$update_check = new RoxWP_Update_Check();
 
-		$response['status'] = true;
-		$response['data']   = $this->site_healths;
-
-		return rest_ensure_response( $response );
+		return rest_ensure_response( [
+			'status' => true,
+			'data' => $update_check->get_site_health(),
+		] );
 	}
 
 
@@ -129,8 +127,8 @@ class RoxWP_Health_Check_Api {
 		$api_keys        = get_option( 'roxwp_site_monitor_api_keys', [] );
 		$request_api_key = $request->get_header( 'X-Api-Key' ) ? $request->get_header( 'X-Api-Key' ) : '';
 		$signature       = $request->get_header( 'X-Api-Signature' ) ? $request->get_header( 'X-Api-Signature' ) : '';
-		$timestamp       = $request->get_header( 'X-Timestamp' ) ? $request->get_header( 'X-Timestamp' ) : '';
-		$method          = $request->get_method();
+		$timestamp       = $request->get_header( 'X-Api-Timestamp' ) ? $request->get_header( 'X-Api-Timestamp' ) : '';
+		$method          = strtolower( $request->get_method() );
 		$data            = $request->get_body();
 
 		if ( empty( $data ) ) {
@@ -150,7 +148,7 @@ class RoxWP_Health_Check_Api {
 			return true;
 		}
 
-		return true;
+		return new \WP_Error( 'invalid_signature', __( 'Invalid Signature', 'roxwp-site-mon' ) );
 
 	}
 
