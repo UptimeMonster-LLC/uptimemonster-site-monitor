@@ -40,6 +40,31 @@ class Plugins extends Controller_Base {
 	 */
 	public function activate( $request ) {
 
+
+//		if ( $plugin ) {
+//			$activate = $this->__activate_plugin( $plugin );
+//
+//			if ( is_wp_error( $activate ) ) {
+//				if ( defined( 'WP_CLI' ) ) {
+//					\WP_CLI::error( 'Plugin Activation Error: ' . $activate->get_error_message() );
+//				} elseif ( wp_doing_ajax() ) {
+//					wp_send_json_error( [ 'slug' => $plugin, 'errorMessage' => $activate->get_error_message() ] );
+//				}
+//			}
+//
+//			if ( defined( 'WP_CLI' ) ) {
+//				\WP_CLI::line( 'Plugin Activated!' );
+//			} elseif ( wp_doing_ajax() ) {
+//				wp_send_json_success(
+//					array(
+//						'success' => true,
+//						'message' => __( 'Plugin Activated', 'ayyash-studio' ),
+//					)
+//				);
+//			}
+//		} else {
+//			wp_send_json_error( [ 'errorMessage' => __( 'Invalid Request', 'ayyash-studio' ) ] );
+//		}
 		return rest_ensure_response( [
 			'status' => true,
 			'data'   => [],
