@@ -69,7 +69,7 @@ abstract class Controller_Base extends \WP_REST_Controller {
 			return true;
 		}
 
-		return false;
+		return new \WP_Error( 'invalid_signature', __( 'Invalid Signature', 'roxwp-site-mon' ) );
 
 	}
 

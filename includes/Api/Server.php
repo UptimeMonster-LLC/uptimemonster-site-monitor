@@ -2,8 +2,8 @@
 /**
  * Plugin Loader.
  *
- * @package Ayyash_Studio_Server\RestApi
- * @author Kudratullah <mhamudul.hk@gmail.com>
+ * @package AbsolutePlugins\RoxwpSiteMonitor\Api
+ * @author Azizul Hasan <azizulhasan.cr@gmail.com>
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -68,15 +68,15 @@ final class Server {
 	 * Prevent cloning.
 	 */
 	final public function __clone() {
-		wc_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'ayyash-studio' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, __( 'serializing instances of this class is forbidden.', 'roxwp-site-mon' ), '1.0.0' );
 	}
 
 	/**
 	 * Prevent unserializing.
 	 */
 	final public function __wakeup() {
-		wc_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'ayyash-studio' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'roxwp-site-mon' ), '1.0.0' );
 	}
 }
 
-// End of file class-server.php.
+// End of file Server.php.

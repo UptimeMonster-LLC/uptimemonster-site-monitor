@@ -78,11 +78,9 @@ class Health_Check extends Controller_Base {
 		$debug_info = $debug_data->debug_data() ? $debug_data->debug_data() : [];
 
 		return rest_ensure_response( [
-			'status' => true,
-			'data'   => [
-				'site_health'     => $site_healths,
-				'site_debug_data' => $debug_info,
-			]
+			'status'      => true,
+			'site_health' => $site_healths,
+			'site_info'   => $debug_info,
 		] );
 	}
 

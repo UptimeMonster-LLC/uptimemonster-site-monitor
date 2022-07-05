@@ -54,7 +54,7 @@ final class RoxWP_Site_Monitor {
 		// Plugin Dashboard.
 		Dashboard::get_instance();
 
-		// Get site health data.
+		// Site monitor rest api.
 		add_action('init', function () {
 			$server = Server::get_instance();
 			$server->init();
