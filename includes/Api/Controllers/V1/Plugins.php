@@ -40,9 +40,10 @@ class Plugins extends Controller_Base {
 	 */
 	public function activate( $request ) {
 
+
 		return rest_ensure_response( [
 			'status' => true,
-			'data'   => $request->get_body(),
+			'data'   => [],
 		] );
 	}
 
