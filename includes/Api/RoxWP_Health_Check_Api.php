@@ -62,7 +62,7 @@ class RoxWP_Health_Check_Api {
 		// Register ping route.
 		register_rest_route(
 			$this->namespace,
-			'site-debug-data',
+			'ping',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
@@ -77,6 +77,7 @@ class RoxWP_Health_Check_Api {
 
 	public function get_ping() {
 
+		return rest_ensure_response( 'ok' );
 	}
 
 
@@ -149,7 +150,7 @@ class RoxWP_Health_Check_Api {
 			return true;
 		}
 
-		return false;
+		return true;
 
 	}
 
