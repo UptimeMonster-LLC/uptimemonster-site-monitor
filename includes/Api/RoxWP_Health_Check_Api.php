@@ -19,47 +19,63 @@ class RoxWP_Health_Check_Api {
 	public $current_user;
 
 
-	public function __construct( $current_user = null)
-	{
-		$this->version = 'v1';
-		$this->namespace = 'roxwp/' . $this->version;
-		$this->rest_base = '/site-health';
+	public function __construct( $current_user = null ) {
+		$this->version      = 'v1';
+		$this->namespace    = 'roxwp/' . $this->version;
+		$this->rest_base    = '/site-health';
 		$this->current_user = $current_user;
 
-		add_action('rest_api_init', [ $this , 'roxwp_register_routes']);
+		add_action( 'rest_api_init', [ $this, 'roxwp_register_routes' ] );
 	}
 
-	public  function roxwp_register_routes(){
-		// Register debug_data route.
-		register_rest_route(
-			$this->namespace,
-			$this->rest_base . '/debug_data',
-			array(
-				array(
-					'methods' => \WP_REST_Server::READABLE,
-					'callback' => array( $this, 'send_debug_info' ),
-					'permission_callback' => array( $this, 'get_route_access' ),
-					'args' => array(),
-				),
-
-			)
-		);
-
+	public function roxwp_register_routes() {
 		// Register site health route.
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/site_health',
+			$this->rest_base,
 			array(
 				array(
-					'methods' => \WP_REST_Server::READABLE,
-					'callback' => array( $this, 'send_site_health_info' ),
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'send_site_health_info' ),
 					'permission_callback' => array( $this, 'get_route_access' ),
-					'args' => array(),
+					'args'                => array(),
 				),
 
 			)
 		);
 
+		// Register site debug dta route.
+		register_rest_route(
+			$this->namespace,
+			'site-debug-data',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'send_debug_info' ),
+					'permission_callback' => array( $this, 'get_route_access' ),
+					'args'                => array(),
+				),
+
+			)
+		);
+
+		// Register ping route.
+		register_rest_route(
+			$this->namespace,
+			'site-debug-data',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_ping' ),
+					'permission_callback' => array( $this, 'get_route_access' ),
+					'args'                => array(),
+				),
+
+			)
+		);
+	}
+
+	public function get_ping() {
 
 	}
 
@@ -67,11 +83,13 @@ class RoxWP_Health_Check_Api {
 	/**
 	 * @param $request
 	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 *
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 */
-	public function send_debug_info( $request ){
+	public function send_debug_info( $request ) {
 
-		$debug_data =   new RoxWP_Debug_Data();
+		$debug_data = new RoxWP_Debug_Data();
 		$debug_info = $debug_data->debug_data();
 
 		$response['status'] = true;
@@ -82,37 +100,57 @@ class RoxWP_Health_Check_Api {
 	}
 
 	/**
-	 * @param $request
+	 * @param \WP_REST_Request $request Full details about the request.
 	 *
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 */
 	public function send_site_health_info( $request ) {
 
-		$update_check = new RoxWP_Update_Check();
+		$update_check       = new RoxWP_Update_Check();
 		$this->site_healths = $update_check->get_site_health();
 
 		$response['status'] = true;
 		$response['data']   = $this->site_healths;
 
 		return rest_ensure_response( $response );
-
 	}
 
 
-	/*
-     * Get route access if request is valid.
-     */
-	public function get_route_access() {
+	/**
+	 * Get route access if request is valid.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 *
+	 * @return \WP_Error|boolean
+	 */
+	public function get_route_access( $request ) {
 
-		$api_keys = get_option( 'roxwp_site_monitor_api_keys', []);
+		$api_keys        = get_option( 'roxwp_site_monitor_api_keys', [] );
+		$request_api_key = $request->get_header( 'X-Api-Key' ) ? $request->get_header( 'X-Api-Key' ) : '';
+		$signature       = $request->get_header( 'X-Api-Signature' ) ? $request->get_header( 'X-Api-Signature' ) : '';
+		$timestamp       = $request->get_header( 'X-Timestamp' ) ? $request->get_header( 'X-Timestamp' ) : '';
+		$method          = $request->get_method();
+		$data            = $request->get_body();
 
-		$api_key = $_SERVER['HTTP_API_KEY'];
-		$secret_key = $_SERVER['HTTP_SECRET_KEY'];
+		if ( empty( $data ) ) {
+			$data = '';
+		} else {
+			if ( ! is_string( $data ) ) {
+				$data = json_encode( $data );
+			}
+		}
 
-		if(  $api_keys['api_key'] === $api_key && $api_keys['api_secret'] === $secret_key) {
+		$isValid = hash_equals(
+			$signature,
+			hash_hmac( 'sha256', $request_api_key . $method . $data . $timestamp, $api_keys['api_secret'] )
+		);
 
+		if ( $isValid ) {
 			return true;
 		}
+
+		return false;
+
 	}
 
 
