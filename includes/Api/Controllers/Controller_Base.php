@@ -45,11 +45,12 @@ abstract class Controller_Base extends \WP_REST_Controller {
 	 */
 	public function get_route_access( $request ) {
 
+
 		$api_keys        = get_option( 'roxwp_site_monitor_api_keys', [] );
 		$request_api_key = $request->get_header( 'X-Api-Key' ) ? $request->get_header( 'X-Api-Key' ) : '';
 		$signature       = $request->get_header( 'X-Api-Signature' ) ? $request->get_header( 'X-Api-Signature' ) : '';
-		$timestamp       = $request->get_header( 'X-Timestamp' ) ? $request->get_header( 'X-Timestamp' ) : '';
-		$method          = $request->get_method();
+		$timestamp       = $request->get_header( 'X-Api-Timestamp' ) ? $request->get_header( 'X-Api-Timestamp' ) : '';
+		$method          = strtolower( $request->get_method() );
 		$data            = $request->get_body();
 
 		if ( empty( $data ) ) {
