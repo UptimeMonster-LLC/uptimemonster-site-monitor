@@ -12,6 +12,7 @@ namespace AbsolutePlugins\RoxwpSiteMonitor\Api;
 
 use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Health_Check;
 use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Plugins;
+use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Themes;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -55,7 +56,8 @@ final class Server {
 
 		$routes = [
 			Health_Check::class,
-			Plugins::class
+			Plugins::class,
+			Themes::class
 		];
 
 		foreach ( $routes as $route ) {

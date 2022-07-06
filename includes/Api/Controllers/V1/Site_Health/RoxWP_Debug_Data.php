@@ -6,10 +6,12 @@ use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update
 
 class RoxWP_Debug_Data {
 	public $update_check;
-	public  function __construct(){
+
+	public function __construct() {
 
 		$this->update_check = new RoxWP_Update_Check();
 	}
+
 	/**
 	 * Calls all core functions to check for updates.
 	 *
@@ -24,17 +26,17 @@ class RoxWP_Debug_Data {
 	/**
 	 * Static function for generating site debug data when required.
 	 *
-	 * @since 5.2.0
-	 * @since 5.3.0 Added database charset, database collation,
-	 *              and timezone information.
+	 * @return array The debug data for the site.
+	 * @throws ImagickException
 	 * @since 5.5.0 Added pretty permalinks support information.
 	 *
-	 * @throws ImagickException
+	 * @since 5.2.0
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 *
-	 * @return array The debug data for the site.
+	 * @since 5.3.0 Added database charset, database collation,
+	 *              and timezone information.
 	 */
-	public  function debug_data() {
+	public function debug_data() {
 		global $wpdb;
 
 		// Save few function calls.
@@ -960,6 +962,7 @@ class RoxWP_Debug_Data {
 				'label' => $plugin['Name'],
 				'value' => $plugin_version_string,
 				'debug' => $plugin_version_string_debug,
+				'slug'  => $plugin_path
 			);
 		}
 
@@ -970,7 +973,7 @@ class RoxWP_Debug_Data {
 
 		$auto_updates = array();
 
-		$auto_updates_enabled =  $this->update_check->wp_is_auto_update_enabled_for_type( 'plugin' );
+		$auto_updates_enabled = $this->update_check->wp_is_auto_update_enabled_for_type( 'plugin' );
 
 		if ( $auto_updates_enabled ) {
 			$auto_updates = (array) get_site_option( 'auto_update_plugins', array() );
@@ -1032,7 +1035,7 @@ class RoxWP_Debug_Data {
 					$item = wp_parse_args( $plugin, $item );
 				}
 
-				$auto_update_forced =  $this->update_check->wp_is_auto_update_forced_for_item( 'plugin', null, (object) $item );
+				$auto_update_forced = $this->update_check->wp_is_auto_update_forced_for_item( 'plugin', null, (object) $item );
 
 				if ( ! is_null( $auto_update_forced ) ) {
 					$enabled = $auto_update_forced;
@@ -1049,12 +1052,13 @@ class RoxWP_Debug_Data {
 				/**
 				 * Filters the text string of the auto-updates setting for each plugin in the Site Health debug data.
 				 *
+				 * @param string $auto_updates_string The string output for the auto-updates column.
+				 * @param string $plugin_path The path to the plugin file.
+				 * @param array $plugin An array of plugin data.
+				 * @param bool $enabled Whether auto-updates are enabled for this item.
+				 *
 				 * @since 5.5.0
 				 *
-				 * @param string $auto_updates_string The string output for the auto-updates column.
-				 * @param string $plugin_path         The path to the plugin file.
-				 * @param array  $plugin              An array of plugin data.
-				 * @param bool   $enabled             Whether auto-updates are enabled for this item.
 				 */
 				$auto_updates_string = apply_filters( 'plugin_auto_update_debug_string', $auto_updates_string, $plugin_path, $plugin, $enabled );
 
@@ -1066,6 +1070,7 @@ class RoxWP_Debug_Data {
 				'label' => $plugin['Name'],
 				'value' => $plugin_version_string,
 				'debug' => $plugin_version_string_debug,
+				'slug'  => $plugin_path
 			);
 		}
 
@@ -1087,7 +1092,7 @@ class RoxWP_Debug_Data {
 		$active_theme_version_debug = $active_theme_version;
 
 		$auto_updates         = array();
-		$auto_updates_enabled =  $this->update_check->wp_is_auto_update_enabled_for_type( 'theme' );
+		$auto_updates_enabled = $this->update_check->wp_is_auto_update_enabled_for_type( 'theme' );
 		if ( $auto_updates_enabled ) {
 			$auto_updates = (array) get_site_option( 'auto_update_themes', array() );
 		}
@@ -1103,7 +1108,7 @@ class RoxWP_Debug_Data {
 		$active_theme_author_uri = $active_theme->display( 'AuthorURI' );
 
 		if ( $active_theme->parent_theme ) {
-			$active_theme_parent_theme = sprintf(
+			$active_theme_parent_theme       = sprintf(
 			/* translators: 1: Theme name. 2: Theme slug. */
 				__( '%1$s (%2$s)' ),
 				$active_theme->parent_theme,
@@ -1174,7 +1179,7 @@ class RoxWP_Debug_Data {
 				);
 			}
 
-			$auto_update_forced =  $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
+			$auto_update_forced = $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
 
 			if ( ! is_null( $auto_update_forced ) ) {
 				$enabled = $auto_update_forced;
@@ -1260,7 +1265,7 @@ class RoxWP_Debug_Data {
 					);
 				}
 
-				$auto_update_forced =  $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
+				$auto_update_forced = $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
 
 				if ( ! is_null( $auto_update_forced ) ) {
 					$enabled = $auto_update_forced;
@@ -1348,7 +1353,7 @@ class RoxWP_Debug_Data {
 					);
 				}
 
-				$auto_update_forced =  $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
+				$auto_update_forced = $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
 
 				if ( ! is_null( $auto_update_forced ) ) {
 					$enabled = $auto_update_forced;
@@ -1365,11 +1370,12 @@ class RoxWP_Debug_Data {
 				/**
 				 * Filters the text string of the auto-updates setting for each theme in the Site Health debug data.
 				 *
+				 * @param string $auto_updates_string The string output for the auto-updates column.
+				 * @param WP_Theme $theme An object of theme data.
+				 * @param bool $enabled Whether auto-updates are enabled for this item.
+				 *
 				 * @since 5.5.0
 				 *
-				 * @param string   $auto_updates_string The string output for the auto-updates column.
-				 * @param WP_Theme $theme               An object of theme data.
-				 * @param bool     $enabled             Whether auto-updates are enabled for this item.
 				 */
 				$auto_updates_string = apply_filters( 'theme_auto_update_debug_string', $auto_updates_string, $theme, $enabled );
 
@@ -1386,6 +1392,7 @@ class RoxWP_Debug_Data {
 				),
 				'value' => $theme_version_string,
 				'debug' => $theme_version_string_debug,
+				'slug'  => $theme_slug
 			);
 		}
 
@@ -1414,51 +1421,51 @@ class RoxWP_Debug_Data {
 		 * All strings are expected to be plain text except `$description` that can contain
 		 * inline HTML tags (see below).
 		 *
-		 * @since 5.2.0
-		 *
 		 * @param array $args {
 		 *     The debug information to be added to the core information page.
 		 *
 		 *     This is an associative multi-dimensional array, up to three levels deep.
 		 *     The topmost array holds the sections, keyed by section ID.
 		 *
-		 *     @type array ...$0 {
+		 * @type array ...$0 {
 		 *         Each section has a `$fields` associative array (see below), and each `$value` in `$fields`
 		 *         can be another associative array of name/value pairs when there is more structured data
 		 *         to display.
 		 *
-		 *         @type string $label       Required. The title for this section of the debug output.
-		 *         @type string $description Optional. A description for your information section which
+		 * @type string $label Required. The title for this section of the debug output.
+		 * @type string $description Optional. A description for your information section which
 		 *                                   may contain basic HTML markup, inline tags only as it is
 		 *                                   outputted in a paragraph.
-		 *         @type bool   $show_count  Optional. If set to `true`, the amount of fields will be included
+		 * @type bool $show_count Optional. If set to `true`, the amount of fields will be included
 		 *                                   in the title for this section. Default false.
-		 *         @type bool   $private     Optional. If set to `true`, the section and all associated fields
+		 * @type bool $private Optional. If set to `true`, the section and all associated fields
 		 *                                   will be excluded from the copied data. Default false.
-		 *         @type array  $fields {
+		 * @type array $fields {
 		 *             Required. An associative array containing the fields to be displayed in the section,
 		 *             keyed by field ID.
 		 *
-		 *             @type array ...$0 {
+		 * @type array ...$0 {
 		 *                 An associative array containing the data to be displayed for the field.
 		 *
-		 *                 @type string $label    Required. The label for this piece of information.
-		 *                 @type mixed  $value    Required. The output that is displayed for this field.
+		 * @type string $label Required. The label for this piece of information.
+		 * @type mixed $value Required. The output that is displayed for this field.
 		 *                                        Text should be translated. Can be an associative array
 		 *                                        that is displayed as name/value pairs.
 		 *                                        Accepted types: `string|int|float|(string|int|float)[]`.
-		 *                 @type string $debug    Optional. The output that is used for this field when
+		 * @type string $debug Optional. The output that is used for this field when
 		 *                                        the user copies the data. It should be more concise and
 		 *                                        not translated. If not set, the content of `$value`
 		 *                                        is used. Note that the array keys are used as labels
 		 *                                        for the copied data.
-		 *                 @type bool   $private  Optional. If set to `true`, the field will be excluded
+		 * @type bool $private Optional. If set to `true`, the field will be excluded
 		 *                                        from the copied data, allowing you to show, for example,
 		 *                                        API keys here. Default false.
 		 *             }
 		 *         }
 		 *     }
 		 * }
+		 * @since 5.2.0
+		 *
 		 */
 		$info = apply_filters( 'debug_information', $info );
 
@@ -1467,9 +1474,9 @@ class RoxWP_Debug_Data {
 
 
 	/**
+	 * @return array
 	 * @since 2.9.0
 	 *
-	 * @return array
 	 */
 	function get_plugin_updates() {
 		$all_plugins     = get_plugins();
@@ -1488,12 +1495,13 @@ class RoxWP_Debug_Data {
 	/**
 	 * Returns the value of a MySQL system variable.
 	 *
+	 * @param string $mysql_var Name of the MySQL system variable.
+	 *
+	 * @return string|null The variable value on success. Null if the variable does not exist.
 	 * @since 5.9.0
 	 *
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 *
-	 * @param string $mysql_var Name of the MySQL system variable.
-	 * @return string|null The variable value on success. Null if the variable does not exist.
 	 */
 	public static function get_mysql_var( $mysql_var ) {
 		global $wpdb;
@@ -1513,11 +1521,12 @@ class RoxWP_Debug_Data {
 	/**
 	 * Format the information gathered for debugging, in a manner suitable for copying to a forum or support ticket.
 	 *
+	 * @param array $info_array Information gathered from the `WP_Debug_Data::debug_data()` function.
+	 * @param string $data_type The data type to return, either 'info' or 'debug'.
+	 *
+	 * @return string The formatted data.
 	 * @since 5.2.0
 	 *
-	 * @param array  $info_array Information gathered from the `WP_Debug_Data::debug_data()` function.
-	 * @param string $data_type  The data type to return, either 'info' or 'debug'.
-	 * @return string The formatted data.
 	 */
 	public static function format( $info_array, $data_type ) {
 		$return = "`\n";
@@ -1582,9 +1591,9 @@ class RoxWP_Debug_Data {
 	/**
 	 * Fetch the total size of all the database tables for the active database user.
 	 *
+	 * @return int The size of the database, in bytes.
 	 * @since 5.2.0
 	 *
-	 * @return int The size of the database, in bytes.
 	 */
 	public static function get_database_size() {
 		global $wpdb;
@@ -1604,9 +1613,9 @@ class RoxWP_Debug_Data {
 	 * Fetch the sizes of the WordPress directories: `wordpress` (ABSPATH), `plugins`, `themes`, and `uploads`.
 	 * Intended to supplement the array returned by `WP_Debug_Data::debug_data()`.
 	 *
+	 * @return array The sizes of the directories, also the database size and total installation size.
 	 * @since 5.2.0
 	 *
-	 * @return array The sizes of the directories, also the database size and total installation size.
 	 */
 	public static function get_sizes() {
 		$size_db    = self::get_database_size();
@@ -1727,18 +1736,15 @@ class RoxWP_Debug_Data {
 	}
 
 
-
-
-
-
 	/**
 	 * Gets and caches the checksums for the given version of WordPress.
 	 *
+	 * @param string $version Version string to query.
+	 * @param string $locale Locale to query.
+	 *
+	 * @return array|false An array of checksums on success, false on failure.
 	 * @since 3.7.0
 	 *
-	 * @param string $version Version string to query.
-	 * @param string $locale  Locale to query.
-	 * @return array|false An array of checksums on success, false on failure.
 	 */
 	public function get_core_checksums( $version, $locale ) {
 		$http_url = 'http://api.wordpress.org/core/checksums/1.0/?' . http_build_query( compact( 'version', 'locale' ), '', '&' );
@@ -1781,11 +1787,10 @@ class RoxWP_Debug_Data {
 	}
 
 
-
 	/**
+	 * @return array
 	 * @since 2.9.0
 	 *
-	 * @return array
 	 */
 	public function get_theme_updates() {
 		$current = get_site_transient( 'update_themes' );
@@ -1812,10 +1817,10 @@ class RoxWP_Debug_Data {
 	 *     param {object} data {
 	 *         Arguments for admin notice.
 	 *
-	 *         @type string id        ID of the notice.
-	 *         @type string className Class names for the notice.
-	 *         @type string message   The notice's message.
-	 *         @type string type      The type of update the notice is for. Either 'plugin' or 'theme'.
+	 * @type string id        ID of the notice.
+	 * @type string className Class names for the notice.
+	 * @type string message   The notice's message.
+	 * @type string type      The type of update the notice is for. Either 'plugin' or 'theme'.
 	 *     }
 	 *
 	 * @since 4.6.0
@@ -1823,10 +1828,12 @@ class RoxWP_Debug_Data {
 	public function wp_print_admin_notice_templates() {
 		?>
 		<script id="tmpl-wp-updates-admin-notice" type="text/html">
-			<div <# if ( data.id ) { #>id="{{ data.id }}"<# } #> class="notice {{ data.className }}"><p>{{{ data.message }}}</p></div>
+			<div <# if ( data.id ) { #>id="{{ data.id }}"<# } #> class="notice {{ data.className }}"><p>{{{ data.message
+				}}}</p></div>
 		</script>
 		<script id="tmpl-wp-bulk-updates-admin-notice" type="text/html">
-			<div id="{{ data.id }}" class="{{ data.className }} notice <# if ( data.errors ) { #>notice-error<# } else { #>notice-success<# } #>">
+			<div id="{{ data.id }}"
+				 class="{{ data.className }} notice <# if ( data.errors ) { #>notice-error<# } else { #>notice-success<# } #>">
 				<p>
 					<# if ( data.successes ) { #>
 					<# if ( 1 === data.successes ) { #>
@@ -1886,14 +1893,12 @@ class RoxWP_Debug_Data {
 	}
 
 
-
-
 	/**
 	 * Determines the appropriate auto-update message to be displayed.
 	 *
+	 * @return string The update message to be shown.
 	 * @since 5.5.0
 	 *
-	 * @return string The update message to be shown.
 	 */
 	public function wp_get_auto_update_message() {
 		$next_update_time = wp_next_scheduled( 'wp_version_check' );
