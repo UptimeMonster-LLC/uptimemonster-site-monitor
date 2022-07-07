@@ -77,13 +77,13 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 		// Has previous errors but no current errors.
 		if ( count( $resolved_errors ) ) {
 			if( isset( $GLOBALS['current_errors'] ) ) {
-				// All errors are resolved.
+				// Solved and current errors.
 				$this->send_log( [
 					'errors'   => $GLOBALS['current_errors'],
 					'resolved' => $resolved_errors
 				] );
 			}else {
-				// All errors are resolved.
+				// solved errors.
 				$this->send_log( [
 					'errors'   => [],
 					'resolved' => $resolved_errors
