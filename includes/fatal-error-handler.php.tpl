@@ -35,20 +35,21 @@ function roxwp_error_catcher( $type, $message, $file, $line ) {
 	global $current_errors;
 
 	if ( E_USER_DEPRECATED !== $type && ! wp_is_maintenance_mode() ) {
-		$error = [
+		$error                   = [
 			'type'    => $type,
 			'message' => $message,
 			'file'    => $file,
 			'line'    => $line
 		];
-		$hash = md5( maybe_serialize( $error ) );
-		$current_errors[$hash] = $error;
+		$hash                    = md5( maybe_serialize( $error ) );
+		$current_errors[ $hash ] = $error;
 	}
 
 	return false;
 }
 
 set_error_handler( 'roxwp_error_catcher', E_ALL );
+
 
 class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 
@@ -70,62 +71,12 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 			return;
 		}
 
-		$prev_errors = get_site_option( 'roxwp_error_hashes', [] );
-		$resolved_errors = $this->get_resolved_errors( $prev_errors );
-
-
-		// Has previous errors but no current errors.
-		if ( count( $resolved_errors ) ) {
-			if( isset( $GLOBALS['current_errors'] ) ) {
-				// Solved and current errors.
-				$this->send_log( [
-					'errors'   => $GLOBALS['current_errors'],
-					'resolved' => $resolved_errors
-				] );
-			}else {
-				// solved errors.
-				$this->send_log( [
-					'errors'   => [],
-					'resolved' => $resolved_errors
-				] );
-			}
-
-			return;
-		}
-
-		// if prev_err or current_err has error.
-		if (  count( $prev_errors ) ||  isset( $GLOBALS['current_errors']) ) {
-			// Send Error Log Data.
-			$this->send_log( [
-				'errors'   => isset( $GLOBALS['current_errors'] ) ? $GLOBALS['current_errors'] : [],
-				'prev_err' => $prev_errors
-			] );
-		}
+		//   errors.
+		$this->send_log( [
+			'errors' => isset( $GLOBALS['current_errors'] ) ? $GLOBALS['current_errors'] : [],
+		] );
 
 	}
-
-	/**
-	 * Get resolved errors and update current errors.
-	 * @param $prev_errors
-	 *
-	 * @return array
-	 */
-	protected  function get_resolved_errors( $prev_errors ) {
-
-		$resolved = [];
-		foreach ( $prev_errors as $hash => $err ) {
-			if ( ! isset( $GLOBALS['current_errors'][ $hash ] ) ) {
-				$resolved[$hash] = $err;
-			}
-		}
-
-		// IF no error then update it as empty.
-		$current_errs = isset( $GLOBALS['current_errors'] ) ? $GLOBALS['current_errors'] : [];
-		update_site_option ( 'roxwp_error_hashes',  $current_errs );
-
-		return $resolved;
-	}
-
 
 	/**
 	 * @param $data
@@ -142,7 +93,7 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 			require_once WP_CONTENT_DIR . '/plugins/roxwp-site-monitor/includes/RoxWP_Client.php';
 		}
 
-		$client = \AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Client::get_instance();
+		$client = AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Client::get_instance();
 		$client->send_log( [
 			'action'    => 'error_log',
 			'activity'  => 'WP_Error_Handler',
