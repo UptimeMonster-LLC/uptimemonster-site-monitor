@@ -89,7 +89,7 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 			// Send Error Log Data.
 			$this->send_log( [
 				'errors'   => isset( $GLOBALS['current_errors'] ) ? $GLOBALS['current_errors'] : [],
-				'resolved' => $prev_errors
+				'prev_err' => $prev_errors
 			] );
 		}
 
