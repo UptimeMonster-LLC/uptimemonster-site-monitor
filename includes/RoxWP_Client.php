@@ -177,6 +177,8 @@ class RoxWP_Client {
 		$route       = ltrim( $route, '\\/' );
 		$request_url = $this->get_host() . 'api/' . $this->version . '/' . $route;
 
+		$args = apply_filters( 'roxwp_site_monitor_client_args', $args, $route );
+
 		if ( false !== strpos( $this->get_host(), '.test/' ) ) {
 			$response = wp_remote_request( $request_url, $args );
 		} elseif ( function_exists( 'vip_safe_wp_remote_request' ) ) {
@@ -184,6 +186,15 @@ class RoxWP_Client {
 		} else {
 			$response = wp_safe_remote_request( $request_url, $args );
 		}
+
+		/**
+		 * action after request being sent.
+		 *
+		 * @param array|WP_Error $response raw response returned from wp_remote_request.
+		 * @param array $args request args.
+		 * @param string $request_url
+		 */
+		do_action( 'roxwp_site_monitor_client_response', $response, $args, $request_url );
 
 		if ( is_wp_error( $response ) ) {
 			return $response;

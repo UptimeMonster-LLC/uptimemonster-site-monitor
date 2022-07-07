@@ -42,6 +42,7 @@ function roxwp_error_catcher( $type, $message, $file, $line ) {
 			'line'    => $line
 		];
 		$hash                    = md5( maybe_serialize( $error ) );
+		$error['hash']           = $hash;
 		$current_errors[ $hash ] = $error;
 	}
 
