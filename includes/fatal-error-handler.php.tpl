@@ -73,13 +73,22 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 		$prev_errors = get_site_option( 'roxwp_error_hashes', [] );
 		$resolved_errors = $this->get_resolved_errors( $prev_errors );
 
+
 		// Has previous errors but no current errors.
-		if ( count( $prev_errors ) && ! isset( $GLOBALS['current_errors'] )  ) {
-			// All errors are resolved.
-			$this->send_log( [
-				'errors'   => [],
-				'resolved' => $resolved_errors
-			] );
+		if ( count( $resolved_errors ) ) {
+			if( isset( $GLOBALS['current_errors'] ) ) {
+				// All errors are resolved.
+				$this->send_log( [
+					'errors'   => $GLOBALS['current_errors'],
+					'resolved' => $resolved_errors
+				] );
+			}else {
+				// All errors are resolved.
+				$this->send_log( [
+					'errors'   => [],
+					'resolved' => $resolved_errors
+				] );
+			}
 
 			return;
 		}
