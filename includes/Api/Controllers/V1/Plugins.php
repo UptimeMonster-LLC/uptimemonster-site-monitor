@@ -345,7 +345,7 @@ class Plugins extends Controller_Base {
 		}
 
 		$response['status'] = true;
-		$response['data']  = $statuses;
+		$response['data']   = $statuses;
 
 		return rest_ensure_response( $response );
 	}
@@ -399,14 +399,14 @@ class Plugins extends Controller_Base {
 				uninstall_plugin( $slug );
 				if ( is_plugin_active( $slug ) ) {
 					$status['message'] = __( 'Uninstallation failed', 'roxwp-site-mon' );
-					$status['status'] = false;
+					$status['status']  = false;
 				} else {
-					$status['status'] = true;
+					$status['status']  = true;
 					$status['message'] = __( 'Plugin uninstalled', 'roxwp-site-mon' );
 				}
 
-			}else{
-				$status['status'] = false;
+			} else {
+				$status['status']  = false;
 				$status['message'] = __( 'Can\'nt be uninstalled', 'roxwp-site-mon' );
 			}
 
@@ -453,6 +453,7 @@ class Plugins extends Controller_Base {
 
 		if ( count( $existed_plugins ) === 0 ) {
 			$count = count( $data->slugs );
+
 			return rest_ensure_response( [
 				'status' => false,
 				'action' => 'delete',
@@ -466,11 +467,11 @@ class Plugins extends Controller_Base {
 		$count  = count( $existed_plugins );
 		if ( null === $status ) {
 			$response['status'] = false;
-			$response['data'] = new \WP_Error( 'filesystem-not-writable', _n( 'Unable to delete plugin. Filesystem is readonly.', 'Unable to delete plugins. Filesystem is readonly.', $count, 'roxwp-site-mon' ) );
+			$response['data']   = new \WP_Error( 'filesystem-not-writable', _n( 'Unable to delete plugin. Filesystem is readonly.', 'Unable to delete plugins. Filesystem is readonly.', $count, 'roxwp-site-mon' ) );
 		} else if ( ! is_wp_error( $status ) ) {
 			$response = [
-				'status'  => true,
-				'data' => [
+				'status' => true,
+				'data'   => [
 					'message' => _n( 'Specified plugin deleted', 'Specified plugins deleted', $count, 'roxwp-site-mon' ),
 				]
 			];
@@ -508,6 +509,7 @@ class Plugins extends Controller_Base {
 		}
 
 
+
 		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
@@ -522,23 +524,23 @@ class Plugins extends Controller_Base {
 		$upgrader = new \Plugin_Upgrader( $skin );
 		$statuses = [];
 		foreach ( $data->slugs as $slug ) {
-			$status = [];
+			$status = [
+				'status' => false,
+			];
 			$plugin = plugin_basename( sanitize_text_field( wp_unslash( $slug ) ) );
 
-			$plugin_data  = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
+			$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
 
 			if ( $plugin_data['Version'] ) {
 				/* translators: %s: Plugin version. */
 				$status['oldVersion'] = sprintf( __( 'Version %s' ), $plugin_data['Version'] );
 			}
 
-			$result   = $upgrader->bulk_upgrade( array( $plugin ) );
+			$result = $upgrader->bulk_upgrade( array( $plugin ) );
 
 			if ( is_wp_error( $skin->result ) ) {
-				$status['status'] = false;
-				$status['message']    = $skin->result->get_error_message();
+				$status['message'] = $skin->result->get_error_message();
 			} elseif ( $skin->get_errors()->has_errors() ) {
-				$status['status'] = false;
 				$status['message'] = $skin->get_error_messages();
 			} elseif ( is_array( $result ) && ! empty( $result[ $plugin ] ) ) {
 				/*
@@ -551,36 +553,30 @@ class Plugins extends Controller_Base {
 				 * For now, surface some sort of error here.
 				 */
 				if ( true === $result[ $plugin ] ) {
-					$status['status'] = false;
 					$status['message'] = $upgrader->strings['up_to_date'];
-
-					wp_send_json_error( $status );
-				}else{
+				} else {
 					$plugin_data = get_plugins( '/' . $result[ $plugin ]['destination_name'] );
 					$plugin_data = reset( $plugin_data );
-
-					$version = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
-					$status['status'] = true;
-					$status['message'] = sprintf( __( '%s Updated. New version %s. ' ), $plugin, $version );
+					$version           = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
+					$status['status']  = true;
+					$status['message'] = sprintf( __( '%s Updated. New version %s.', 'roxwp-site-mon' ), $plugin, $version );
 				}
 			} elseif ( false === $result ) {
 				global $wp_filesystem;
-
-				$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-monitor' );
-
 				// Pass through the error from WP_Filesystem if one was raised.
 				if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
 					$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
+				}else{
+					$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-monitor' );
 				}
-
-				wp_send_json_error( $status );
 			}
 
 			$statuses [ $slug ] = $status;
 		}
 
+		$response['data'] = $statuses;
 
-		wp_send_json_error( $status );
+		return rest_ensure_response( $response );
 	}
 
 	/**
