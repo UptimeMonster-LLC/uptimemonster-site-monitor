@@ -508,7 +508,20 @@ class Plugins extends Controller_Base {
 			);
 		}
 
+		$existed_plugins = $this->existed_plugins( $data->slugs );
 
+		if ( count( $existed_plugins ) === 0 ) {
+			$count = count( $data->slugs );
+
+			return rest_ensure_response( [
+				'status' => false,
+				'action' => 'update',
+				'data'   => [
+					'message' => _n( 'Plugin does\'nt exists with this slug', 'Plugins does\'nt exists with these slugs', $count, 'roxwp-site-mon' ),
+				],
+				'extra'  => [],
+			] );
+		}
 
 		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
@@ -523,18 +536,13 @@ class Plugins extends Controller_Base {
 		$skin     = new \WP_Ajax_Upgrader_Skin();
 		$upgrader = new \Plugin_Upgrader( $skin );
 		$statuses = [];
-		foreach ( $data->slugs as $slug ) {
+		foreach ( $existed_plugins as $slug ) {
 			$status = [
 				'status' => false,
 			];
 			$plugin = plugin_basename( sanitize_text_field( wp_unslash( $slug ) ) );
 
 			$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
-
-			if ( $plugin_data['Version'] ) {
-				/* translators: %s: Plugin version. */
-				$status['oldVersion'] = sprintf( __( 'Version %s' ), $plugin_data['Version'] );
-			}
 
 			$result = $upgrader->bulk_upgrade( array( $plugin ) );
 

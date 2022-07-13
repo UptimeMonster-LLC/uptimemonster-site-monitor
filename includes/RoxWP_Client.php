@@ -24,7 +24,7 @@ class RoxWP_Client {
 
 	use Singleton;
 
-//	private $host = 'https://app.roxwp.com/';
+//	private $host = 'https://app.roxwp.com/'; @todo change this host on production for app.roxwp.com
 	private $host = 'https://staging.roxwp.com/';
 
 	private $version = 'v1';
