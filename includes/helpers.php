@@ -74,6 +74,20 @@ function roxwp_get_current_actor() {
 			'name' => 'WP CLI',
 			'ip'   => roxwp_get_ip_address(), // maybe cron triggered by visitor.
 		];
+	} elseif ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		$route     = trim( $GLOBALS['wp']->query_vars['rest_route'], '/' );
+		$parts     = explode( '/', $route );
+		$namespace = reset( $parts );
+
+		$actor = [
+			'type'  => 'rest-api',
+			'name'  => $namespace,
+			'ip'    => roxwp_get_ip_address(),
+			'extra' => [
+				'namespace' => $namespace,
+				'route'     => $route,
+			]
+		];
 	} else {
 		if ( ! function_exists( 'is_user_logged_in' ) ) {
 			require_once ABSPATH . 'wp-includes/pluggable.php';
@@ -95,10 +109,12 @@ function roxwp_get_current_actor() {
 				'ip'   => roxwp_get_ip_address(),
 			];
 		}
+
 	}
 
 	return $actor; // @phpstan-ignore-line
 }
+
 
 /**
  * Get User by identity.
@@ -411,9 +427,9 @@ function get_site_health_tests() {
 	return $tests;
 }
 
-function roxlog( $data ){
+function roxlog( $data ) {
 
-	error_log( print_r( $data, true) );
+	error_log( print_r( $data, true ) );
 }
 
 // End of file helpers.php.

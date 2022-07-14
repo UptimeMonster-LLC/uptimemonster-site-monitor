@@ -36,7 +36,7 @@ class Plugins extends Controller_Base {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'install_plugin' ),
+					'callback'            => array( $this, 'install_plugins' ),
 					'permission_callback' => array( $this, 'get_route_access' ),
 					'args'                => array(),
 				),
@@ -126,7 +126,7 @@ class Plugins extends Controller_Base {
 	 *
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response|
 	 */
-	public function install_plugin( \WP_REST_Request $request ) {
+	public function install_plugins( \WP_REST_Request $request ) {
 
 		$response = array(
 			'action' => 'install',
@@ -136,7 +136,7 @@ class Plugins extends Controller_Base {
 
 		$data = json_decode( $request->get_body() );
 
-		if ( ! isset( $data->slug ) || empty( $data->slug ) ) {
+		if ( ! isset( $data->slugs ) || empty( $data->slugs ) ) {
 			return rest_ensure_response( [
 					'status' => false,
 					'action' => 'install',
@@ -158,76 +158,55 @@ class Plugins extends Controller_Base {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
-		if ( $this->is_plugin_exists( $data->slug ) ) {
-			return rest_ensure_response( [
-					'status' => false,
-					'action' => 'install',
-					'data'   => [
-						'message' => __( 'This plugin already exists.', 'roxwp-site-mon' ),
-					],
-					'extra'  => []
-				]
-			);
-		}
-
-		$api = plugins_api(
-			'plugin_information',
-			array(
-				'slug'   => sanitize_key( wp_unslash( $data->slug ) ),
-				'fields' => array(
-					'sections' => false,
-				),
-			)
-		);
-
-
-		if ( is_wp_error( $api ) ) {
-			$response['status'] = false;
-			$response['data']   = [
-				'message' => $api->get_error_message(),
-			];
-
-			return rest_ensure_response( $response );
-		}
-
 		$skin     = new \WP_Ajax_Upgrader_Skin();
 		$upgrader = new \Plugin_Upgrader( $skin );
-		$result   = $upgrader->install( $api->download_link );
+		$statuses = [];
+		foreach ( $data->slugs as $path ) {
+			$status = array( 'status' => false );
 
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			$response['extra'][] = $skin->get_upgrade_messages();
-		}
+			$slug = $this->get_slug( $path );
 
-		$error = [];
-		if ( is_wp_error( $result ) ) {
-			$error['message'] = $result->get_error_message();
-		} elseif ( is_wp_error( $skin->result ) ) {
-			$error['message'] = $skin->result->get_error_message();
-		} elseif ( $skin->get_errors()->has_errors() ) {
-			$error['message'] = $skin->get_error_messages();
-		} elseif ( is_null( $result ) ) {
-			global $wp_filesystem;
+			$api = plugins_api(
+				'plugin_information',
+				array(
+					'slug'   => $slug,
+					'fields' => array(
+						'sections' => false,
+					),
+				)
+			);
 
-			// Pass through the error from WP_Filesystem if one was raised.
-			if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
-				$error['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
+			if ( is_wp_error( $api ) ) {
+				$status['message']  = $api->get_error_message();
+				$statuses [ $path ] = $status;
+				continue;
 			}
+
+			$result   = $upgrader->install( $api->download_link );
+			if ( is_wp_error( $result ) ) {
+				$status['message'] = $result->get_error_message();
+			} elseif ( is_wp_error( $skin->result ) ) {
+				$status['message'] = $skin->result->get_error_message();
+			} elseif ( $skin->get_errors()->has_errors() ) {
+				$status['message'] = $skin->get_error_messages();
+			} elseif ( is_null( $result ) ) {
+				global $wp_filesystem;
+
+				// Pass through the error from WP_Filesystem if one was raised.
+				if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
+					$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
+				}else{
+					$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.' );
+				}
+			}
+			$status['status'] = true;
+
+			$statuses [ $path ] = $status;
 		}
 
-		if ( ! empty( $error ) ) {
-			$response['status'] = false;
-			$response['data']   = $error;
-
-			return rest_ensure_response( $response );
-		}
-
-		$install_status = install_plugin_install_status( $api );
 
 		$response['status']  = true;
-		$response['data']    = [
-			'message' => __( 'Plugin installed', 'roxwp-site-mon' ),
-		];
-		$response['extra'][] = $install_status;
+		$response['data']    = $statuses;
 
 		return rest_ensure_response( $response );
 	}
@@ -259,6 +238,7 @@ class Plugins extends Controller_Base {
 				]
 			);
 		}
+
 
 		$statuses = [];
 		foreach ( $data->slugs as $slug ) {
@@ -536,11 +516,11 @@ class Plugins extends Controller_Base {
 		$skin     = new \WP_Ajax_Upgrader_Skin();
 		$upgrader = new \Plugin_Upgrader( $skin );
 		$statuses = [];
-		foreach ( $existed_plugins as $slug ) {
+		foreach ( $existed_plugins as $path ) {
 			$status = [
 				'status' => false,
 			];
-			$plugin = plugin_basename( sanitize_text_field( wp_unslash( $slug ) ) );
+			$plugin = plugin_basename( sanitize_text_field( wp_unslash( $path ) ) );
 
 			$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
 
@@ -579,7 +559,7 @@ class Plugins extends Controller_Base {
 				}
 			}
 
-			$statuses [ $slug ] = $status;
+			$statuses [ $path ] = $status;
 		}
 
 		$response['data'] = $statuses;
@@ -610,6 +590,22 @@ class Plugins extends Controller_Base {
 		}
 
 		return $existed_plugins;
+	}
+
+	/**
+	 * @param $plugin_path
+	 *
+	 * @return string
+	 */
+	private function get_slug( $plugin_path ) {
+		if( strpos( $plugin_path, '/') > 0 ){
+			$temparr = explode( '/', $plugin_path );
+			if( isset( $temparr[0] ) ) {
+				return $temparr[0];
+			}
+		}
+
+		return null;
 	}
 
 }
