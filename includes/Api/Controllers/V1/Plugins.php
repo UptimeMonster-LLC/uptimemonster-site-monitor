@@ -163,43 +163,52 @@ class Plugins extends Controller_Base {
 		$statuses = [];
 		foreach ( $data->slugs as $path ) {
 			$status = array( 'status' => false );
-
 			$slug = $this->get_slug( $path );
 
-			$api = plugins_api(
-				'plugin_information',
-				array(
-					'slug'   => $slug,
-					'fields' => array(
-						'sections' => false,
-					),
-				)
-			);
+			if ( ! $this->is_plugin_exists( $path ) ) {
 
-			if ( is_wp_error( $api ) ) {
-				$status['message']  = $api->get_error_message();
-				$statuses [ $path ] = $status;
-				continue;
-			}
+				$api = plugins_api(
+					'plugin_information',
+					array(
+						'slug'   => $slug,
+						'fields' => array(
+							'sections' => false,
+						),
+					)
+				);
 
-			$result   = $upgrader->install( $api->download_link );
-			if ( is_wp_error( $result ) ) {
-				$status['message'] = $result->get_error_message();
-			} elseif ( is_wp_error( $skin->result ) ) {
-				$status['message'] = $skin->result->get_error_message();
-			} elseif ( $skin->get_errors()->has_errors() ) {
-				$status['message'] = $skin->get_error_messages();
-			} elseif ( is_null( $result ) ) {
-				global $wp_filesystem;
-
-				// Pass through the error from WP_Filesystem if one was raised.
-				if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
-					$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
-				}else{
-					$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.' );
+				if ( is_wp_error( $api ) ) {
+					$status['message']  = $api->get_error_message();
+					$statuses [ $path ] = $status;
+					continue;
 				}
+
+				$result = $upgrader->install( $api->download_link );
+				if ( is_wp_error( $result ) ) {
+					$status['message'] = $result->get_error_message();
+				} elseif ( is_wp_error( $skin->result ) ) {
+					$status['message'] = $skin->result->get_error_message();
+				} elseif ( $skin->get_errors()->has_errors() ) {
+					$status['message'] = $skin->get_error_messages();
+				} elseif ( is_null( $result ) ) {
+					global $wp_filesystem;
+
+					// Pass through the error from WP_Filesystem if one was raised.
+					if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
+						$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
+					} else {
+						$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.' );
+					}
+				}
+
+				if ( ! isset( $status['message'] ) ) {
+					$status['status']  = true;
+					$status['message'] = sprintf( __( '%s installed.', 'roxwp-site-mon' ), $slug );
+				}
+			} else {
+				$status['status']  = false;
+				$status['message'] = sprintf( __( '%s already exists.', 'roxwp-site-mon' ), $slug );
 			}
-			$status['status'] = true;
 
 			$statuses [ $path ] = $status;
 		}

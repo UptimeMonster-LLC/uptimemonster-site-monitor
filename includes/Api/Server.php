@@ -45,7 +45,7 @@ final class Server {
 	}
 
 	public function init() {
-		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ), 1000 );
+		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
 	}
 
 	/**
