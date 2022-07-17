@@ -163,7 +163,7 @@ class Plugins extends Controller_Base {
 		$statuses = [];
 		foreach ( $data->slugs as $path ) {
 			$status = array( 'status' => false );
-			$slug = $this->get_slug( $path );
+			$slug   = $this->get_slug( $path );
 
 			if ( ! $this->is_plugin_exists( $path ) ) {
 
@@ -214,8 +214,8 @@ class Plugins extends Controller_Base {
 		}
 
 
-		$response['status']  = true;
-		$response['data']    = $statuses;
+		$response['status'] = true;
+		$response['data']   = $statuses;
 
 		return rest_ensure_response( $response );
 	}
@@ -289,7 +289,7 @@ class Plugins extends Controller_Base {
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response|
 	 */
 	public function deactivate_plugins( \WP_REST_Request $request ) {
-
+		$action   = 'deactivate';
 		$response = [
 			'status' => true,
 			'action' => 'deactivate',
@@ -311,10 +311,13 @@ class Plugins extends Controller_Base {
 			);
 		}
 
+		// Prevent from deactivating self.
+		$slugs = $this->exclude_self( $data->slugs, $action );
 
-		$existed_plugins = $this->existed_plugins( $data->slugs );
+		$existed_plugins = $this->existed_plugins( $slugs );
 
-		$count = count( $data->slugs );
+
+		$count = count( $slugs );
 		if ( count( $existed_plugins ) === 0 ) {
 			return rest_ensure_response( [
 				'status' => false,
@@ -348,7 +351,7 @@ class Plugins extends Controller_Base {
 
 		$response = [
 			'status' => true,
-			'action' => 'deactivate',
+			'action' => 'uninstall',
 			'data'   => [],
 			'extra'  => [],
 		];
@@ -367,9 +370,13 @@ class Plugins extends Controller_Base {
 			);
 		}
 
-		$existed_plugins = $this->existed_plugins( $data->slugs );
 
-		$count = count( $data->slugs );
+		// Prevent from uninstall self.
+		$slugs = $this->exclude_self( $data->slugs, 'uninstall' );
+
+		$existed_plugins = $this->existed_plugins( $slugs );
+
+		$count = count( $slugs );
 		if ( count( $existed_plugins ) === 0 ) {
 			return rest_ensure_response( [
 				'status' => false,
@@ -382,26 +389,23 @@ class Plugins extends Controller_Base {
 		}
 		$statuses = [];
 		foreach ( $existed_plugins as $slug ) {
-			$status = [ 'action' => 'uninstall', ];
+			$status = [ 'status' => false, ];
 
 			if ( is_uninstallable_plugin( $slug ) ) {
 				uninstall_plugin( $slug );
 				if ( is_plugin_active( $slug ) ) {
 					$status['message'] = __( 'Uninstallation failed', 'roxwp-site-mon' );
-					$status['status']  = false;
 				} else {
 					$status['status']  = true;
 					$status['message'] = __( 'Plugin uninstalled', 'roxwp-site-mon' );
 				}
-
 			} else {
-				$status['status']  = false;
 				$status['message'] = __( 'Can\'nt be uninstalled', 'roxwp-site-mon' );
 			}
 
-
 			$statuses[ $slug ] = $status;
 		}
+
 		$response['data'] = $statuses;
 
 		return rest_ensure_response( $response );
@@ -438,7 +442,10 @@ class Plugins extends Controller_Base {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
-		$existed_plugins = $this->existed_plugins( $data->slugs );
+		// Prevent from delete self.
+		$slugs = $this->exclude_self( $data->slugs, 'uninstall' );
+
+		$existed_plugins = $this->existed_plugins( $slugs );
 
 		if ( count( $existed_plugins ) === 0 ) {
 			$count = count( $data->slugs );
@@ -497,7 +504,10 @@ class Plugins extends Controller_Base {
 			);
 		}
 
-		$existed_plugins = $this->existed_plugins( $data->slugs );
+		// Prevent from uninstall self.
+		$slugs = $this->exclude_self( $data->slugs, 'uninstall' );
+
+		$existed_plugins = $this->existed_plugins( $slugs );
 
 		if ( count( $existed_plugins ) === 0 ) {
 			$count = count( $data->slugs );
@@ -552,8 +562,8 @@ class Plugins extends Controller_Base {
 				if ( true === $result[ $plugin ] ) {
 					$status['message'] = $upgrader->strings['up_to_date'];
 				} else {
-					$plugin_data = get_plugins( '/' . $result[ $plugin ]['destination_name'] );
-					$plugin_data = reset( $plugin_data );
+					$plugin_data       = get_plugins( '/' . $result[ $plugin ]['destination_name'] );
+					$plugin_data       = reset( $plugin_data );
 					$version           = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
 					$status['status']  = true;
 					$status['message'] = sprintf( __( '%s Updated. New version %s.', 'roxwp-site-mon' ), $plugin, $version );
@@ -563,7 +573,7 @@ class Plugins extends Controller_Base {
 				// Pass through the error from WP_Filesystem if one was raised.
 				if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
 					$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
-				}else{
+				} else {
 					$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-monitor' );
 				}
 			}
@@ -607,14 +617,46 @@ class Plugins extends Controller_Base {
 	 * @return string
 	 */
 	private function get_slug( $plugin_path ) {
-		if( strpos( $plugin_path, '/') > 0 ){
+		if ( strpos( $plugin_path, '/' ) > 0 ) {
 			$temparr = explode( '/', $plugin_path );
-			if( isset( $temparr[0] ) ) {
+			if ( isset( $temparr[0] ) ) {
 				return $temparr[0];
 			}
 		}
 
 		return null;
+	}
+
+	/**
+	 * @param $data
+	 * @param $action
+	 *
+	 * @return array|void|\wp_send_json_success
+	 */
+	public function exclude_self( $data, $action = '' ) {
+		$slugs = [];
+		if ( in_array( 'roxwp-site-monitor/roxwp-site-monitor.php', $data ) ) {
+			if ( count( $data ) === 1 ) {
+				return wp_send_json_success( [
+					'status' => false,
+					'action' => $action,
+					'data'   => [
+						'message' => sprintf( __( 'roxwp-site-monitor/roxwp-site-monitor.php can\'not be %s.', 'roxwp-site-mon' ), $action ),
+					],
+					'extra'  => [],
+				] );
+			}
+
+			$slugs = array_filter( $data, function ( $slug ) {
+				if ( 'roxwp-site-monitor/roxwp-site-monitor.php' !== $slug ) {
+					return $slug;
+				}
+			} );
+		} else {
+			$slugs = $data;
+		}
+
+		return $slugs;
 	}
 
 }

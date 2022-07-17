@@ -29,7 +29,7 @@ class Themes extends Controller_Base {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'install_theme' ),
+					'callback'            => array( $this, 'install_themes' ),
 					'permission_callback' => array( $this, 'get_route_access' ),
 					'args'                => array(),
 				),
@@ -60,7 +60,6 @@ class Themes extends Controller_Base {
 					'permission_callback' => array( $this, 'get_route_access' ),
 					'args'                => array(),
 				),
-
 			)
 		);
 
@@ -86,97 +85,97 @@ class Themes extends Controller_Base {
 	 *
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response|
 	 */
-	public function install_theme( \WP_REST_Request $request ) {
-
-		$response = array(
-			'action' => 'install',
-			'data'   => [],
-			'extra'  => []
-		);
-
-		$data = json_decode( $request->get_body() );
-
-		if ( ! isset( $data->slugs ) || empty( $data->slugs ) ) {
-			return rest_ensure_response( [
-					'status' => false,
-					'action' => 'install',
-					'data'   => [
-						'message' => __( 'No theme specified.', 'roxwp-site-mon' ),
-					],
-					'extra'  => []
-				]
-			);
-		}
-
-		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-		include_once ABSPATH . 'wp-admin/includes/theme.php';
-		if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
-		}
-		if ( ! class_exists( 'WP_Ajax_Upgrader_Skin' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-ajax-upgrader-skin.php';
-		}
-		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-
-		$skin     = new \WP_Ajax_Upgrader_Skin();
-		$upgrader = new \Plugin_Upgrader( $skin );
-
-		$status = array( 'status' => false );
-		$slug   = sanitize_key( wp_unslash( $data->slugs[0] ) );
-
-		if ( ! $this->is_theme_exists( $slug ) ) {
-			$status['sluggg'] = $data->slugs[0];
-			$api            = themes_api(
-				'theme_information',
-				array(
-					'slug'   => $slug,
-					'fields' => array( 'sections' => false ),
-				)
-			);
-
-
-			if ( is_wp_error( $api ) ) {
-				$status['message']  = $api->get_error_message();
-				$response['status'] = false;
-				$response['data']   = $status;
-
-				return rest_ensure_response( $response );
-			}
-			$result = $upgrader->install( $api->download_link );
-
-			if ( is_wp_error( $result ) ) {
-				$status['message'] = $result->get_error_message();
-			} elseif ( is_wp_error( $skin->result ) ) {
-				$status['message'] = $skin->result->get_error_message();
-			} elseif ( $skin->get_errors()->has_errors() ) {
-				$status['message'] = $skin->get_error_messages();
-			} elseif ( is_null( $result ) ) {
-				global $wp_filesystem;
-
-				// Pass through the error from WP_Filesystem if one was raised.
-				if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
-					$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
-				} else {
-					$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-mon' );
-				}
-			}
-
-			if ( ! isset( $status['message'] ) ) {
-				$status['status']  = true;
-				$status['message'] = sprintf( __( '%s  installed.', 'roxwp-site-mon' ), $slug );
-			}
-		} else {
-			$status['status']  = false;
-			$status['message'] = sprintf( __( '%s already installed.', 'roxwp-site-mon' ), $slug );
-		}
-
-		$response['status'] = true;
-		$response['data']   = $status;
-
-		return rest_ensure_response( $response );
-	}
+//	public function install_theme( \WP_REST_Request $request ) {
+//
+//		$response = array(
+//			'action' => 'install',
+//			'data'   => [],
+//			'extra'  => []
+//		);
+//
+//		$data = json_decode( $request->get_body() );
+//
+//		if ( ! isset( $data->slugs ) || empty( $data->slugs ) ) {
+//			return rest_ensure_response( [
+//					'status' => false,
+//					'action' => 'install',
+//					'data'   => [
+//						'message' => __( 'No theme specified.', 'roxwp-site-mon' ),
+//					],
+//					'extra'  => []
+//				]
+//			);
+//		}
+//
+//		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+//		include_once ABSPATH . 'wp-admin/includes/theme.php';
+//		if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
+//			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+//		}
+//		if ( ! class_exists( 'WP_Ajax_Upgrader_Skin' ) ) {
+//			require_once ABSPATH . 'wp-admin/includes/class-wp-ajax-upgrader-skin.php';
+//		}
+//		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+//			require_once ABSPATH . 'wp-admin/includes/file.php';
+//		}
+//
+//		$skin     = new \WP_Ajax_Upgrader_Skin();
+//		$upgrader = new \Theme_Upgrader( $skin );
+//
+//		$status = array( 'status' => false );
+//		$slug   = sanitize_key( wp_unslash( $data->slugs[0] ) );
+//
+//		if ( ! $this->is_theme_exists( $slug ) ) {
+//			$status['sluggg'] = $data->slugs[0];
+//			$api            = themes_api(
+//				'theme_information',
+//				array(
+//					'slug'   => $slug,
+//					'fields' => array( 'sections' => false ),
+//				)
+//			);
+//
+//
+//			if ( is_wp_error( $api ) ) {
+//				$status['message']  = $api->get_error_message();
+//				$response['status'] = false;
+//				$response['data']   = $status;
+//
+//				return rest_ensure_response( $response );
+//			}
+//			$result = $upgrader->install( $api->download_link );
+//
+//			if ( is_wp_error( $result ) ) {
+//				$status['message'] = $result->get_error_message();
+//			} elseif ( is_wp_error( $skin->result ) ) {
+//				$status['message'] = $skin->result->get_error_message();
+//			} elseif ( $skin->get_errors()->has_errors() ) {
+//				$status['message'] = $skin->get_error_messages();
+//			} elseif ( is_null( $result ) ) {
+//				global $wp_filesystem;
+//
+//				// Pass through the error from WP_Filesystem if one was raised.
+//				if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
+//					$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
+//				} else {
+//					$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-mon' );
+//				}
+//			}
+//
+//			if ( ! isset( $status['message'] ) ) {
+//				$status['status']  = true;
+//				$status['message'] = sprintf( __( '%s  installed.', 'roxwp-site-mon' ), $slug );
+//			}
+//		} else {
+//			$status['status']  = false;
+//			$status['message'] = sprintf( __( '%s already installed.', 'roxwp-site-mon' ), $slug );
+//		}
+//
+//		$response['status'] = true;
+//		$response['data']   = $status;
+//
+//		return rest_ensure_response( $response );
+//	}
 
 	/**
 	 * @param \WP_REST_Request $request Full details about the request.
@@ -207,6 +206,9 @@ class Themes extends Controller_Base {
 
 		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		include_once ABSPATH . 'wp-admin/includes/theme.php';
+		if ( ! class_exists( 'WP_Ajax_Upgrader_Skin' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-ajax-upgrader-skin.php';
+		}
 		if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
 		}
@@ -215,7 +217,8 @@ class Themes extends Controller_Base {
 		}
 
 		$skin     = new \WP_Ajax_Upgrader_Skin();
-		$upgrader = new \Plugin_Upgrader( $skin );
+		$upgrader = new \Theme_Upgrader( $skin );
+
 		$statuses = [];
 		foreach ( $data->slugs as $slug ) {
 			$status = array( 'status' => false );
@@ -365,7 +368,7 @@ class Themes extends Controller_Base {
 				$credentials = request_filesystem_credentials( $url );
 				ob_end_clean();
 
-				if ( false === $credentials || ! WP_Filesystem( $credentials ) ) {
+				if ( false === $credentials || ! \WP_Filesystem( $credentials ) ) {
 					global $wp_filesystem;
 
 					// Pass through the error from WP_Filesystem if one was raised.
@@ -422,7 +425,7 @@ class Themes extends Controller_Base {
 	public function update_themes( \WP_REST_Request $request ) {
 
 		$response = array(
-			'action' => 'install',
+			'action' => 'update',
 			'data'   => [],
 			'extra'  => []
 		);
@@ -432,7 +435,7 @@ class Themes extends Controller_Base {
 		if ( ! isset( $data->slugs ) || empty( $data->slugs ) ) {
 			return rest_ensure_response( [
 					'status' => false,
-					'action' => 'install',
+					'action' => 'update',
 					'data'   => [
 						'message' => __( 'No theme specified.', 'roxwp-site-mon' ),
 					],
@@ -451,35 +454,31 @@ class Themes extends Controller_Base {
 		}
 
 		$skin     = new \WP_Ajax_Upgrader_Skin();
-		$upgrader = new \Plugin_Upgrader( $skin );
+		$upgrader = new \Theme_Upgrader( $skin );
 		$statuses = [];
 		foreach ( $data->slugs as $slug ) {
 			$status = array( 'status' => false );
 			$slug   = sanitize_key( wp_unslash( $slug ) );
 
-			if ( ! $this->is_theme_exists( $slug ) ) {
+			if ( $this->is_theme_exists( $slug ) ) {
 				$status['slug'] = $slug;
-				$api            = themes_api(
-					'theme_information',
-					array(
-						'slug'   => $slug,
-						'fields' => array( 'sections' => false ),
-					)
-				);
-
-				if ( is_wp_error( $api ) ) {
-					$status['message']  = $api->get_error_message();
-					$statuses [ $slug ] = $status;
-					continue;
+				$current = get_site_transient( 'update_themes' );
+				if ( empty( $current ) ) {
+					wp_update_themes();
 				}
-				$result = $upgrader->install( $api->download_link );
-				if ( is_wp_error( $result ) ) {
-					$status['message'] = $result->get_error_message();
-				} elseif ( is_wp_error( $skin->result ) ) {
+
+				$result   = $upgrader->bulk_upgrade( array( $slug ) );
+
+				if ( is_wp_error( $skin->result ) ) {
 					$status['message'] = $skin->result->get_error_message();
 				} elseif ( $skin->get_errors()->has_errors() ) {
 					$status['message'] = $skin->get_error_messages();
-				} elseif ( is_null( $result ) ) {
+				} elseif ( is_array( $result ) && ! empty( $result[ $slug ] ) ) {
+					// Theme is already at the latest version.
+					if ( true === $result[ $slug ] ) {
+						$status['message'] = $upgrader->strings['up_to_date'];
+					}
+				}  elseif ( is_null( $result ) ) {
 					global $wp_filesystem;
 
 					// Pass through the error from WP_Filesystem if one was raised.
@@ -492,11 +491,10 @@ class Themes extends Controller_Base {
 
 				if ( ! isset( $status['message'] ) ) {
 					$status['status']  = true;
-					$status['message'] = sprintf( __( '%s  installed.', 'roxwp-site-mon' ), $slug );
+					$status['message'] = sprintf( __( '%s  updated.', 'roxwp-site-mon' ), $slug );
 				}
 			} else {
-				$status['status']  = false;
-				$status['message'] = sprintf( __( '%s already installed.', 'roxwp-site-mon' ), $slug );
+				$status['message'] = sprintf( __( '%s does\'nt exists.', 'roxwp-site-mon' ), $slug );
 			}
 
 			$statuses [ $slug ] = $status;
@@ -505,6 +503,7 @@ class Themes extends Controller_Base {
 
 		$response['status'] = true;
 		$response['data']   = $statuses;
+
 
 		return rest_ensure_response( $response );
 	}

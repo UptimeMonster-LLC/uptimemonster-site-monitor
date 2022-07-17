@@ -1005,12 +1005,17 @@ class RoxWP_Debug_Data {
 					$plugin_version_string_debug = sprintf( 'author: (undefined), version: %s', $plugin_version );
 				}
 			}
-
+			$need_to_update_plugin = false;
 			if ( array_key_exists( $plugin_path, $plugin_updates ) ) {
 				/* translators: %s: Latest plugin version number. */
 				$plugin_version_string       .= ' ' . sprintf( __( '(Latest version: %s)' ), $plugin_updates[ $plugin_path ]->update->new_version );
 				$plugin_version_string_debug .= sprintf( ' (latest version: %s)', $plugin_updates[ $plugin_path ]->update->new_version );
+
+				if ( version_compare( $plugin_version, $plugin_updates[ $plugin_path ]->update->new_version, '<' ) ) {
+					$need_to_update_plugin = true;
+				}
 			}
+
 
 			if ( $auto_updates_enabled ) {
 				if ( isset( $transient->response[ $plugin_path ] ) ) {
@@ -1067,10 +1072,11 @@ class RoxWP_Debug_Data {
 			}
 
 			$info[ $plugin_part ]['fields'][ sanitize_text_field( $plugin['Name'] ) ] = array(
-				'label' => $plugin['Name'],
-				'value' => $plugin_version_string,
-				'debug' => $plugin_version_string_debug,
-				'slug'  => $plugin_path
+				'label'  => $plugin['Name'],
+				'value'  => $plugin_version_string,
+				'debug'  => $plugin_version_string_debug,
+				'slug'   => $plugin_path,
+				'update' => $need_to_update_plugin,
 			);
 		}
 
@@ -1097,12 +1103,17 @@ class RoxWP_Debug_Data {
 			$auto_updates = (array) get_site_option( 'auto_update_themes', array() );
 		}
 
+		$need_to_update_theme = false;
 		if ( array_key_exists( $active_theme->stylesheet, $theme_updates ) ) {
 			$theme_update_new_version = $theme_updates[ $active_theme->stylesheet ]->update['new_version'];
 
 			/* translators: %s: Latest theme version number. */
 			$active_theme_version       .= ' ' . sprintf( __( '(Latest version: %s)' ), $theme_update_new_version );
 			$active_theme_version_debug .= sprintf( ' (latest version: %s)', $theme_update_new_version );
+
+			if ( version_compare( $plugin_version, $theme_update_new_version, '<' ) ) {
+				$need_to_update_theme = true;
+			}
 		}
 
 		$active_theme_author_uri = $active_theme->display( 'AuthorURI' );
@@ -1125,6 +1136,8 @@ class RoxWP_Debug_Data {
 		}
 
 		$info['wp-active-theme']['fields'] = array(
+			'slug' => $active_theme->stylesheet,
+			'update' => $need_to_update_theme,
 			'name'           => array(
 				'label' => __( 'Name' ),
 				'value' => sprintf(
@@ -1220,6 +1233,7 @@ class RoxWP_Debug_Data {
 			$parent_theme_author_uri = $parent_theme->display( 'AuthorURI' );
 
 			$info['wp-parent-theme']['fields'] = array(
+				'slug' => $parent_theme->stylesheet,
 				'name'           => array(
 					'label' => __( 'Name' ),
 					'value' => sprintf(
@@ -1330,11 +1344,15 @@ class RoxWP_Debug_Data {
 					$theme_version_string_debug = sprintf( 'author: (undefined), version: %s', $theme_version );
 				}
 			}
-
+			$need_to_update_theme = false;
 			if ( array_key_exists( $theme_slug, $theme_updates ) ) {
 				/* translators: %s: Latest theme version number. */
 				$theme_version_string       .= ' ' . sprintf( __( '(Latest version: %s)' ), $theme_updates[ $theme_slug ]->update['new_version'] );
 				$theme_version_string_debug .= sprintf( ' (latest version: %s)', $theme_updates[ $theme_slug ]->update['new_version'] );
+
+				if ( version_compare( $theme_version, $theme_updates[ $theme_slug ]->update['new_version'], '<' ) ) {
+					$need_to_update_theme = true;
+				}
 			}
 
 			if ( $auto_updates_enabled ) {
@@ -1384,15 +1402,16 @@ class RoxWP_Debug_Data {
 			}
 
 			$info['wp-themes-inactive']['fields'][ sanitize_text_field( $theme->name ) ] = array(
-				'label' => sprintf(
+				'label'  => sprintf(
 				/* translators: 1: Theme name. 2: Theme slug. */
 					__( '%1$s (%2$s)' ),
 					$theme->name,
 					$theme_slug
 				),
-				'value' => $theme_version_string,
-				'debug' => $theme_version_string_debug,
-				'slug'  => $theme_slug
+				'value'  => $theme_version_string,
+				'debug'  => $theme_version_string_debug,
+				'slug'   => $theme_slug,
+				'update' => $need_to_update_theme,
 			);
 		}
 

@@ -39,7 +39,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 		if ( version_compare( get_bloginfo( 'version' ), '5.8', '>=' ) ) {
 			add_action( 'delete_theme', [ $this, 'on_before_delete' ] );
-			add_action( 'deleted_theme', [ $this, 'on_theme_deleted' ] );
+			add_action( 'deleted_theme', [ $this, 'on_theme_deleted' ], 10, 2 );
 		} else {
 			add_action( 'delete_site_transient_update_themes', [ $this, 'trace_on_theme_deleted' ] );
 		}
@@ -111,7 +111,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 		$data = $this->get_theme_data( $stylesheet );
 
-		set_transient( 'roxwp_theme_data_' . $hash, $data, 60 );
+		set_transient( 'roxwp_theme_data_' . $hash, $data, 5 * MINUTE_IN_SECONDS );
 	}
 
 	public function on_theme_deleted( $stylesheet, $deleted ) {
@@ -218,8 +218,9 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 		}
 
 		if ( isset( $extra['action'] ) && 'install' === $extra['action'] ) {
-			$slug = $upgrader->theme_info();
-			if ( $slug ) {
+			$theme_info = $upgrader->theme_info();
+			if ( $theme_info ) {
+				$slug = $theme_info->get_stylesheet();
 				wp_clean_themes_cache();
 
 				if ( ! $this->maybe_log_theme( Activity_Monitor_Base::ITEM_INSTALLED, $slug ) ) {
