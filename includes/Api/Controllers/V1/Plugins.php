@@ -4,6 +4,9 @@ namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1;
 
 use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\Controller_Base;
 
+use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Debug_Data;
+use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update_Check;
+
 /**
  * Class Plugins
  */
@@ -17,10 +20,30 @@ class Plugins extends Controller_Base {
 	protected $rest_base = '/plugin';
 
 	/**
+	 * Site health.
+	 *
+	 * @var string
+	 */
+	protected $site_health;
+
+	/**
+	 * Site info.
+	 *
+	 * @var string
+	 */
+	protected $site_info;
+
+	/**
 	 * constructor.
 	 */
 	public function __construct() {
+		// Health data
+		$update_check = new RoxWP_Update_Check();
+		$this->site_health = $update_check->get_site_health() ? $update_check->get_site_health() : [];
 
+		// Debug data.
+		$debug_data = new RoxWP_Debug_Data();
+		$this->site_info = $debug_data->debug_data() ? $debug_data->debug_data() : [];
 	}
 
 	/**
@@ -282,6 +305,11 @@ class Plugins extends Controller_Base {
 		}
 
 		$response['data'] = $statuses;
+
+		$response['extra'] = [
+			'site_health' =>  $this->site_health ,
+			'site_info' => $this->site_info
+		];
 
 		return rest_ensure_response( $response );
 	}
