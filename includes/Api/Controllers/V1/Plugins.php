@@ -2,18 +2,17 @@
 
 namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1;
 
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\Controller_Base;
-
-<<<<<<< HEAD
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
 	die();
 }
-=======
+
+use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\Controller_Base;
 use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Debug_Data;
 use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update_Check;
->>>>>>> 16687323853adcbd2430f5145e66791c1957a1fa
+
+
 
 /**
  * Class Plugins

@@ -13,7 +13,6 @@ class RoxWP_Update_Check {
 		}
 
 		$site_health =  \WP_Site_Health::get_instance();
-
 		$tests = $site_health::get_tests();
 
 		$results = [];
@@ -957,6 +956,10 @@ class RoxWP_Update_Check {
 			),
 			'test'        => 'plugin_version',
 		);
+
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
 
 		$plugins        = get_plugins();
 		$plugin_updates = $this->get_plugin_updates();
