@@ -3,11 +3,27 @@
 namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1;
 
 use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\Controller_Base;
+use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Debug_Data;
+use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update_Check;
 
 /**
  * Class Theme
  */
 class Themes extends Controller_Base {
+
+	/**
+	 * Class For Debug data.
+	 * 
+	 * @var object
+	 */
+	protected $debug_model;
+
+	/**
+	 * Update Check.
+	 * 
+	 * @var object
+	 */
+	protected $update_check_model;
 
 	/**
 	 * Route base.
@@ -16,7 +32,13 @@ class Themes extends Controller_Base {
 	 */
 	protected $rest_base = '/theme';
 
-	public function __construct() {}
+	public function __construct() {
+		// Health data
+		$this->update_check_model = new RoxWP_Update_Check();
+
+		// Debug data.
+		$this->debug_model = new RoxWP_Debug_Data();
+	}
 
 	public function register_routes() {
 		// Register install theme.
@@ -170,6 +192,10 @@ class Themes extends Controller_Base {
 
 		$response['status'] = true;
 		$response['data']   = $statuses;
+		$response['extra'] = [
+			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+		];
 
 		return rest_ensure_response( $response );
 	}
@@ -215,6 +241,10 @@ class Themes extends Controller_Base {
 		}
 
 		$response ['data'][] = $status;
+		$response['extra'] = [
+			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+		];
 
 		return rest_ensure_response( $response );
 
@@ -310,6 +340,10 @@ class Themes extends Controller_Base {
 
 		$response['status'] = true;
 		$response['data']   = $statuses;
+		$response['extra'] = [
+			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+		];
 
 		return rest_ensure_response( $response );
 	}
@@ -401,6 +435,10 @@ class Themes extends Controller_Base {
 
 		$response['status'] = true;
 		$response['data']   = $statuses;
+		$response['extra'] = [
+			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+		];
 
 		return rest_ensure_response( $response );
 	}

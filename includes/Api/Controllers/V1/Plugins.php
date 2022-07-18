@@ -27,30 +27,28 @@ class Plugins extends Controller_Base {
 	protected $rest_base = '/plugin';
 
 	/**
-	 * Site health.
-	 *
-	 * @var string
+	 * Class For Debug data.
+	 * 
+	 * @var object
 	 */
-	protected $site_health;
+	protected $debug_model;
 
 	/**
-	 * Site info.
-	 *
-	 * @var string
+	 * Update Check.
+	 * 
+	 * @var object
 	 */
-	protected $site_info;
+	protected $update_check_model;
 
 	/**
 	 * constructor.
 	 */
 	public function __construct() {
 		// Health data
-		$update_check = new RoxWP_Update_Check();
-		$this->site_health = $update_check->get_site_health() ? $update_check->get_site_health() : [];
+		$this->update_check_model = new RoxWP_Update_Check();
 
 		// Debug data.
-		$debug_data = new RoxWP_Debug_Data();
-		$this->site_info = $debug_data->debug_data() ? $debug_data->debug_data() : [];
+		$this->debug_model = new RoxWP_Debug_Data();
 	}
 
 	/**
@@ -246,6 +244,10 @@ class Plugins extends Controller_Base {
 		}
 
 		$response['data']   = $statuses;
+		$response['extra'] = [
+			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+		];
 
 		return rest_ensure_response( $response );
 	}
@@ -280,7 +282,7 @@ class Plugins extends Controller_Base {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$statuses = [];
+		$statuses = array();
 
 		foreach ( $data->slugs as $slug ) {
 			$status = array();
@@ -317,8 +319,8 @@ class Plugins extends Controller_Base {
 		$response['data'] = $statuses;
 
 		$response['extra'] = [
-			'site_health' =>  $this->site_health ,
-			'site_info' => $this->site_info
+			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
 		];
 
 		return rest_ensure_response( $response );
@@ -368,14 +370,44 @@ class Plugins extends Controller_Base {
 			] );
 		}
 
-		deactivate_plugins( $existed_plugins );
+		// deactivate_plugins( $existed_plugins );
 		$statuses = [];
 
 		foreach ( $existed_plugins as $plugin ) {
-			$statuses[]['status'] = is_plugin_inactive( $plugin );
+			$status = array();
+
+			if ( $this->is_plugin_exists( $plugin ) ) {
+
+				if ( is_plugin_inactive( $plugin ) ) {
+					$statuses[] = [
+						'status'  => false,
+						'message' => __( 'Plugin already inactive', 'roxwp-site-mon' ),
+					];
+					continue;
+				}
+
+				$deactivate = deactivate_plugins( $plugin, '', false, false );
+
+				if ( is_wp_error( $deactivate ) ) {
+					$status['status']  = false;
+					$status['message'] = $deactivate->get_error_message();
+				} else {
+					$status['status']  = true;
+					$status['message'] = __( 'Plugin deactivated', 'roxwp-site-mon' );
+				}
+
+			} else {
+				$status['status']  = false;
+				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
+			}
+			$statuses[] = $status;
 		}
 
 		$response['data']   = $statuses;
+		$response['extra'] 	= [
+			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+		];
 
 		return rest_ensure_response( $response );
 	}
@@ -408,8 +440,6 @@ class Plugins extends Controller_Base {
 				]
 			);
 		}
-
-		
 
 		if ( count( $existed_plugins ) === 0 ) {
 			return rest_ensure_response( [
@@ -446,7 +476,10 @@ class Plugins extends Controller_Base {
 		}
 
 		$response['data'] = $statuses;
-
+		$response['extra'] 	= [
+			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+		];
 		return rest_ensure_response( $response );
 	}
 
@@ -461,9 +494,7 @@ class Plugins extends Controller_Base {
 			'data'   => [],
 			'extra'  => [],
 		];
-
 		$data = json_decode( $request->get_body() );
-
 		// Prevent from delete self.
 		$slugs = $this->exclude_self( $data->slugs, 'uninstall' );
 		$existed_plugins = $this->existed_plugins( $slugs );
@@ -512,6 +543,11 @@ class Plugins extends Controller_Base {
 				]
 			];
 		}
+
+		$response['extra'] = [
+			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+		];
 
 		return rest_ensure_response( $response );
 	}
@@ -615,6 +651,10 @@ class Plugins extends Controller_Base {
 		}
 
 		$response['data'] = $statuses;
+		$response['extra'] = [
+			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+		];
 
 		return rest_ensure_response( $response );
 	}
