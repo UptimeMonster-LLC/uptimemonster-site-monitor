@@ -234,6 +234,10 @@ class Plugins extends Controller_Base {
 				if ( ! isset( $status['message'] ) ) {
 					$status['status']  = true;
 					$status['message'] = sprintf( __( '%s installed.', 'roxwp-site-mon' ), $slug );
+					$response['extra'] = [
+						'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+						'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+					];
 				}
 			} else {
 				$status['status']  = false;
@@ -244,10 +248,7 @@ class Plugins extends Controller_Base {
 		}
 
 		$response['data']   = $statuses;
-		$response['extra'] = [
-			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-		];
+		
 
 		return rest_ensure_response( $response );
 	}
@@ -306,6 +307,10 @@ class Plugins extends Controller_Base {
 				} else {
 					$status['status']  = true;
 					$status['message'] = __( 'Plugin activated', 'roxwp-site-mon' );
+					$response['extra'] = [
+						'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+						'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+					];
 				}
 
 			} else {
@@ -318,10 +323,7 @@ class Plugins extends Controller_Base {
 
 		$response['data'] = $statuses;
 
-		$response['extra'] = [
-			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-		];
+		
 
 		return rest_ensure_response( $response );
 	}
@@ -394,6 +396,10 @@ class Plugins extends Controller_Base {
 				} else {
 					$status['status']  = true;
 					$status['message'] = __( 'Plugin deactivated', 'roxwp-site-mon' );
+					$response['extra'] = [
+						'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+						'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+					];
 				}
 
 			} else {
@@ -404,10 +410,7 @@ class Plugins extends Controller_Base {
 		}
 
 		$response['data']   = $statuses;
-		$response['extra'] 	= [
-			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-		];
+
 
 		return rest_ensure_response( $response );
 	}
@@ -467,6 +470,10 @@ class Plugins extends Controller_Base {
 				} else {
 					$status['status']  = true;
 					$status['message'] = __( 'Plugin uninstalled', 'roxwp-site-mon' );
+					$response['extra'] = [
+						'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+						'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+					];
 				}
 			} else {
 				$status['message'] = __( 'Can\'nt be uninstalled', 'roxwp-site-mon' );
@@ -476,10 +483,7 @@ class Plugins extends Controller_Base {
 		}
 
 		$response['data'] = $statuses;
-		$response['extra'] 	= [
-			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-		];
+		
 		return rest_ensure_response( $response );
 	}
 
@@ -542,12 +546,13 @@ class Plugins extends Controller_Base {
 					'message' => _n( 'Specified plugin deleted', 'Specified plugins deleted', $count, 'roxwp-site-mon' ),
 				]
 			];
-		}
 
-		$response['extra'] = [
-			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-		];
+
+			$response['extra'] = [
+				'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+				'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+			];
+		}
 
 		return rest_ensure_response( $response );
 	}
@@ -636,6 +641,10 @@ class Plugins extends Controller_Base {
 					$version           = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
 					$status['status']  = true;
 					$status['message'] = sprintf( __( '%s Updated. New version %s.', 'roxwp-site-mon' ), $plugin, $version );
+					$response['extra'] = [
+						'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+						'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+					];
 				}
 			} elseif ( false === $result ) {
 				global $wp_filesystem;
@@ -651,10 +660,7 @@ class Plugins extends Controller_Base {
 		}
 
 		$response['data'] = $statuses;
-		$response['extra'] = [
-			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-		];
+		
 
 		return rest_ensure_response( $response );
 	}
