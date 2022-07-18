@@ -144,7 +144,6 @@ class Themes extends Controller_Base {
 			$slug   = sanitize_key( wp_unslash( $slug ) );
 
 			if ( ! $this->is_theme_exists( $slug ) ) {
-				$status['slug'] = $slug;
 				$api            = themes_api(
 					'theme_information',
 					array(
@@ -180,6 +179,10 @@ class Themes extends Controller_Base {
 				if ( ! isset( $status['message'] ) ) {
 					$status['status']  = true;
 					$status['message'] = sprintf( __( '%s  installed.', 'roxwp-site-mon' ), $slug );
+					$response['extra'] = [
+						'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+						'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+					];
 				}
 
 			} else {
@@ -192,10 +195,7 @@ class Themes extends Controller_Base {
 
 		$response['status'] = true;
 		$response['data']   = $statuses;
-		$response['extra'] = [
-			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-		];
+		
 
 		return rest_ensure_response( $response );
 	}
@@ -234,6 +234,10 @@ class Themes extends Controller_Base {
 				switch_theme( $data->slugs[0] );
 				$status['status'] = true;
 				$status['message'] = __( 'Theme activated.', 'roxwp-site-mon' );
+				$response['extra'] = [
+					'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+					'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+				];
 			}
 
 		} else {
@@ -241,13 +245,8 @@ class Themes extends Controller_Base {
 		}
 
 		$response ['data'][] = $status;
-		$response['extra'] = [
-			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-		];
 
 		return rest_ensure_response( $response );
-
 	}
 
 	/**
@@ -328,6 +327,10 @@ class Themes extends Controller_Base {
 				if ( ! isset( $status['message'] ) ) {
 					$status['status']  = true;
 					$status['message'] = sprintf( __( '%s deleted.', 'roxwp-site-mon' ), $slug );
+					$response['extra'] = [
+						'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+						'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+					];
 				}
 
 			} else {
@@ -340,10 +343,7 @@ class Themes extends Controller_Base {
 
 		$response['status'] = true;
 		$response['data']   = $statuses;
-		$response['extra'] = [
-			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-		];
+		
 
 		return rest_ensure_response( $response );
 	}
@@ -424,6 +424,10 @@ class Themes extends Controller_Base {
 				if ( ! isset( $status['message'] ) ) {
 					$status['status']  = true;
 					$status['message'] = sprintf( __( '%s  updated.', 'roxwp-site-mon' ), $slug );
+					$response['extra'] = [
+						'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+						'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+					];
 				}
 
 			} else {
@@ -435,10 +439,6 @@ class Themes extends Controller_Base {
 
 		$response['status'] = true;
 		$response['data']   = $statuses;
-		$response['extra'] = [
-			'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-			'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-		];
 
 		return rest_ensure_response( $response );
 	}
