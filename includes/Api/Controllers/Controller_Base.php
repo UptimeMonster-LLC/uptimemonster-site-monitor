@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * REST Controller Base.
  *
@@ -11,8 +9,6 @@
  */
 
 namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers;
-
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -44,8 +40,6 @@ abstract class Controller_Base extends \WP_REST_Controller {
 	 * @return \WP_Error|boolean
 	 */
 	public function get_route_access( $request ) {
-
-
 		$api_keys        = get_option( 'roxwp_site_monitor_api_keys', [] );
 		$request_api_key = $request->get_header( 'X-Api-Key' ) ? $request->get_header( 'X-Api-Key' ) : '';
 		$signature       = $request->get_header( 'X-Api-Signature' ) ? $request->get_header( 'X-Api-Signature' ) : '';
@@ -56,9 +50,11 @@ abstract class Controller_Base extends \WP_REST_Controller {
 		if ( empty( $data ) ) {
 			$data = '';
 		} else {
+
 			if ( ! is_string( $data ) ) {
 				$data = json_encode( $data );
 			}
+
 		}
 
 		$isValid = hash_equals(
@@ -71,8 +67,5 @@ abstract class Controller_Base extends \WP_REST_Controller {
 		}
 
 		return new \WP_Error( 'invalid_signature', __( 'Invalid Signature', 'roxwp-site-mon' ), [] );
-
 	}
-
-
 }
