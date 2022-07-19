@@ -570,7 +570,7 @@ class Plugins extends Controller_Base
 				'data' => [
 					[
 						'status' => true,
-						'message' => __n('Specified plugin deleted', 'Specified plugins deleted', $count, 'roxwp-site-mon'),
+						'message' => _n('Specified plugin deleted', 'Specified plugins deleted', $count, 'roxwp-site-mon'),
 					]
 				]
 			];
