@@ -510,7 +510,7 @@ class RoxWP_Debug_Data {
 		// Get ImageMagic information, if available.
 		if ( class_exists( 'Imagick' ) ) {
 			// Save the Imagick instance for later use.
-			$imagick             = new Imagick();
+			$imagick             = new \Imagick();
 			$imagemagick_version = $imagick->getVersion();
 		} else {
 			$imagemagick_version = __( 'Not available' );
