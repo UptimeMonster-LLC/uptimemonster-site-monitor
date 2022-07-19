@@ -440,7 +440,7 @@ class Plugins extends Controller_Base
 	public function uninstall_plugins(\WP_REST_Request $request)
 	{
 		$response = [
-			'status' => false,
+			'status' => true,
 			'data' => [],
 			'extra' => [],
 		];
@@ -463,7 +463,7 @@ class Plugins extends Controller_Base
 		if ( empty($existed_plugins) ) {
 			return rest_ensure_response(array_merge($response, ['data' => [
 				'status' => false,
-				'message' => _n('Plugin does\'nt exists with this slug', 'Plugins does\'nt exists with these slugs', $count, 'roxwp-site-mon'),
+				'message' => _n("This Plugin doesn't exist !", "Plugins doesn't exist !!", $count, 'roxwp-site-mon'),
 			]]));
 		}
 
@@ -481,16 +481,16 @@ class Plugins extends Controller_Base
 				uninstall_plugin($slug);
 
 				if (is_plugin_active($slug)) {
-					$status['message'] = __('Uninstallation failed', 'roxwp-site-mon');
+					$status['message'] = __('Uninstallation failed. This Plugin is currently Active', 'roxwp-site-mon');
 				} else {
 					$status = [
 						'status' => true,
-						'message' => __('Plugin uninstalled', 'roxwp-site-mon'),
+						'message' => __('Plugin uninstalled successfully', 'roxwp-site-mon'),
 					];
 					$is_uninstalled = true;
 				}
 			} else {
-				$status['message'] = __("Plugin can't be uninstalled', 'roxwp-site-mon");
+				$status['message'] = __("Plugin can't be uninstalled. Instead uninstalling, you can DELETE this Plugin.", "roxwp-site-mon");
 			}
 
 			$statuses[] = $status;
