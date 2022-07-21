@@ -231,11 +231,11 @@ class Core_Update extends Controller_Base {
 		global $wpdb, $wp_db_version, $wp_current_db_version;
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		require_once ABSPATH . 'wp-includes/version.php';
+		include ABSPATH . 'wp-includes/version.php';
+
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Replacing WP Core behavior is the goal here.
 		$wp_current_db_version = (int) __get_option( 'db_version' );
-		error_log(print_r($wp_current_db_version, true));
-		error_log(print_r($wp_db_version, true));
+
 		if ( $wp_db_version !== $wp_current_db_version ) {
 			// WP upgrade isn't too fussy about generating MySQL warnings such as "Duplicate key name" during an upgrade so suppress.
 			$wpdb->suppress_errors();
