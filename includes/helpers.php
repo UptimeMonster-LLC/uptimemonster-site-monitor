@@ -432,4 +432,55 @@ function roxlog( $data ) {
 	error_log( print_r( $data, true ) );
 }
 
+function roxwp_wp_version_compare( $since, $operator ) {
+	$wp_version = str_replace( '-src', '', $GLOBALS['wp_version'] );
+	$since      = str_replace( '-src', '', $since );
+	return version_compare( $wp_version, $since, $operator );
+}
+
+function roxwp_parse_boolval( $maby_bool ) {
+
+	if ( is_numeric( $maby_bool ) ) {
+		return (bool) $maby_bool;
+	}
+
+	return 'true' === strtolower( $maby_bool );
+}
+
+/**
+ * Compare two version strings to get the named semantic version.
+ *
+ * @access public
+ *
+ * @param string $new_version
+ * @param string $original_version
+ * @return string 'major', 'minor', 'patch'
+ */
+function roxwp_get_named_sem_ver( $new_version, $original_version ) {
+
+	if ( ! \Composer\Semver\Comparator::greaterThan( $new_version, $original_version ) ) {
+		return '';
+	}
+
+	$parts = explode( '-', $original_version );
+	$bits  = explode( '.', $parts[0] );
+	$major = $bits[0];
+	if ( isset( $bits[1] ) ) {
+		$minor = $bits[1];
+	}
+	if ( isset( $bits[2] ) ) {
+		$patch = $bits[2];
+	}
+
+	if ( isset( $minor ) && \Composer\Semver\Semver::satisfies( $new_version, "{$major}.{$minor}.x" ) ) {
+		return 'patch';
+	}
+
+	if ( \Composer\Semver\Semver::satisfies( $new_version, "{$major}.x.x" ) ) {
+		return 'minor';
+	}
+
+	return 'major';
+}
+
 // End of file helpers.php.

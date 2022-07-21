@@ -13,9 +13,7 @@ use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\Controller_Base;
 class Health_Check extends Controller_Base {
 
 
-	public function __construct() {
-
-	}
+	public function __construct() {}
 
 	public function register_routes() {
 		// Register site health route.

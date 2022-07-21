@@ -9,8 +9,7 @@ use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update
 /**
  * Class Theme
  */
-class Themes extends Controller_Base
-{
+class Themes extends Controller_Base {
 
 	/**
 	 * Class For Debug data.
@@ -50,10 +49,10 @@ class Themes extends Controller_Base
 			$this->rest_base . '/install',
 			array(
 				array(
-					'methods' => \WP_REST_Server::CREATABLE,
-					'callback' => array($this, 'install_themes'),
-					'permission_callback' => array($this, 'get_route_access'),
-					'args' => array(),
+					'methods'				=> \WP_REST_Server::CREATABLE,
+					'callback'				=> array($this, 'install_themes'),
+					'permission_callback' 	=> array($this, 'get_route_access'),
+					'args'					=> array(),
 				),
 			)
 		);
@@ -63,10 +62,10 @@ class Themes extends Controller_Base
 			$this->rest_base . '/activate',
 			array(
 				array(
-					'methods' => \WP_REST_Server::CREATABLE,
-					'callback' => array($this, 'activate_theme'),
-					'permission_callback' => array($this, 'get_route_access'),
-					'args' => array(),
+					'methods'				=> \WP_REST_Server::CREATABLE,
+					'callback' 				=> array($this, 'activate_theme'),
+					'permission_callback' 	=> array($this, 'get_route_access'),
+					'args' 					=> array(),
 				),
 			)
 		);
@@ -77,10 +76,10 @@ class Themes extends Controller_Base
 			$this->rest_base . '/delete',
 			array(
 				array(
-					'methods' => \WP_REST_Server::CREATABLE,
-					'callback' => array($this, 'delete_themes'),
-					'permission_callback' => array($this, 'get_route_access'),
-					'args' => array(),
+					'methods'		 		=> \WP_REST_Server::CREATABLE,
+					'callback' 				=> array($this, 'delete_themes'),
+					'permission_callback' 	=> array($this, 'get_route_access'),
+					'args' 					=> array(),
 				),
 			)
 		);
@@ -91,10 +90,10 @@ class Themes extends Controller_Base
 			$this->rest_base . '/update',
 			array(
 				array(
-					'methods' => \WP_REST_Server::CREATABLE,
-					'callback' => array($this, 'update_themes'),
-					'permission_callback' => array($this, 'get_route_access'),
-					'args' => array(),
+					'methods' 				=> \WP_REST_Server::CREATABLE,
+					'callback' 				=> array($this, 'update_themes'),
+					'permission_callback' 	=> array($this, 'get_route_access'),
+					'args' 					=> array(),
 				),
 			)
 		);
@@ -105,18 +104,20 @@ class Themes extends Controller_Base
 	 *
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response|
 	 */
-	public function install_themes(\WP_REST_Request $request)
-	{
+	public function install_themes(\WP_REST_Request $request) {
+
+		set_time_limit( 0 );
+
 		$response = array(
 			'data' => [],
-			'extra' => []
+			'extra'=> []
 		);
 		$data = json_decode($request->get_body());
 
 		if (!isset($data->slugs) || empty($data->slugs)) {
 			return rest_ensure_response([
-					'status' => false,
-					'data' => [
+					'status'=> false,
+					'data' 	=> [
 						'message' => __('No theme specified.', 'roxwp-site-mon'),
 					],
 					'extra' => []
@@ -144,9 +145,9 @@ class Themes extends Controller_Base
 		$statuses = [];
 		$is_installed = false;
 
-		foreach ($data->slugs as $slug) {
-			$status = array('status' => false);
-			$slug = sanitize_key(wp_unslash($slug));
+		foreach ( $data->slugs as $slug ) {
+			$status = array( 'status' => false );
+			$slug = sanitize_key( wp_unslash($slug) );
 
 			if (!$this->is_theme_exists($slug)) {
 				$api = themes_api(
@@ -159,7 +160,7 @@ class Themes extends Controller_Base
 
 				if (is_wp_error($api)) {
 					$status['message'] = $api->get_error_message();
-					$statuses [$slug] = $status;
+					$statuses[$slug] = $status;
 					continue;
 				}
 				$result = $upgrader->install($api->download_link);
@@ -185,7 +186,6 @@ class Themes extends Controller_Base
 					$status['status'] = true;
 					$status['message'] = sprintf(__('%s  installed.', 'roxwp-site-mon'), $slug);
 					$is_installed = true;
-
 				}
 
 			} else {
@@ -198,11 +198,11 @@ class Themes extends Controller_Base
 
 		$response['status'] = true;
 		$response['data'] = $statuses;
-		if ($is_installed) {
-			$response['extra'] = [
-				'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-				'site_info' => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-			];
+		if ( $is_installed ) {
+			$response = array_merge($response, ['extra' => [
+				'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+				'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+			]]);
 		}
 
 
@@ -214,8 +214,10 @@ class Themes extends Controller_Base
 	 *
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response|
 	 */
-	public function activate_theme($request)
-	{
+	public function activate_theme($request) {
+
+		set_time_limit( 0 );
+
 		$data = json_decode($request->get_body());
 		$response = array(
 			'status' => true,
@@ -223,10 +225,10 @@ class Themes extends Controller_Base
 			'extra' => [],
 		);
 
-		if (!isset($data->slugs) || empty($data->slugs)) {
+		if ( !isset($data->slugs) || empty($data->slugs) ) {
 			return rest_ensure_response([
-					'status' => false,
-					'data' => [
+					'status'=> false,
+					'data' 	=> [
 						'message' => __('No theme specified.', 'roxwp-site-mon'),
 					],
 					'extra' => []
@@ -237,7 +239,7 @@ class Themes extends Controller_Base
 		$status = ['status' => false];
 		$is_activated = false;
 
-		if (isset($data->slugs[0]) && $this->is_theme_exists($data->slugs[0])) {
+		if ( isset($data->slugs[0]) && $this->is_theme_exists($data->slugs[0]) ) {
 
 			if (wp_get_theme()->get_stylesheet() === $data->slugs[0]) {
 				$status['message'] = __('Theme already active.', 'roxwp-site-mon');
@@ -255,8 +257,8 @@ class Themes extends Controller_Base
 		$response ['data'][] = $status;
 		if ($is_activated) {
 			$response['extra'] = [
-				'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-				'site_info' => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+				'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+				'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
 			];
 		}
 
@@ -268,8 +270,10 @@ class Themes extends Controller_Base
 	 *
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response|
 	 */
-	public function delete_themes(\WP_REST_Request $request)
-	{
+	public function delete_themes(\WP_REST_Request $request) {
+
+		set_time_limit( 0 );
+
 		$data = json_decode($request->get_body());
 		$response = array(
 			'status' => true,
@@ -357,11 +361,11 @@ class Themes extends Controller_Base
 
 		$response['status'] = true;
 		$response['data'] = $statuses;
-		if ($is_deleted) {
-			$response['extra'] = [
-				'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-				'site_info' => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-			];
+		if ( $is_deleted ) {
+			$response = array_merge($response, ['extra' => [
+				'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+				'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+			]]);
 		}
 
 
@@ -373,8 +377,9 @@ class Themes extends Controller_Base
 	 *
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response|
 	 */
-	public function update_themes(\WP_REST_Request $request)
-	{
+	public function update_themes(\WP_REST_Request $request) {
+
+		set_time_limit( 0 );
 		$response = array(
 			'action' => 'update',
 			'data' => [],
@@ -463,10 +468,10 @@ class Themes extends Controller_Base
 		];
 
 		if ($is_updated) {
-			$response['extra'] = [
-				'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-				'site_info' => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-			];
+			$response = array_merge($response, ['extra' => [
+				'site_health' 	=> $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+				'site_info' 	=> $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+			]]);
 		}
 
 		return rest_ensure_response($response);
