@@ -403,10 +403,12 @@ class RoxWP_Debug_Data {
 			);
 		}
 
-		$info['wp-core']['fields']['user_count'] = array(
-			'label' => __( 'User count' ),
-			'value' => get_user_count(),
-		);
+		if ( function_exists('get_user_count') ) {
+			$info['wp-core']['fields']['user_count'] = array(
+				'label' => __('User count'),
+				'value' => get_user_count(),
+			);
+		}
 
 		// WordPress features requiring processing.
 		$wp_dotorg = wp_remote_get( 'https://wordpress.org', array( 'timeout' => 10 ) );
@@ -510,7 +512,7 @@ class RoxWP_Debug_Data {
 		// Get ImageMagic information, if available.
 		if ( class_exists( 'Imagick' ) ) {
 			// Save the Imagick instance for later use.
-			$imagick             = new Imagick();
+			$imagick             = new \Imagick();
 			$imagemagick_version = $imagick->getVersion();
 		} else {
 			$imagemagick_version = __( 'Not available' );
