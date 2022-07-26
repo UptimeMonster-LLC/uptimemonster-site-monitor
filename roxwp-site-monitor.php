@@ -74,9 +74,6 @@ if ( ! file_exists( ROXWP_SM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
 }
 
 require_once ROXWP_SM_PLUGIN_PATH . 'vendor/autoload.php';
-
-
-
 require_once ROXWP_SM_PLUGIN_PATH . 'includes/helpers.php';
 
 /**
