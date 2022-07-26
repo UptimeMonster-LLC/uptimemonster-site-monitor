@@ -161,6 +161,7 @@ class Plugins extends Controller_Base {
 
 		$data = json_decode( $request->get_body() );
 
+
 		if ( ! isset( $data->slugs ) || empty( $data->slugs ) ) {
 			return rest_ensure_response( array(
 					'status' => false,
@@ -751,7 +752,7 @@ class Plugins extends Controller_Base {
 
 		}
 
-		return null;
+		return $plugin_path;
 	}
 
 	/**
@@ -767,13 +768,13 @@ class Plugins extends Controller_Base {
 		if ( in_array('roxwp-site-monitor/roxwp-site-monitor.php', $data ) ) {
 
 			if ( count($data) === 1 ) {
-				return wp_send_json_success([
+				return wp_send_json_success( [
 					'status'=> false,
 					'data' 	=> [
 						'message' => sprintf(__('roxwp-site-monitor/roxwp-site-monitor.php can\'not be %s.', 'roxwp-site-mon'), $action),
 					],
 					'extra' => [],
-				]);
+				] );
 			}
 
 			$slugs = array_filter($data, function ($slug) {
@@ -781,7 +782,6 @@ class Plugins extends Controller_Base {
 				if ('roxwp-site-monitor/roxwp-site-monitor.php' !== $slug) {
 					return $slug;
 				}
-
 			});
 
 		}
