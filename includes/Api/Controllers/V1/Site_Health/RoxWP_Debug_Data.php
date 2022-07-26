@@ -500,7 +500,6 @@ class RoxWP_Debug_Data {
 				'debug' => 'true',
 			);
 		}
-
 		// Populate the media fields.
 		$info['wp-media']['fields']['image_editor'] = array(
 			'label' => __( 'Active editor' ),
