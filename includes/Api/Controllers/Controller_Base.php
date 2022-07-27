@@ -65,7 +65,7 @@ abstract class Controller_Base extends \WP_REST_Controller {
 		if ( $isValid ) {
 			return true;
 		}
-return true;
+
 		return new \WP_Error( 'invalid_signature', __( 'Invalid Signature', 'roxwp-site-mon' ), [] );
 	}
 }
