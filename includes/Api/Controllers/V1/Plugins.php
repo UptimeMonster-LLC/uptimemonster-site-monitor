@@ -273,72 +273,55 @@ class Plugins extends Controller_Base {
 		set_time_limit( 0 );
 		$data = json_decode( $request->get_body() );
 
-		$response = [
-			'status' => true,
-			'data'   => [],
-			'extra'  => [],
-		];
-
-		if ( ! isset( $data->slugs ) || empty( $data->slugs ) ) {
-			return rest_ensure_response( [
-					'status' => false,
-					'data'   => [
-						'message' => __( 'No plugin specified.', 'roxwp-site-mon' ),
-					],
-					'extra'  => []
-				]
-			);
-		}
-
 		if ( ! function_exists( 'is_plugin_active' ) || ! function_exists( 'get_plugin_data' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$statuses     = array();
+		$this->check_slug( $data );
+		$response = [];
+		$plugins =  $data->slugs;
+
 		$is_activated = false;
 
-		foreach ( $data->slugs as $slug ) {
+
+		foreach ( $plugins as $plugin ) {
 			$status = array();
-			$plugin = ( isset( $slug ) ) ? esc_attr( $slug ) : false;
+
+			$plugin = esc_attr( $plugin );
 
 			if ( $this->is_plugin_exists( $plugin ) ) {
 
 				if ( is_plugin_active( $plugin ) ) {
-					$statuses[] = [
+					$status = [
 						'status'  => false,
 						'message' => __( 'Plugin already active', 'roxwp-site-mon' ),
 					];
-					continue;
-				}
-
-				$activate = activate_plugin( $plugin, '', false, false );
-
-				if ( is_wp_error( $activate ) ) {
-					$status['status']  = false;
-					$status['message'] = $activate->get_error_message();
 				} else {
-					$status['status']  = true;
-					$status['message'] = __( 'Plugin activated', 'roxwp-site-mon' );
-					$is_activated      = true;
-				}
+					$activate = activate_plugin( $plugin, '', false, false );
 
+					if ( is_wp_error( $activate ) ) {
+						$status['status']  = false;
+						$status['message'] = $activate->get_error_message();
+					} else {
+						$status['status']  = true;
+						$status['message'] = __( 'Plugin activated', 'roxwp-site-mon' );
+						$is_activated      = true;
+					}
+				}
 			} else {
 				$status['status']  = false;
 				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
 			}
-
-			$statuses[] = $status;
+			$response[ $plugin ] = $status;
 		}
 
-		$response['data'] = $statuses;
+		$response = ['status'=>true, 'data'=>$response ];
 
 		if ( $is_activated ) {
-			$response = array_merge( $response, [
-				'extra' => [
-					'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-					'site_info'   => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-				]
-			] );
+			$response['extra'] = [
+				'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+				'site_info'   => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+			];
 		}
 
 		return rest_ensure_response( $response );
@@ -382,11 +365,12 @@ class Plugins extends Controller_Base {
 						'message' => __( 'Plugin already inactive', 'roxwp-site-mon' ),
 					];
 				} else {
-					deactivate_plugins( $plugin );
+
 					if ( is_plugin_inactive( $plugin ) ) {
 						$status['status']  = false;
 						$status['message'] = __( 'Unable to deactivated.', 'roxwp-site-mon' );
 					} else {
+						deactivate_plugins( $plugin );
 						$status['status']  = true;
 						$status['message'] = __( 'Plugin deactivated', 'roxwp-site-mon' );
 						$is_deactivated    = true;
@@ -396,7 +380,6 @@ class Plugins extends Controller_Base {
 				$status['status']  = false;
 				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
 			}
-
 			$response[ $plugin ] = $status;
 		}
 
@@ -420,75 +403,57 @@ class Plugins extends Controller_Base {
 	 */
 	public function uninstall_plugins( \WP_REST_Request $request ) {
 		set_time_limit( 0 );
-		$response = [
-			'status' => true,
-			'data'   => [],
-			'extra'  => [],
-		];
 
 		$data = json_decode( $request->get_body() );
-		// Prevent from uninstall self.
-		$slugs           = $this->exclude_self( $data->slugs, 'uninstall' );
-		$existed_plugins = $this->existed_plugins( $slugs );
-		$count           = count( $slugs );
-
-		if ( ! isset( $data->slugs ) || empty( $data->slugs ) ) {
-			return rest_ensure_response(
-				array_merge( $response, [
-					'data' => [
-						'status'  => false,
-						'message' => __( 'No plugin specified.', 'roxwp-site-mon' ),
-					]
-				] )
-			);
-		}
-
-		if ( empty( $existed_plugins ) ) {
-			return rest_ensure_response( array_merge( $response, [
-				'data' => [
-					'status'  => false,
-					'message' => _n( "This Plugin doesn't exist!", "Plugins doesn't exist !", $count, 'roxwp-site-mon' ),
-				]
-			] ) );
-		}
 
 		if ( ! function_exists( 'is_plugin_active' ) || ! function_exists( 'get_plugin_data' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$statuses       = [];
+		$this->check_slug( $data );
+		$response = [];
+		$plugins  = $data->slugs;
+
+
+		// Prevent from uninstall self.
+		$this->self_check( $plugins, $response );
 		$is_uninstalled = false;
 
-		foreach ( $existed_plugins as $slug ) {
-			$status = [ 'status' => false ];
+		foreach ( $plugins as $plugin ) {
+			$status = array();
 
-			if ( is_uninstallable_plugin( $slug ) ) {
-				uninstall_plugin( $slug );
+			if ( $this->is_plugin_exists( $plugin )){
+				if ( is_uninstallable_plugin( $plugin ) ) {
+					uninstall_plugin( $plugin );
 
-				if ( is_plugin_active( $slug ) ) {
-					$status['message'] = __( 'Uninstallation failed. This Plugin is currently Active.', 'roxwp-site-mon' );
+					if ( is_plugin_active( $plugin ) ) {
+						$status['status']  = false;
+						$status['message'] = __( 'Uninstallation failed. This Plugin is currently Active.', 'roxwp-site-mon' );
+					} else {
+						$status         = [
+							'status'  => true,
+							'message' => __( 'Plugin uninstalled successfully.', 'roxwp-site-mon' ),
+						];
+						$is_uninstalled = true;
+					}
 				} else {
-					$status         = [
-						'status'  => true,
-						'message' => __( 'Plugin uninstalled successfully.', 'roxwp-site-mon' ),
-					];
-					$is_uninstalled = true;
+					$status['status']  = false;
+					$status['message'] = __( "Plugin can't be uninstalled.", "roxwp-site-mon" );
 				}
-			} else {
-				$status['message'] = __( "Plugin can't be uninstalled.", "roxwp-site-mon" );
+			}else{
+				$status['status']  = false;
+				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
 			}
-
-			$statuses[] = $status;
+			$response[ $plugin ] = $status;
 		}
 
-		$response['data'] = $statuses;
+		$response = [ 'status' => true, 'data' => $response ];
+
 		if ( $is_uninstalled ) {
-			$response = array_merge( $response, [
-				'extra' => [
-					'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-					'site_info'   => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-				]
-			] );
+			$response['extra'] = [
+				'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+				'site_info'   => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+			];
 		}
 
 		return rest_ensure_response( $response );
@@ -501,15 +466,7 @@ class Plugins extends Controller_Base {
 	 */
 	public function delete_plugins( \WP_REST_Request $request ) {
 		set_time_limit( 0 );
-		$response = [
-			'status' => true,
-			'data'   => [],
-			'extra'  => [],
-		];
 		$data     = json_decode( $request->get_body() );
-		// Prevent from delete self.
-		$slugs           = $this->exclude_self( $data->slugs, 'uninstall' );
-		$existed_plugins = $this->existed_plugins( $slugs );
 
 		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -519,60 +476,64 @@ class Plugins extends Controller_Base {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		if ( ! isset( $data->slugs ) || empty( $data->slugs ) ) {
-			return rest_ensure_response( [
-					'status' => false,
-					'data'   => [
-						[
-							'status'  => false,
-							'message' => __( 'No plugin specified.', 'roxwp-site-mon' ),
-						]
-					],
-					'extra'  => []
-				]
-			);
-		}
+		$this->check_slug( $data );
+		$response = [];
+		$plugins = $data->slugs;
 
-		if ( empty( $existed_plugins ) ) {
-			$count = count( $data->slugs );
-
-			return rest_ensure_response( [
-				'status' => false,
-				'data'   => [
-					'status'  => false,
-					'message' => _n( 'Plugin does\'nt exists!', 'Plugins does\'nt exists!', $count, 'roxwp-site-mon' ),
-				],
-				'extra'  => [],
-			] );
-		}
-
-		$status     = delete_plugins( $existed_plugins );
-		$count      = count( $existed_plugins );
+		// Prevent from delete self.
+		$this->self_check( $plugins, $response );
+//		$existed_plugins = $this->existed_plugins( $slugs );
+//
+//		$status     = delete_plugins( $existed_plugins );
+//		$count      = count( $existed_plugins );
 		$is_deleted = false;
 
-		if ( null === $status ) {
-			$response['status'] = false;
-			$response['data']   = new \WP_Error( 'filesystem-not-writable', _n( 'Unable to delete plugin. Filesystem is readonly.', 'Unable to delete plugins. Filesystem is readonly.', $count, 'roxwp-site-mon' ) );
-		} else if ( ! is_wp_error( $status ) ) {
-			$response   = [
-				'status' => true,
-				'data'   => [
-					[
-						'status'  => true,
-						'message' => _n( 'Specified plugin deleted', 'Specified plugins deleted', $count, 'roxwp-site-mon' ),
-					]
-				]
-			];
-			$is_deleted = true;
+		foreach ( $plugins as $plugin ){
+			$status = array();
+
+			if ( $this->is_plugin_exists( $plugin) ){
+
+				$isPluginDeleted = delete_plugins( $plugin );
+
+				if ( $isPluginDeleted ){
+					$status['status']  = true;
+					$status['message'] = __( 'Plugins deleted', 'roxwp-site-mon' );
+				} else {
+					$status['status']  = false;
+					$status['message'] = __( 'Plugin is inactivate', 'roxwp-site-mon' );
+				}
+
+			} else{
+				$status['status']  = false;
+				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
+			}
+			$response[ $plugin ] = $status;
 		}
+		$response = [ 'status' => true, 'data' => $response ];
+
+
+
+//		if ( null === $status ) {
+//			$response['status'] = false;
+//			$response['data']   = new \WP_Error( 'filesystem-not-writable', _n( 'Unable to delete plugin. Filesystem is readonly.', 'Unable to delete plugins. Filesystem is readonly.', $count, 'roxwp-site-mon' ) );
+//		} else if ( ! is_wp_error( $status ) ) {
+//			$response   = [
+//				'status' => true,
+//				'data'   => [
+//					[
+//						'status'  => true,
+//						'message' => _n( 'Specified plugin deleted', 'Specified plugins deleted', $count, 'roxwp-site-mon' ),
+//					]
+//				]
+//			];
+//			$is_deleted = true;
+//		}
 
 		if ( $is_deleted ) {
-			$response = array_merge( $response, [
-				'extra' => [
-					'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-					'site_info'   => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-				]
-			] );
+			$response['extra'] = [
+				'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+				'site_info'   => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+			];
 		}
 
 		return rest_ensure_response( $response );
@@ -585,39 +546,6 @@ class Plugins extends Controller_Base {
 	 */
 	public function update_plugins( \WP_REST_Request $request ) {
 		set_time_limit( 0 );
-		$response = array(
-			'status' => true,
-			'data'   => [],
-			'extra'  => []
-		);
-		$data     = json_decode( $request->get_body() );
-
-		// Prevent from uninstall self.
-		$slugs           = $this->exclude_self( $data->slugs, 'uninstall' );
-		$existed_plugins = $this->existed_plugins( $slugs );
-
-		if ( ! isset( $data->slugs ) || empty( $data->slugs ) ) {
-			return rest_ensure_response( [
-					'status' => false,
-					'data'   => [
-						'message' => __( 'No plugin specified.', 'roxwp-site-mon' ),
-					],
-					'extra'  => []
-				]
-			);
-		}
-
-		if ( empty( $existed_plugins ) ) {
-			$count = count( $data->slugs );
-
-			return rest_ensure_response( [
-				'status' => false,
-				'data'   => [
-					'message' => _n( 'Plugin does\'nt exists with this slug', 'Plugins does\'nt exists with these slugs', $count, 'roxwp-site-mon' ),
-				],
-				'extra'  => [],
-			] );
-		}
 
 		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 
@@ -628,69 +556,80 @@ class Plugins extends Controller_Base {
 		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
+		$data     = json_decode( $request->get_body() );
+
+		$this->check_slug( $data );
+		$response = [];
+		$plugins  = $data->slugs;
+
+		// Prevent from uninstall self.
+		$this->self_check( $plugins, $response );
 
 		wp_update_plugins();
+
 		$skin       = new \WP_Ajax_Upgrader_Skin();
 		$upgrader   = new \Plugin_Upgrader( $skin );
-		$statuses   = [];
 		$is_updated = false;
 
-		foreach ( $existed_plugins as $path ) {
-			$status      = [
-				'status' => false,
-			];
-			$plugin      = plugin_basename( sanitize_text_field( wp_unslash( $path ) ) );
-			$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
-			$result      = $upgrader->bulk_upgrade( array( $plugin ) );
+		foreach ( $plugins as $plugin ) {
+			$status      = array();
+			if ( $this->is_plugin_exists( $plugin ) ) {
+				$plugin      = plugin_basename( sanitize_text_field( wp_unslash( $plugin ) ) );
+				$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
+				$result      = $upgrader->bulk_upgrade( array( $plugin ) );
 
-			if ( is_wp_error( $skin->result ) ) {
-				$status['message'] = $skin->result->get_error_message();
-			} elseif ( $skin->get_errors()->has_errors() ) {
-				$status['message'] = $skin->get_error_messages();
-			} elseif ( is_array( $result ) && ! empty( $result[ $plugin ] ) ) {
-				/*
-				 * Plugin is already at the latest version.
-				 *
-				 * This may also be the return value if the `update_plugins` site transient is empty,
-				 * e.g. when you update two plugins in quick succession before the transient repopulates.
-				 *
-				 * Preferably something can be done to ensure `update_plugins` isn't empty.
-				 * For now, surface some sort of error here.
-				 */
-				if ( true === $result[ $plugin ] ) {
-					$status['message'] = $upgrader->strings['up_to_date'];
-				} else {
-					$plugin_data       = get_plugins( '/' . $result[ $plugin ]['destination_name'] );
-					$plugin_data       = reset( $plugin_data );
-					$version           = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
-					$status['status']  = true;
-					$status['message'] = sprintf( __( '%s Updated. New version %s.', 'roxwp-site-mon' ), $plugin, $version );
-					$is_updated        = true;
+				$status['status']  = true;
+				if ( is_wp_error( $skin->result ) ) {
+					$status['message'] = $skin->result->get_error_message();
 				}
-			} elseif ( false === $result ) {
-				global $wp_filesystem;
-				// Pass through the error from WP_Filesystem if one was raised.
-				if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
-					$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
-				} else {
-					$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-monitor' );
+				elseif ( $skin->get_errors()->has_errors() ) {
+					$status['message'] = $skin->get_error_messages();
 				}
+				elseif ( is_array( $result ) && ! empty( $result[ $plugin ] ) ) {
+					/*
+					 * Plugin is already at the latest version.
+					 *
+					 * This may also be the return value if the `update_plugins` site transient is empty,
+					 * e.g. when you update two plugins in quick succession before the transient repopulates.
+					 *
+					 * Preferably something can be done to ensure `update_plugins` isn't empty.
+					 * For now, surface some sort of error here.
+					 */
+					if ( true === $result[ $plugin ] ) {
+						$status['message'] = $upgrader->strings['up_to_date'];
+					} else {
+						$plugin_data       = get_plugins( '/' . $result[ $plugin ]['destination_name'] );
+						$plugin_data       = reset( $plugin_data );
+						$version           = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
+						$status['message'] = sprintf( __( '%s Updated. New version %s.', 'roxwp-site-mon' ), $plugin, $version );
+						$is_updated        = true;
+					}
+				}
+				elseif ( false === $result ) {
+					global $wp_filesystem;
+					// Pass through the error from WP_Filesystem if one was raised.
+					if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
+						$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
+					} else {
+						$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-monitor' );
+					}
+				}
+
+			} else{
+				$status['status']  = false;
+				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
 			}
-
-			$statuses [] = $status;
+			$response[ $plugin ] = $status;
 		}
 
-		$response['data'] = $statuses;
+		$response = [ 'status' => true, 'data' => $response ];
 
 		if ( $is_updated ) {
-			$response = array_merge( $response, [
-				'extra' => [
-					'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
-					'site_info'   => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
-				]
-			] );
+			$response['extra'] = [
+				'site_health' => $this->update_check_model->get_site_health() ? $this->update_check_model->get_site_health() : [],
+				'site_info'   => $this->debug_model->debug_data() ? $this->debug_model->debug_data() : [],
+			];
 		}
-
 
 		return rest_ensure_response( $response );
 	}
@@ -810,5 +749,19 @@ class Plugins extends Controller_Base {
 		}
 
 		return $existed_plugins;
+	}
+
+	/**
+	 * @param $data
+	 *
+	 * @return void|\WP_Error|\WP_HTTP_Response|\WP_REST_Response
+	 */
+	private function check_slug( $data ){
+		if ( ! isset( $data->slugs ) || empty( $data->slugs ) || ! is_array( $data->slugs ) ) {
+			return rest_ensure_response( [
+				'status'  => false,
+				'message' => __( 'No plugin specified.', 'roxwp-site-mon' ),
+			] );
+		}
 	}
 }
