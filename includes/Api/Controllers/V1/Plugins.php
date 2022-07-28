@@ -768,12 +768,16 @@ class Plugins extends Controller_Base {
 		if ( in_array('roxwp-site-monitor/roxwp-site-monitor.php', $data ) ) {
 
 			if ( count($data) === 1 ) {
+
 				return wp_send_json_success( [
-					'status'=> false,
-					'data' 	=> [
-						'message' => sprintf(__('roxwp-site-monitor/roxwp-site-monitor.php can\'not be %s.', 'roxwp-site-mon'), $action),
+					'status' => false,
+					'data'   => [
+						[
+							'message' => sprintf( __( 'Monitor plugin can\'not be %s.', 'roxwp-site-mon' ), $action ),
+							'status'  => false
+						]
 					],
-					'extra' => [],
+					'extra'  => [],
 				] );
 			}
 
