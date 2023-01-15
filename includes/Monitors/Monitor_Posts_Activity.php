@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 use Exception;
 use WP_Post;
@@ -61,7 +61,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		 * @param WP_Post $post
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_post_activity', $status, $post, $action );
+		return (bool) apply_filters( 'umsm_should_log_post_activity', $status, $post, $action );
 	}
 
 	/**
@@ -150,7 +150,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		 *
 		 * @param array $post_types
 		 */
-		return (array) apply_filters( 'roxwp_exclude_pos_type', [] );
+		return (array) apply_filters( 'umsm_exclude_pos_type', [] );
 	}
 
 	/**

@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 use WP_User;
 
@@ -30,7 +30,7 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 	}
 
 	protected function maybe_log_activity( $action, $object_id ) {
-		$user = roxwp_get_user( $object_id );
+		$user = umsm_get_user( $object_id );
 
 		/**
 		 * Should report activity?
@@ -41,11 +41,11 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 		 * @param string $value
 		 * @param string $new_value
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_session_activity', false !== $user, $user, $action );
+		return (bool) apply_filters( 'umsm_should_log_session_activity', false !== $user, $user, $action );
 	}
 
 	protected function log_user( $action, $user, $extra = [] ) {
-		$user = roxwp_get_user( $user );
+		$user = umsm_get_user( $user );
 
 		if ( ! $user || ! $this->maybe_log_activity( $action, $user ) ) {
 			return;
@@ -55,10 +55,10 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 			$action,
 			$user->ID, // @phpstan-ignore-line
 			'session',
-			roxwp_get_user_display_name( $user ),
+			umsm_get_user_display_name( $user ),
 			array_merge( [
 				'username' => $user->user_login,
-				'role'     => roxwp_get_user_role( $user ),
+				'role'     => umsm_get_user_role( $user ),
 				'email'    => $user->user_email,
 			], $extra )
 		);

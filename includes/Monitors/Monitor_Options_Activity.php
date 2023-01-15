@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -36,7 +36,7 @@ class Monitor_Options_Activity extends Activity_Monitor_Base {
 		 * @param string $value
 		 * @param string $new_value
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_options_activity', true, $option, $action, $value, $new_value );
+		return (bool) apply_filters( 'umsm_should_log_options_activity', true, $option, $action, $value, $new_value );
 	}
 
 	public function log_on_change( $option, $old, $new = null ) {
@@ -59,7 +59,7 @@ class Monitor_Options_Activity extends Activity_Monitor_Base {
 
 	public static function get_options_to_log() {
 		return apply_filters(
-			'roxwp_options_to_log', [
+			'umsm_options_to_log', [
 				// General
 				'blogname',
 				'blogdescription',

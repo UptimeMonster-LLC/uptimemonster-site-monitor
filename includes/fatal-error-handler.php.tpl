@@ -1,15 +1,15 @@
 <?php
 /**
- * Error handler drop-in for RoxWP Site Monitor Error Monitoring Support.
+ * Error handler drop-in for UptimeMonster Site Monitor Error Monitoring Support.
  *
  * Plugin Name: Roxwp Site Error Logger Drop-in
- * Plugin URI: https://absoluteplugins.com/wordpress-plugins/roxwp-site-monitor/
- * Description: Error Logger RoxWP WordPress Site Activity Monitor Plugin.
- * Author: AbsolutePlugins
- * Author URI: https://absoluteplugins.com/
+ * Plugin URI: https://uptimemonster.com/
+ * Description: Error Logger UptimeMonster WordPress Site Activity Monitor Plugin.
+ * Author: UptimeMonster
+ * Author URI: https://uptimemonster.com/
  * Version: 1.0.0
  *
- * @package RoxwpSiteMonitor
+ * @package UptimeMonster\SiteMonitor
  * @version 1.0.0
  * @license GPL-3.0-or-later
  */
@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $current_errors = [];
+
 /**
  * Get all errors and push to $GLOBALS['ERRORS'].
  *
@@ -31,7 +32,7 @@ $current_errors = [];
  *
  * @return false
  */
-function roxwp_error_catcher( $type, $message, $file, $line ) {
+function umsm_error_catcher( $type, $message, $file, $line ) {
 	global $current_errors;
 
 	if ( E_USER_DEPRECATED !== $type && ! wp_is_maintenance_mode() ) {
@@ -49,10 +50,13 @@ function roxwp_error_catcher( $type, $message, $file, $line ) {
 	return false;
 }
 
-set_error_handler( 'roxwp_error_catcher', E_ALL );
+set_error_handler( 'umsm_error_catcher', E_ALL );
 
-
-class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
+/**
+ * Drop-in fatal-error-handler class for UptimeMonster Site Monitor
+ */
+#[AllowDynamicProperties]
+class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 
 	/**
 	 * Runs the shutdown handler.
@@ -86,23 +90,23 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 	 */
 	protected function send_log( $data ) {
 
-		if ( ! function_exists( 'roxwp_get_current_actor' ) ) {
-			require_once WP_CONTENT_DIR . '/plugins/roxwp-site-monitor/includes/helpers.php';
+		if ( ! function_exists( 'umsm_get_current_actor' ) ) {
+			require_once WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/includes/helpers.php';
 		}
 
-		if ( ! class_exists( '\AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Client', false ) ) {
-			require_once WP_CONTENT_DIR . '/plugins/roxwp-site-monitor/includes/RoxWP_Client.php';
+		if ( ! class_exists( '\UptimeMonster\SiteMonitor\UptimeMonster_Client', false ) ) {
+			require_once WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/includes/UptimeMonster_Client.php';
 		}
 
-		$client = AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Client::get_instance();
+		$client = UptimeMonster\SiteMonitor\UptimeMonster_Client::get_instance();
 		$client->send_log( [
 			'action'    => 'error_log',
 			'activity'  => 'WP_Error_Handler',
 			'subtype'   => 'error',
 			'object_id' => null,
 			'name'      => null,
-			'timestamp' => roxwp_get_current_time(),
-			'actor'     => roxwp_get_current_actor(),
+			'timestamp' => umsm_get_current_time(),
+			'actor'     => umsm_get_current_actor(),
 			'extra'     => $data,
 		] );
 
@@ -147,6 +151,6 @@ class RoxWP_Monitor_Errors extends WP_Fatal_Error_Handler {
 	}
 }
 
-return new RoxWP_Monitor_Errors;
+return new UptimeMonster_Monitor_Errors;
 
 // End of file fatal-error-handler.php.

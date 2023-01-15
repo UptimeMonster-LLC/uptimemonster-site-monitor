@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 use Exception;
 use WP_Post;
@@ -38,7 +38,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		 * @param null $object
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_wp_core_update_activity', true, null, $action );
+		return (bool) apply_filters( 'umsm_should_log_wp_core_update_activity', true, null, $action );
 	}
 
 	/**
@@ -48,10 +48,10 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		global $pagenow;
 
 		if ( 'wp_maybe_auto_update' === current_filter() ) {
-			roxwp_switch_to_english();
+			umsm_switch_to_english();
 			/* translators: 1. WordPress Version. */
-			$name = __( 'WordPress Auto Upgrading From %s', 'roxwp-site-mon' );
-			roxwp_restore_locale();
+			$name = __( 'WordPress Auto Upgrading From %s', 'uptime' );
+			umsm_restore_locale();
 
 			$version = get_bloginfo( 'version' );
 
@@ -73,10 +73,10 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		if ( 'do-core-upgrade' === $action || 'do-core-reinstall' === $action ) {
 			if ( isset( $_POST['upgrade'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 				$action = 'do-core-upgrade' === $action ? Activity_Monitor_Base::ITEM_UPGRADING : Activity_Monitor_Base::ITEM_REINSTALLING;
-				roxwp_switch_to_english();
+				umsm_switch_to_english();
 				/* translators: 1. WordPress Version. */
-				$name = 'do-core-upgrade' == $action ? __( 'WordPress Upgrading From %s', 'roxwp-site-mon' ) : __( 'WordPress Reinstalling %s', 'roxwp-site-mon' );
-				roxwp_restore_locale();
+				$name = 'do-core-upgrade' == $action ? __( 'WordPress Upgrading From %s', 'uptime' ) : __( 'WordPress Reinstalling %s', 'uptime' );
+				umsm_restore_locale();
 
 				$version = get_bloginfo( 'version' );
 
@@ -94,10 +94,10 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 	public function log_on_successful_update( $version ) {
 		global $pagenow;
 
-		roxwp_switch_to_english();
+		umsm_switch_to_english();
 		/* translators: 1. WordPress Updated Version. */
-		$name = 'update-core.php' !== $pagenow ? __( 'WordPress Auto Updated to %s', 'roxwp-site-mon' ) : __( 'WordPress Updated to %s', 'roxwp-site-mon' );
-		roxwp_restore_locale();
+		$name = 'update-core.php' !== $pagenow ? __( 'WordPress Auto Updated to %s', 'uptime' ) : __( 'WordPress Updated to %s', 'uptime' );
+		umsm_restore_locale();
 
 		$this->log_activity(
 			Activity_Monitor_Base::ITEM_UPDATED,

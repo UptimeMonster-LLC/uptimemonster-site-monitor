@@ -2,14 +2,14 @@
 /**
  * Initialize Monitoring.
  *
- * @package RoxwpSiteMonitor
+ * @package UptimeMonster\SiteMonitor
  * @version 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor;
+namespace UptimeMonster\SiteMonitor;
 
-use AbsolutePlugins\RoxwpSiteMonitor\Monitors\Singleton;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Server;
+use UptimeMonster\SiteMonitor\Monitors\Singleton;
+use UptimeMonster\SiteMonitor\Api\Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -17,12 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-/** @define "ROXWP_SM_PLUGIN_PATH" "./" */
+/** @define "UMSM_PLUGIN_PATH" "./" */
 
 /**
  * Site Monitor.
  */
-final class RoxWP_Site_Monitor {
+final class UptimeMonster_Site_Monitor {
 
 	use Singleton;
 
@@ -40,11 +40,11 @@ final class RoxWP_Site_Monitor {
 		// Check if autoloader exists, include it or show error with admin notice ui.
 
 		// DropIns
-		self::$error_handler_dist = ROXWP_SM_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl'; // @phpstan-ignore-line
+		self::$error_handler_dist = UMSM_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl'; // @phpstan-ignore-line
 		self::$error_handler      = WP_CONTENT_DIR . '/fatal-error-handler.php'; // @phpstan-ignore-line
 
-		register_activation_hook( ROXWP_SM_PLUGIN_FILE, array( __CLASS__, 'install' ) );
-		register_deactivation_hook( ROXWP_SM_PLUGIN_FILE, array( __CLASS__, 'uninstall' ) );
+		register_activation_hook( UMSM_PLUGIN_FILE, array( __CLASS__, 'install' ) );
+		register_deactivation_hook( UMSM_PLUGIN_FILE, array( __CLASS__, 'uninstall' ) );
 
 		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
@@ -65,18 +65,18 @@ final class RoxWP_Site_Monitor {
 		// @TODO move installation to another file.
 		self::maybe_install_drop_in();
 
-		$api_keys = get_option( 'roxwp_site_monitor_api_keys', array() );
+		$api_keys = get_option( 'umsm_site_monitor_api_keys', array() );
 		if ( empty( $api_keys ) ) {
-			update_option( 'roxwp_need_setup', 'yes' );
+			update_option( 'umsm_need_setup', 'yes' );
 		}
 
-		if ( empty( get_option( 'roxwp_first_installed' ) ) ) {
-			update_option( 'roxwp_first_installed', roxwp_get_current_time() );
+		if ( empty( get_option( 'umsm_first_installed' ) ) ) {
+			update_option( 'umsm_first_installed', umsm_get_current_time() );
 		}
 
-		update_option( 'roxwp_site_monitor_version', ROXWP_SM_PLUGIN_VERSION );
+		update_option( 'umsm_site_monitor_version', UMSM_PLUGIN_VERSION );
 
-		do_action( 'roxwp_site_monitor_activation' );
+		do_action( 'umsm_site_monitor_activation' );
 	}
 
 	public static function maybe_install_drop_in() {
@@ -85,13 +85,13 @@ final class RoxWP_Site_Monitor {
 
 	public static function uninstall() {
 		self::remove_drop_in();
-		do_action( 'roxwp_site_monitor_deactivation' );
+		do_action( 'umsm_site_monitor_deactivation' );
 	}
 
 	public static function get_drop_in_data( $installed = true ) {
 		$which = $installed ? 'installed' : 'dist';
 		if ( ! isset( self::$error_handler_data[ $which ] ) ) {
-			self::$error_handler_data[ $which ] = roxwp_get_plugin_data( $installed ? self::$error_handler : self::$error_handler_dist );
+			self::$error_handler_data[ $which ] = umsm_get_plugin_data( $installed ? self::$error_handler : self::$error_handler_dist );
 		}
 
 		return self::$error_handler_data[ $which ];
@@ -156,7 +156,7 @@ final class RoxWP_Site_Monitor {
 				fclose( $fp );
 			}
 
-			do_action( 'roxwp_error_logger_installed', $old_version, self::is_drop_in_installed() );
+			do_action( 'umsm_error_logger_installed', $old_version, self::is_drop_in_installed() );
 		}
 	}
 
@@ -182,13 +182,13 @@ final class RoxWP_Site_Monitor {
 		}
 
 		$locale = determine_locale();
-		$locale = apply_filters( 'plugin_locale', $locale, 'roxwp-site-mon' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$locale = apply_filters( 'plugin_locale', $locale, 'uptime' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
-		unload_textdomain( 'roxwp-site-mon' );
+		unload_textdomain( 'uptime' );
 
-		load_textdomain( 'roxwp-site-mon', WP_LANG_DIR . '/roxwp-site-monitor/roxwp-site-monitor-' . $locale . '.mo' ); // @phpstan-ignore-line
-		load_plugin_textdomain( 'roxwp-site-mon', false, plugin_basename( dirname( ROXWP_SM_PLUGIN_FILE ) ) . '/languages' );
+		load_textdomain( 'uptime', WP_LANG_DIR . '/uptimemonster-site-monitor/uptimemonster-site-monitor-' . $locale . '.mo' ); // @phpstan-ignore-line
+		load_plugin_textdomain( 'uptime', false, plugin_basename( dirname( UMSM_PLUGIN_FILE ) ) . '/languages' );
 	}
 }
 
-// End of file class-roxwp_site_monitor.php.
+// End of file class-umsm_site_monitor.php.

@@ -1,6 +1,12 @@
 <?php
+/**
+ * Plugin Updater API
+ *
+ * @package UptimeMonster\SiteMonitor\API
+ * @version 1.0.0
+ */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1;
+namespace UptimeMonster\SiteMonitor\Api\Controllers\V1;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -8,10 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\Controller_Base;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Debug_Data;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update_Check;
+use UptimeMonster\SiteMonitor\Api\Controllers\Controller_Base;
+use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Debug_Data;
+use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Update_Check;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.1 403 Forbidden' );
+	die();
+}
 
 /**
  * Class Plugins
@@ -46,10 +57,10 @@ class Plugins extends Controller_Base {
 	 */
 	public function __construct() {
 		// Health data
-		$this->update_check_model = new RoxWP_Update_Check();
+		$this->update_check_model = new UptimeMonster_Update_Check();
 
 		// Debug data.
-		$this->debug_model = new RoxWP_Debug_Data();
+		$this->debug_model = new UptimeMonster_Debug_Data();
 	}
 
 	/**
@@ -223,13 +234,13 @@ class Plugins extends Controller_Base {
 
 				if ( ! isset( $status['message'] ) ) {
 					$status['status']  = true;
-					$status['message'] = sprintf( __( '%s installed.', 'roxwp-site-mon' ), $slug );
+					$status['message'] = sprintf( __( '%s installed.', 'uptime' ), $slug );
 					$is_installed      = true;
 				}
 
 			} else {
 				$status['status']  = false;
-				$status['message'] = sprintf( __( '%s already exists.', 'roxwp-site-mon' ), $slug );
+				$status['message'] = sprintf( __( '%s already exists.', 'uptime' ), $slug );
 			}
 			$response[ $plugin ] = $status;
 
@@ -276,7 +287,7 @@ class Plugins extends Controller_Base {
 				if ( is_plugin_active( $plugin ) ) {
 					$status = [
 						'status'  => false,
-						'message' => __( 'Plugin already active', 'roxwp-site-mon' ),
+						'message' => __( 'Plugin already active', 'uptime' ),
 					];
 				} else {
 					$activate = activate_plugin( $plugin, '', false, false );
@@ -286,13 +297,13 @@ class Plugins extends Controller_Base {
 						$status['message'] = $activate->get_error_message();
 					} else {
 						$status['status']  = true;
-						$status['message'] = __( 'Plugin activated', 'roxwp-site-mon' );
+						$status['message'] = __( 'Plugin activated', 'uptime' );
 						$is_activated      = true;
 					}
 				}
 			} else {
 				$status['status']  = false;
-				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
+				$status['message'] = __( 'Plugin does not exist', 'uptime' );
 			}
 			$response[ $plugin ] = $status;
 		}
@@ -326,7 +337,7 @@ class Plugins extends Controller_Base {
 		if ( ! isset( $data->slugs ) || empty( $data->slugs ) || ! is_array( $data->slugs ) ) {
 			return rest_ensure_response( [
 				'status'  => false,
-				'message' => __( 'No plugin specified.', 'roxwp-site-mon' ),
+				'message' => __( 'No plugin specified.', 'uptime' ),
 			] );
 		}
 
@@ -344,23 +355,23 @@ class Plugins extends Controller_Base {
 				if ( is_plugin_inactive( $plugin ) ) {
 					$status[] = [
 						'status'  => false,
-						'message' => __( 'Plugin already inactive', 'roxwp-site-mon' ),
+						'message' => __( 'Plugin already inactive', 'uptime' ),
 					];
 				} else {
 
 					if ( is_plugin_inactive( $plugin ) ) {
 						$status['status']  = false;
-						$status['message'] = __( 'Unable to deactivated.', 'roxwp-site-mon' );
+						$status['message'] = __( 'Unable to deactivated.', 'uptime' );
 					} else {
 						deactivate_plugins( $plugin );
 						$status['status']  = true;
-						$status['message'] = __( 'Plugin deactivated', 'roxwp-site-mon' );
+						$status['message'] = __( 'Plugin deactivated', 'uptime' );
 						$is_deactivated    = true;
 					}
 				}
 			} else {
 				$status['status']  = false;
-				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
+				$status['message'] = __( 'Plugin does not exist', 'uptime' );
 			}
 			$response[ $plugin ] = $status;
 		}
@@ -410,21 +421,21 @@ class Plugins extends Controller_Base {
 
 					if ( is_plugin_active( $plugin ) ) {
 						$status['status']  = false;
-						$status['message'] = __( 'Uninstallation failed. This Plugin is currently Active.', 'roxwp-site-mon' );
+						$status['message'] = __( 'Uninstallation failed. This Plugin is currently Active.', 'uptime' );
 					} else {
 						$status         = [
 							'status'  => true,
-							'message' => __( 'Plugin uninstalled successfully.', 'roxwp-site-mon' ),
+							'message' => __( 'Plugin uninstalled successfully.', 'uptime' ),
 						];
 						$is_uninstalled = true;
 					}
 				} else {
 					$status['status']  = false;
-					$status['message'] = __( "Plugin can't be uninstalled.", "roxwp-site-mon" );
+					$status['message'] = __( "Plugin can't be uninstalled.", 'uptime' );
 				}
 			}else{
 				$status['status']  = false;
-				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
+				$status['message'] = __( 'Plugin does not exist', 'uptime' );
 			}
 			$response[ $plugin ] = $status;
 		}
@@ -475,17 +486,17 @@ class Plugins extends Controller_Base {
 				$status = delete_plugins( $plugin );
 				if ( null === $status ) {
 					$response['status'] = false;
-					$response['message']   = new \WP_Error( 'filesystem-not-writable', _n( 'Unable to delete plugin. Filesystem is readonly.', 'Unable to delete plugins. Filesystem is readonly.', $count, 'roxwp-site-mon' ) );
+					$response['message']   = new \WP_Error( 'filesystem-not-writable', _n( 'Unable to delete plugin. Filesystem is readonly.', 'Unable to delete plugins. Filesystem is readonly.', $count, 'uptime' ) );
 				} else if ( ! is_wp_error( $status ) ) {
 					$status   = [
 						'status'  => true,
-						'message' => _n( 'Specified plugin deleted', 'Specified plugins deleted', $count, 'roxwp-site-mon' ),
+						'message' => _n( 'Specified plugin deleted', 'Specified plugins deleted', $count, 'uptime' ),
 					];
 					$is_deleted = true;
 				}
 			} else{
 				$status['status']  = false;
-				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
+				$status['message'] = __( 'Plugin does not exist', 'uptime' );
 			}
 			$response[ $plugin ] = $status;
 		}
@@ -562,7 +573,7 @@ class Plugins extends Controller_Base {
 						$plugin_data       = get_plugins( '/' . $result[ $plugin ]['destination_name'] );
 						$plugin_data       = reset( $plugin_data );
 						$version           = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
-						$status['message'] = sprintf( __( '%s Updated. New version %s.', 'roxwp-site-mon' ), $plugin, $version );
+						$status['message'] = sprintf( __( '%s Updated. New version %s.', 'uptime' ), $plugin, $version );
 						$is_updated        = true;
 					}
 				}
@@ -572,13 +583,13 @@ class Plugins extends Controller_Base {
 					if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
 						$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
 					} else {
-						$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-monitor' );
+						$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'uptimemonster-site-monitor' );
 					}
 				}
 
 			} else{
 				$status['status']  = false;
-				$status['message'] = __( 'Plugin does not exist', 'roxwp-site-mon' );
+				$status['message'] = __( 'Plugin does not exist', 'uptime' );
 			}
 			$response[ $plugin ] = $status;
 		}
@@ -640,14 +651,14 @@ class Plugins extends Controller_Base {
 
 	protected function self_check( &$plugins, &$response ) {
 
-		if ( in_array( ROXWP_SM_PLUGIN_BASENAME, $plugins, true ) ) {
+		if ( in_array( UMSM_PLUGIN_BASENAME, $plugins, true ) ) {
 			$plugins = array_flip( $plugins );
 
-			unset( $plugins[ ROXWP_SM_PLUGIN_BASENAME ] );
+			unset( $plugins[ UMSM_PLUGIN_BASENAME ] );
 
-			$response[ ROXWP_SM_PLUGIN_BASENAME ] = [
+			$response[ UMSM_PLUGIN_BASENAME ] = [
 				'status'  => false,
-				'message' => __( 'Self destruction is prohibited', 'roxwp-site-mon' ),
+				'message' => __( 'Self destruction is prohibited', 'uptime' ),
 			];
 
 			$plugins = array_flip( $plugins );
@@ -682,7 +693,7 @@ class Plugins extends Controller_Base {
 		if ( ! isset( $data->slugs ) || empty( $data->slugs ) || ! is_array( $data->slugs ) ) {
 			return rest_ensure_response( [
 				'status'  => false,
-				'message' => __( 'No plugin specified.', 'roxwp-site-mon' ),
+				'message' => __( 'No plugin specified.', 'uptime' ),
 			] );
 		}
 	}

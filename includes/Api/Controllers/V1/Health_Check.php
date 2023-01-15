@@ -1,11 +1,22 @@
 <?php
+/**
+ * Core Health Check API
+ *
+ * @package UptimeMonster\SiteMonitor\API
+ * @version 1.0.0
+ */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1;
+namespace UptimeMonster\SiteMonitor\Api\Controllers\V1;
 
+use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Debug_Data;
+use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Update_Check;
+use UptimeMonster\SiteMonitor\Api\Controllers\Controller_Base;
 
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Debug_Data;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update_Check;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\Controller_Base;
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.1 403 Forbidden' );
+	die();
+}
 
 /**
  * Class Health_Check
@@ -68,11 +79,11 @@ class Health_Check extends Controller_Base {
 	public function send_site_health_info( $request ) {
 
 		// Health data
-		$update_check = new RoxWP_Update_Check();
+		$update_check = new UptimeMonster_Update_Check();
 		$site_healths = $update_check->get_site_health() ? $update_check->get_site_health() : [];
 
 		// Debug data.
-		$debug_data = new RoxWP_Debug_Data();
+		$debug_data = new UptimeMonster_Debug_Data();
 		$debug_info = $debug_data->debug_data() ? $debug_data->debug_data() : [];
 
 		return rest_ensure_response( [

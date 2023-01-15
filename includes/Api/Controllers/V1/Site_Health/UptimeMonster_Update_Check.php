@@ -1,10 +1,22 @@
 <?php
+/**
+ * Update Checker
+ *
+ * @package UptimeMonster\SiteMonitor\API
+ * @version 1.0.0
+ */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health;
+namespace UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health;
 
-class RoxWP_Update_Check {
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.1 403 Forbidden' );
+	die();
+}
 
-	public function get_site_health(){
+class UptimeMonster_Update_Check {
+
+	public function get_site_health() {
 		if ( ! class_exists( 'WP_Debug_Data' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
 		}
@@ -12,8 +24,8 @@ class RoxWP_Update_Check {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-site-health.php';
 		}
 
-		$site_health =  \WP_Site_Health::get_instance();
-		$tests = $site_health::get_tests();
+		$site_health = \WP_Site_Health::get_instance();
+		$tests       = $site_health::get_tests();
 
 		$results = [];
 		foreach ( $tests['direct'] as $test ) {
@@ -22,10 +34,8 @@ class RoxWP_Update_Check {
 			}
 
 			if ( is_string( $test['test'] ) ) {
-				$test_function = sprintf(
-					'get_test_%s',
-					$test['test']
-				);
+				$test_function = sprintf( 'get_test_%s', $test['test'] );
+
 				$include_test = [
 					'get_test_wordpress_version',
 					'get_test_plugin_version',
@@ -42,12 +52,18 @@ class RoxWP_Update_Check {
 //					continue;
 //				}
 
-				if ( in_array( $test_function, $include_test ) && method_exists( $this, $test_function ) && is_callable( array( $this, $test_function ) ) ) {
+				if ( in_array( $test_function, $include_test ) && method_exists( $this, $test_function ) && is_callable( array(
+						$this,
+						$test_function
+					) ) ) {
 					$results[] = $this->perform_test( array( $this, $test_function ) );
 					continue;
 				}
 
-				if ( method_exists( $site_health, $test_function ) && is_callable( array( $site_health, $test_function ) ) ) {
+				if ( method_exists( $site_health, $test_function ) && is_callable( array(
+						$site_health,
+						$test_function
+					) ) ) {
 					$results[] = $this->perform_test( array( $site_health, $test_function ) );
 					continue;
 				}
@@ -117,9 +133,9 @@ class RoxWP_Update_Check {
 	/**
 	 * Test if plugin and theme auto-updates appear to be configured correctly.
 	 *
+	 * @return array The test results.
 	 * @since 5.5.0
 	 *
-	 * @return array The test results.
 	 */
 	public function get_test_plugin_theme_auto_updates() {
 		$result = array(
@@ -160,29 +176,29 @@ class RoxWP_Update_Check {
 	 * correctly, a few educated guesses could be made to flag any conditions that would
 	 * potentially cause unexpected behaviors.
 	 *
+	 * @return object The test results.
 	 * @since 5.5.0
 	 *
-	 * @return object The test results.
 	 */
 	public function detect_plugin_theme_auto_update_issues() {
 		$mock_plugin = (object) array(
-			'id'            => 'w.org/plugins/a-fake-plugin',
-			'slug'          => 'a-fake-plugin',
-			'plugin'        => 'a-fake-plugin/a-fake-plugin.php',
-			'new_version'   => '9.9',
-			'url'           => 'https://wordpress.org/plugins/a-fake-plugin/',
-			'package'       => 'https://downloads.wordpress.org/plugin/a-fake-plugin.9.9.zip',
-			'icons'         => array(
+			'id'           => 'w.org/plugins/a-fake-plugin',
+			'slug'         => 'a-fake-plugin',
+			'plugin'       => 'a-fake-plugin/a-fake-plugin.php',
+			'new_version'  => '9.9',
+			'url'          => 'https://wordpress.org/plugins/a-fake-plugin/',
+			'package'      => 'https://downloads.wordpress.org/plugin/a-fake-plugin.9.9.zip',
+			'icons'        => array(
 				'2x' => 'https://ps.w.org/a-fake-plugin/assets/icon-256x256.png',
 				'1x' => 'https://ps.w.org/a-fake-plugin/assets/icon-128x128.png',
 			),
-			'banners'       => array(
+			'banners'      => array(
 				'2x' => 'https://ps.w.org/a-fake-plugin/assets/banner-1544x500.png',
 				'1x' => 'https://ps.w.org/a-fake-plugin/assets/banner-772x250.png',
 			),
-			'banners_rtl'   => array(),
-			'tested'        => '5.5.0',
-			'requires_php'  => '5.6.20',
+			'banners_rtl'  => array(),
+			'tested'       => '5.5.0',
+			'requires_php' => '5.6.20',
 		);
 
 		$mock_theme = (object) array(
@@ -240,10 +256,11 @@ class RoxWP_Update_Check {
 	/**
 	 * Checks whether auto-updates are enabled.
 	 *
+	 * @param string $type The type of update being checked: 'theme' or 'plugin'.
+	 *
+	 * @return bool True if auto-updates are enabled for `$type`, false otherwise.
 	 * @since 5.5.0
 	 *
-	 * @param string $type The type of update being checked: 'theme' or 'plugin'.
-	 * @return bool True if auto-updates are enabled for `$type`, false otherwise.
 	 */
 	function wp_is_auto_update_enabled_for_type( $type ) {
 		if ( ! class_exists( 'WP_Automatic_Updater' ) ) {
@@ -258,18 +275,20 @@ class RoxWP_Update_Check {
 				/**
 				 * Filters whether plugins auto-update is enabled.
 				 *
+				 * @param bool $enabled True if plugins auto-update is enabled, false otherwise.
+				 *
 				 * @since 5.5.0
 				 *
-				 * @param bool $enabled True if plugins auto-update is enabled, false otherwise.
 				 */
 				return apply_filters( 'plugins_auto_update_enabled', $enabled );
 			case 'theme':
 				/**
 				 * Filters whether themes auto-update is enabled.
 				 *
+				 * @param bool $enabled True if themes auto-update is enabled, false otherwise.
+				 *
 				 * @since 5.5.0
 				 *
-				 * @param bool $enabled True if themes auto-update is enabled, false otherwise.
 				 */
 				return apply_filters( 'themes_auto_update_enabled', $enabled );
 		}
@@ -280,13 +299,14 @@ class RoxWP_Update_Check {
 	/**
 	 * Checks whether auto-updates are forced for an item.
 	 *
-	 * @since 5.6.0
-	 *
-	 * @param string    $type   The type of update being checked: 'theme' or 'plugin'.
+	 * @param string $type The type of update being checked: 'theme' or 'plugin'.
 	 * @param bool|null $update Whether to update. The value of null is internally used
 	 *                          to detect whether nothing has hooked into this filter.
-	 * @param object    $item   The update offer.
+	 * @param object $item The update offer.
+	 *
 	 * @return bool True if auto-updates are forced for `$item`, false otherwise.
+	 * @since 5.6.0
+	 *
 	 */
 	function wp_is_auto_update_forced_for_item( $type, $update, $item ) {
 		/** This filter is documented in wp-admin/includes/class-wp-automatic-updater.php */
@@ -298,11 +318,11 @@ class RoxWP_Update_Check {
 	 *
 	 * Detects Apache's mod_rewrite, IIS 7.0+ permalink support, and nginx.
 	 *
-	 * @since 3.7.0
-	 *
+	 * @return bool Whether the server supports URL rewriting.
 	 * @global bool $is_nginx
 	 *
-	 * @return bool Whether the server supports URL rewriting.
+	 * @since 3.7.0
+	 *
 	 */
 	function got_url_rewrite() {
 		$got_url_rewrite = ( $this->got_mod_rewrite() || $GLOBALS['is_nginx'] || $this->iis7_supports_permalinks() );
@@ -310,9 +330,10 @@ class RoxWP_Update_Check {
 		/**
 		 * Filters whether URL rewriting is available.
 		 *
+		 * @param bool $got_url_rewrite Whether URL rewriting is available.
+		 *
 		 * @since 3.7.0
 		 *
-		 * @param bool $got_url_rewrite Whether URL rewriting is available.
 		 */
 		return apply_filters( 'got_url_rewrite', $got_url_rewrite );
 	}
@@ -320,11 +341,11 @@ class RoxWP_Update_Check {
 	/**
 	 * Check if IIS 7+ supports pretty permalinks.
 	 *
-	 * @since 2.8.0
-	 *
+	 * @return bool Whether IIS7 supports permalinks.
 	 * @global bool $is_iis7
 	 *
-	 * @return bool Whether IIS7 supports permalinks.
+	 * @since 2.8.0
+	 *
 	 */
 	function iis7_supports_permalinks() {
 		global $is_iis7;
@@ -346,9 +367,10 @@ class RoxWP_Update_Check {
 		/**
 		 * Filters whether IIS 7+ supports pretty permalinks.
 		 *
+		 * @param bool $supports_permalinks Whether IIS7 supports permalinks. Default false.
+		 *
 		 * @since 2.8.0
 		 *
-		 * @param bool $supports_permalinks Whether IIS7 supports permalinks. Default false.
 		 */
 		return apply_filters( 'iis7_supports_permalinks', $supports_permalinks );
 	}
@@ -356,9 +378,9 @@ class RoxWP_Update_Check {
 	/**
 	 * Returns whether the server is running Apache with the mod_rewrite module loaded.
 	 *
+	 * @return bool Whether the server is running Apache with the mod_rewrite module loaded.
 	 * @since 2.0.0
 	 *
-	 * @return bool Whether the server is running Apache with the mod_rewrite module loaded.
 	 */
 	function got_mod_rewrite() {
 		$got_rewrite = apache_mod_loaded( 'mod_rewrite', true );
@@ -369,11 +391,12 @@ class RoxWP_Update_Check {
 		 * This filter was previously used to force URL rewriting for other servers,
 		 * like nginx. Use the {@see 'got_url_rewrite'} filter in got_url_rewrite() instead.
 		 *
-		 * @since 2.5.0
+		 * @param bool $got_rewrite Whether Apache and mod_rewrite are present.
 		 *
 		 * @see got_url_rewrite()
 		 *
-		 * @param bool $got_rewrite Whether Apache and mod_rewrite are present.
+		 * @since 2.5.0
+		 *
 		 */
 		return apply_filters( 'got_rewrite', $got_rewrite );
 	}
@@ -381,9 +404,9 @@ class RoxWP_Update_Check {
 	/**
 	 * Test if the supplied PHP version is supported.
 	 *
+	 * @return array The test results.
 	 * @since 5.2.0
 	 *
-	 * @return array The test results.
 	 */
 	public function get_test_php_version() {
 		$response = $this->wp_check_php_version();
@@ -424,7 +447,7 @@ class RoxWP_Update_Check {
 
 		// The PHP version is older than the recommended version, but still receiving active support.
 		if ( $response['is_supported'] ) {
-			$result['label'] = sprintf(
+			$result['label']  = sprintf(
 			/* translators: %s: The server PHP version. */
 				__( 'Your site is running an older version of PHP (%s)' ),
 				PHP_VERSION
@@ -436,7 +459,7 @@ class RoxWP_Update_Check {
 
 		// The PHP version is only receiving security fixes.
 		if ( $response['is_secure'] ) {
-			$result['label'] = sprintf(
+			$result['label']  = sprintf(
 			/* translators: %s: The server PHP version. */
 				__( 'Your site is running an older version of PHP (%s), which should be updated' ),
 				PHP_VERSION
@@ -447,7 +470,7 @@ class RoxWP_Update_Check {
 		}
 
 		// Anything no longer secure must be updated.
-		$result['label'] = sprintf(
+		$result['label']          = sprintf(
 		/* translators: %s: The server PHP version. */
 			__( 'Your site is running an outdated version of PHP (%s), which requires an update' ),
 			PHP_VERSION
@@ -507,25 +530,27 @@ class RoxWP_Update_Check {
 			 * This filter is only run if the wordpress.org Serve Happy API considers the PHP version acceptable, ensuring
 			 * that this filter can only make this check stricter, but not loosen it.
 			 *
+			 * @param bool $is_acceptable Whether the PHP version is considered acceptable. Default true.
+			 * @param string $version PHP version checked.
+			 *
 			 * @since 5.1.1
 			 *
-			 * @param bool   $is_acceptable Whether the PHP version is considered acceptable. Default true.
-			 * @param string $version       PHP version checked.
 			 */
 			$response['is_acceptable'] = (bool) apply_filters( 'wp_is_php_version_acceptable', true, $version );
 		}
 
 		return $response;
 	}
+
 	/**
 	 * Tests for WordPress version and outputs it.
 	 *
 	 * Gives various results depending on what kind of updates are available, if any, to encourage
 	 * the user to install security updates as a priority.
 	 *
+	 * @return array The test result.
 	 * @since 5.2.0
 	 *
-	 * @return array The test result.
 	 */
 	public function get_test_wordpress_version() {
 		$result = array(
@@ -626,9 +651,9 @@ class RoxWP_Update_Check {
 	 * if your themes are up to date and, finally, encourages you to remove any themes
 	 * that are not needed.
 	 *
+	 * @return array The test results.
 	 * @since 5.2.0
 	 *
-	 * @return array The test results.
 	 */
 	public function get_test_theme_version() {
 		$result = array(
@@ -687,21 +712,21 @@ class RoxWP_Update_Check {
 		}
 
 		foreach ( $all_themes as $theme_slug => $theme ) {
-			$themes_total++;
+			$themes_total ++;
 
 			if ( array_key_exists( $theme_slug, $theme_updates ) ) {
-				$themes_need_updates++;
+				$themes_need_updates ++;
 			}
 		}
 
 		// If this is a child theme, increase the allowed theme count by one, to account for the parent.
 		if ( is_child_theme() ) {
-			$allowed_theme_count++;
+			$allowed_theme_count ++;
 		}
 
 		// If there's a default theme installed and not in use, we count that as allowed as well.
 		if ( $has_default_theme && ! $using_default_theme ) {
-			$allowed_theme_count++;
+			$allowed_theme_count ++;
 		}
 
 		if ( $themes_total > $allowed_theme_count ) {
@@ -856,9 +881,9 @@ class RoxWP_Update_Check {
 	}
 
 	/**
+	 * @return array
 	 * @since 2.9.0
 	 *
-	 * @return array
 	 */
 	function get_theme_updates() {
 		$current = get_site_transient( 'update_themes' );
@@ -879,11 +904,12 @@ class RoxWP_Update_Check {
 	/**
 	 * Gets available core updates.
 	 *
-	 * @since 2.7.0
-	 *
 	 * @param array $options Set $options['dismissed'] to true to show dismissed upgrades too,
 	 *                       set $options['available'] to false to skip not-dismissed updates.
+	 *
 	 * @return array|false Array of the update objects on success, false on failure.
+	 * @since 2.7.0
+	 *
 	 */
 	function get_core_updates( $options = array() ) {
 		$options   = array_merge(
@@ -924,6 +950,7 @@ class RoxWP_Update_Check {
 				}
 			}
 		}
+
 		return $result;
 	}
 
@@ -933,9 +960,9 @@ class RoxWP_Update_Check {
 	 * The tests checks if your plugins are up to date, and encourages you to remove any
 	 * that are not in use.
 	 *
+	 * @return array The test result.
 	 * @since 5.2.0
 	 *
-	 * @return array The test result.
 	 */
 	public function get_test_plugin_version() {
 		$result = array(
@@ -971,16 +998,16 @@ class RoxWP_Update_Check {
 
 		// Loop over the available plugins and check their versions and active state.
 		foreach ( $plugins as $plugin_path => $plugin ) {
-			$plugins_total++;
+			$plugins_total ++;
 
 			if ( is_plugin_active( $plugin_path ) ) {
-				$plugins_active++;
+				$plugins_active ++;
 			}
 
 			$plugin_version = $plugin['Version'];
 
 			if ( array_key_exists( $plugin_path, $plugin_updates ) ) {
-				$plugins_need_update++;
+				$plugins_need_update ++;
 				$plugins_have_updates = true;
 			}
 		}
@@ -1065,9 +1092,9 @@ class RoxWP_Update_Check {
 
 
 	/**
+	 * @return array
 	 * @since 2.9.0
 	 *
-	 * @return array
 	 */
 	public function get_plugin_updates() {
 		$all_plugins     = get_plugins();
@@ -1088,7 +1115,7 @@ class RoxWP_Update_Check {
 	 *
 	 * @return mixed|void
 	 */
-	public function perform_test( $callback ){
+	public function perform_test( $callback ) {
 
 		return apply_filters( 'site_status_test_result', call_user_func( $callback ) );
 	}

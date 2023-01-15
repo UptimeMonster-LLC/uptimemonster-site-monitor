@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 use Exception;
 use WP_Widget;
@@ -48,7 +48,7 @@ class Monitor_Widgets_Activity extends Activity_Monitor_Base {
 		 * @param string $option
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_widgets_activity', true, $sidebar, $widget );
+		return (bool) apply_filters( 'umsm_should_log_widgets_activity', true, $sidebar, $widget );
 	}
 
 	/**

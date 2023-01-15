@@ -1,6 +1,12 @@
 <?php
+/**
+ * Core Updater API
+ *
+ * @package UptimeMonster\SiteMonitor\API
+ * @version 1.0.0
+ */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1;
+namespace UptimeMonster\SiteMonitor\Api\Controllers\V1;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -8,11 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\Controller_Base;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Debug_Data;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update_Check;
-use AbsolutePlugins\RoxwpSiteMonitor\CoreUpdate\RoxWPCoreUpgrader;
-use AbsolutePlugins\RoxwpSiteMonitor\CoreUpdate\RoxWPUpgraderSkin;
+use UptimeMonster\SiteMonitor\Api\Controllers\Controller_Base;
+use UptimeMonster\SiteMonitor\CoreUpdate\UptimeMonsterCoreUpgrader;
+use UptimeMonster\SiteMonitor\CoreUpdate\UptimeMonsterUpgraderSkin;
+use WP_Error;
 
 require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 require_once ABSPATH . 'wp-admin/includes/class-core-upgrader.php';
@@ -32,10 +37,10 @@ class Core_Update extends Controller_Base {
 
 	public function __construct() {
 		// Health data
-//		$this->update_check_model = new RoxWP_Update_Check();
+//		$this->update_check_model = new UptimeMonster_Update_Check();
 
 		// Debug data.
-//		$this->debug_model = new RoxWP_Debug_Data();
+//		$this->debug_model = new UptimeMonster_Debug_Data();
 	}
 
 	/**
@@ -124,8 +129,8 @@ class Core_Update extends Controller_Base {
 		// Specific version is given
 		$version = $request['version'];
 		$locale  = $request['locale'] ? $request['locale'] : get_locale();
-		$force   = roxwp_parse_boolval( $request['force'] );
-		$minor   = roxwp_parse_boolval( $request['minor'] );
+		$force   = umsm_parse_boolval( $request['force'] );
+		$minor   = umsm_parse_boolval( $request['minor'] );
 
 		if ( 'trunk' === $request['version'] ) {
 			$request['version'] = 'nightly';
@@ -133,13 +138,14 @@ class Core_Update extends Controller_Base {
 
 		if ( empty( $request['version'] ) ) {
 
-			// Update to next release
-			wp_version_check();
+			// Update to next release.
+			wp_version_check( [], $force );
+
 			$from_api = get_site_transient( 'update_core' );
 
 			if ( $minor ) {
 				foreach ( $from_api->updates as $offer ) {
-					$sem_ver = roxwp_get_named_sem_ver( $offer->version, $wp_version );
+					$sem_ver = umsm_get_named_sem_ver( $offer->version, $wp_version );
 					if ( ! $sem_ver || 'patch' !== $sem_ver ) {
 						continue;
 					}
@@ -149,7 +155,7 @@ class Core_Update extends Controller_Base {
 				if ( empty( $update ) ) {
 					return [
 						'need_db_update' => false,
-						'message'        => __( 'WordPress is at the latest minor release.', 'roxwp-site-mon' ),
+						'message'        => __( 'WordPress is at the latest minor release.', 'uptime' ),
 					];
 				}
 			} else {
@@ -157,7 +163,7 @@ class Core_Update extends Controller_Base {
 					list( $update ) = $from_api->updates;
 				}
 			}
-		} elseif ( roxwp_wp_version_compare( $request['version'], '<' ) || 'nightly' === $request['version'] || $force ) {
+		} elseif ( umsm_wp_version_compare( $request['version'], '<' ) || 'nightly' === $request['version'] || $force ) {
 
 			$new_package = $this->get_download_url( $version, $locale );
 
@@ -190,14 +196,14 @@ class Core_Update extends Controller_Base {
 			$from_version = $wp_version;
 
 			$GLOBALS['wpcli_core_update_obj'] = $update;
-			$upgrader                         = new RoxWPCoreUpgrader( new RoxWPUpgraderSkin() );
+			$upgrader                         = new UptimeMonsterCoreUpgrader( new UptimeMonsterUpgraderSkin() );
 			$result                           = $upgrader->upgrade( $update );
 			unset( $GLOBALS['wpcli_core_update_obj'] );
 
 			if ( is_wp_error( $result ) ) {
 				$message = self::error_to_string( $result );
 				if ( 'up_to_date' !== $result->get_error_code() ) {
-					$message = new \WP_Error( $result->get_error_code(), $message );
+					$message = new WP_Error( $result->get_error_code(), $message );
 				}
 
 				return [
@@ -216,13 +222,13 @@ class Core_Update extends Controller_Base {
 
 				return [
 					'need_db_update' => true,
-					'message'        => is_wp_error( $cleanup ) ? $cleanup : __( 'WordPress updated successfully.', 'roxwp-site-mon' ),
+					'message'        => is_wp_error( $cleanup ) ? $cleanup : __( 'WordPress updated successfully.', 'uptime' ),
 				];
 			}
 		} else {
 			return [
 				'need_db_update' => false,
-				'message'        => __( 'WordPress is up to date.', 'roxwp-site-mon' ),
+				'message'        => __( 'WordPress is up to date.', 'uptime' ),
 			];
 		}
 	}
@@ -247,9 +253,9 @@ class Core_Update extends Controller_Base {
 
 			wp_upgrade();
 
-			return __( "WordPress database upgraded successfully from db version {$wp_current_db_version} to {$wp_db_version}.", 'roxwp-site-mon');
+			return __( "WordPress database upgraded successfully from db version {$wp_current_db_version} to {$wp_db_version}.", 'uptime');
 		} else {
-			return __( "WordPress database already at latest db version {$wp_db_version}.",  'roxwp-site-mon' );
+			return __( "WordPress database already at latest db version {$wp_db_version}.",  'uptime' );
 		}
 	}
 
@@ -262,16 +268,16 @@ class Core_Update extends Controller_Base {
 	 */
 	private function cleanup_extra_files( $version_from, $version_to, $locale ) {
 		if ( ! $version_from || ! $version_to ) {
-			return new \WP_Error( 'cleanup-error-wp-version', 'Failed to find WordPress version. Please cleanup files manually.' );
+			return new WP_Error( 'cleanup-error-wp-version', 'Failed to find WordPress version. Please cleanup files manually.' );
 		}
 
 		$old_checksums = self::get_core_checksums( $version_from, $locale ?: 'en_US' );
 		if ( ! is_array( $old_checksums ) ) {
-			return new \WP_Error( 'cleanup-error-old-checksum', "{$old_checksums} Please cleanup files manually." );
+			return new WP_Error( 'cleanup-error-old-checksum', "{$old_checksums} Please cleanup files manually." );
 		}
 		$new_checksums = self::get_core_checksums( $version_to, $locale ?: 'en_US' );
 		if ( ! is_array( $new_checksums ) ) {
-			return new \WP_Error( 'cleanup-error-new-checksum', "{$new_checksums} Please cleanup files manually." );
+			return new WP_Error( 'cleanup-error-new-checksum', "{$new_checksums} Please cleanup files manually." );
 		}
 
 		// Compare the files from the old version and the new version in a case-insensitive manner,
@@ -374,7 +380,7 @@ class Core_Update extends Controller_Base {
 	 *
 	 * @param string $version  Version string to query.
 	 * @param string $locale   Locale to query.
-	 * @return \WP_Error|array String message on failure. An array of checksums on success.
+	 * @return WP_Error|array String message on failure. An array of checksums on success.
 	 */
 	private static function get_core_checksums( $version, $locale ) {
 		$query = http_build_query( compact( 'version', 'locale' ), null, '&' );
@@ -394,7 +400,7 @@ class Core_Update extends Controller_Base {
 		$response = json_decode( $response_body );
 
 		if ( ! $response ) {
-			return new \WP_Error( 'json-decode-error', json_last_error_msg(), [
+			return new WP_Error( 'json-decode-error', json_last_error_msg(), [
 				'body' => $response_body,
 				'code' => $code,
 			] );
@@ -402,7 +408,7 @@ class Core_Update extends Controller_Base {
 //		error_log(print_r($response_body, true));
 
 		if ( ! $response_body || 200 !== (int) $code ) {
-			return new \WP_Error( 'checksum-error', "Checksum request '{$url}' failed (HTTP {$code})." );
+			return new WP_Error( 'checksum-error', "Checksum request '{$url}' failed (HTTP {$code})." );
 		}
 
 		$body = trim( $response_body );
@@ -411,7 +417,7 @@ class Core_Update extends Controller_Base {
 		if ( ! is_array( $body )
 		     || ! isset( $body['checksums'] )
 		     || ! is_array( $body['checksums'] ) ) {
-			return new \WP_Error( 'checksum-error', "Checksums not available for WordPress {$version}/{$locale}." );
+			return new WP_Error( 'checksum-error', "Checksums not available for WordPress {$version}/{$locale}." );
 		}
 
 		return $body['checksums'];
@@ -423,7 +429,8 @@ class Core_Update extends Controller_Base {
 	 * @param $version
 	 * @param string $locale
 	 * @param string $file_type
-	 * @return string|\WP_Error
+	 *
+	 * @return string|WP_Error
 	 */
 	private function get_download_url( $version, $locale = 'en_US', $file_type = 'zip' ) {
 
@@ -431,7 +438,7 @@ class Core_Update extends Controller_Base {
 			if ( 'zip' === $file_type ) {
 				return 'https://wordpress.org/nightly-builds/wordpress-latest.zip';
 			} else {
-				return new \WP_Error( 'nightly-file-type-error', 'Nightly builds are only available in .zip format.' );
+				return new WP_Error( 'nightly-file-type-error', 'Nightly builds are only available in .zip format.' );
 			}
 		}
 
@@ -451,13 +458,13 @@ class Core_Update extends Controller_Base {
 	 *     @type string $wp_local_package The TinyMCE version.
 	 * }
 	 *
-	 * @return array|\WP_Error
+	 * @return array|WP_Error
 	 */
 	private static function get_wp_details( $abspath = ABSPATH ) {
 		$versions_path = $abspath . 'wp-includes/version.php';
 
 		if ( ! is_readable( $versions_path ) ) {
-			return new \WP_Error( 'version-not-readable', "This does not seem to be a WordPress installation. Pass --path=`path/to/wordpress` or run `wp core download`." );
+			return new WP_Error( 'version-not-readable', "This does not seem to be a WordPress installation. Pass --path=`path/to/wordpress` or run `wp core download`." );
 		}
 
 		$version_content = file_get_contents( $versions_path, null, null, 6, 2048 );
@@ -502,10 +509,11 @@ class Core_Update extends Controller_Base {
 	/**
 	 * Convert a WP_Error or Exception into a string
 	 *
-	 * @param string|\WP_Error|\Exception|\Throwable $errors
-	 * @throws \InvalidArgumentException
+	 * @param string|WP_Error|\Exception|\Throwable $errors
 	 *
 	 * @return string
+	 *@throws \InvalidArgumentException
+	 *
 	 */
 	public static function error_to_string( $errors ) {
 		if ( is_string( $errors ) ) {
@@ -521,7 +529,7 @@ class Core_Update extends Controller_Base {
 			return '"' . $data . '"';
 		};
 
-		if ( $errors instanceof \WP_Error ) {
+		if ( $errors instanceof WP_Error ) {
 			foreach ( $errors->get_error_messages() as $message ) {
 				if ( $errors->get_error_data() ) {
 					return $message . ' ' . $render_data( $errors->get_error_data() );
@@ -540,7 +548,7 @@ class Core_Update extends Controller_Base {
 
 		throw new \InvalidArgumentException(
 			sprintf(
-				__( "Unsupported argument type passed", 'roxwp-site-mon' ),
+				__( "Unsupported argument type passed", 'uptime' ),
 				gettype( $errors )
 			)
 		);

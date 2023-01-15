@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 use Exception;
 use WP_Error;
@@ -42,7 +42,7 @@ class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {
 		 * @param WP_Term|WP_Error $term
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_wp_export_activity', $status, $term, $action );
+		return (bool) apply_filters( 'umsm_should_log_wp_export_activity', $status, $term, $action );
 	}
 
 	protected function detect_action() {

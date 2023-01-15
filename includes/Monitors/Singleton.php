@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -51,14 +51,14 @@ trait Singleton {
 	 * Cloning is forbidden.
 	 */
 	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cloning is forbidden.', 'roxwp-site-mon' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cloning is forbidden.', 'uptime' ), '1.0.0' );
 	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Unserializing instances of this class is forbidden.', 'roxwp-site-mon' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Unserializing instances of this class is forbidden.', 'uptime' ), '1.0.0' );
 	}
 }
 

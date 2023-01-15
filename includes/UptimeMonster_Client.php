@@ -1,17 +1,13 @@
 <?php
 /**
+ * API Client
  *
- *
- * @package Package
- * @author Name <email>
- * @version
- * @since
- * @license
+ * @package UptimeMonster\SiteMonitor
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor;
+namespace UptimeMonster\SiteMonitor;
 
-use AbsolutePlugins\RoxwpSiteMonitor\Monitors\Singleton;
+use UptimeMonster\SiteMonitor\Monitors\Singleton;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,12 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-class RoxWP_Client {
+class UptimeMonster_Client {
 
 	use Singleton;
 
-//	private $host = 'https://app.roxwp.com/'; @todo change this host on production for app.roxwp.com
-	private $host = 'https://staging.roxwp.com/';
+	private $host = 'https://app.uptimemonster.com/';
 
 	private $version = 'v1';
 
@@ -34,7 +29,7 @@ class RoxWP_Client {
 	private $api_secret;
 
 	/**
-	 * RoxWP Client Constructor.
+	 * UptimeMonster Client Constructor.
 	 *
 	 * @return void
 	 */
@@ -48,7 +43,7 @@ class RoxWP_Client {
 	 * @return $this
 	 */
 	public function reload_api_keys() {
-		$api_keys = get_option( 'roxwp_site_monitor_api_keys', [] );
+		$api_keys = get_option( 'umsm_site_monitor_api_keys', [] );
 
 		if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
 			$this->api_key    = $api_keys['api_key'];
@@ -64,7 +59,7 @@ class RoxWP_Client {
 	 * @return string
 	 */
 	public function get_host() {
-		return trailingslashit( apply_filters( 'roxwp_client_app_host', $this->host ) );
+		return trailingslashit( apply_filters( 'uptimemonster_client_app_host', $this->host ) );
 	}
 
 	/**
@@ -113,7 +108,7 @@ class RoxWP_Client {
 	}
 
 	/**
-	 * Send Log Data to RoxWP.
+	 * Send Log Data to UptimeMonster.
 	 *
 	 * @param array $log Log Data.
 	 *
@@ -143,13 +138,13 @@ class RoxWP_Client {
 	 */
 	public function request( $route, $data = [], $method = 'get', $args = [] ) {
 		if ( ! $this->has_keys() ) {
-			return new WP_Error( 'missing-api-keys', __( 'Missing API Keys.', 'roxwp-site-mon' ) );
+			return new WP_Error( 'missing-api-keys', __( 'Missing API Keys.', 'uptime' ) );
 		}
 
 		list( $algo, $timestamp, $signature ) = $this->signature( $data, $method );
 
 		$defaults = [
-			'sslverify' => apply_filters( 'roxwp_client_ssl_verify', true ), // https_local_ssl_verify local
+			'sslverify' => apply_filters( 'umsm_client_ssl_verify', true ), // https_local_ssl_verify local
 			'headers'   => [],
 			'method'    => strtoupper( $method ),
 			'body'      => [],
@@ -178,7 +173,7 @@ class RoxWP_Client {
 		$route       = ltrim( $route, '\\/' );
 		$request_url = $this->get_host() . 'api/' . $this->version . '/' . $route;
 
-		$args = apply_filters( 'roxwp_site_monitor_client_args', $args, $route );
+		$args = apply_filters( 'umsm_site_monitor_client_args', $args, $route );
 
 		if ( false !== strpos( $this->get_host(), '.test/' ) ) {
 			$response = wp_remote_request( $request_url, $args );
@@ -195,7 +190,7 @@ class RoxWP_Client {
 		 * @param array $args request args.
 		 * @param string $request_url
 		 */
-		do_action( 'roxwp_site_monitor_client_response', $response, $args, $request_url );
+		do_action( 'umsm_site_monitor_client_response', $response, $args, $request_url );
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -219,7 +214,7 @@ class RoxWP_Client {
 			}
 
 			if ( ! $message ) {
-				$message = __( 'Something went wrong', 'roxwp-site-mon' );
+				$message = __( 'Something went wrong', 'uptime' );
 			}
 
 			return new WP_Error( $code, $message, $body );
@@ -229,7 +224,7 @@ class RoxWP_Client {
 	}
 
 	/**
-	 * Generate HMAC Signature for RoxWP Api auth header.
+	 * Generate HMAC Signature for UptimeMonster Api auth header.
 	 *
 	 * @param string|array $data Request payload.
 	 * @param string $method Request Method.
@@ -257,4 +252,4 @@ class RoxWP_Client {
 	}
 }
 
-// End of file RoxWP_Client.php.
+// End of file UptimeMonster_Client.php.

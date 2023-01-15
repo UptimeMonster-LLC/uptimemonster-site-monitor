@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -30,7 +30,7 @@ class Monitor_Attachment_Activity extends Monitor_Posts_Activity {
 		 * @param bool $status
 		 * @param int|object $object_id
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_attachment_activity', true, $action, $object_id );
+		return (bool) apply_filters( 'umsm_should_log_attachment_activity', true, $action, $object_id );
 	}
 
 	protected function log_data( $action, $attachment_id ) {

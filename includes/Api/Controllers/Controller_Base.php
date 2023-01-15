@@ -1,14 +1,12 @@
 <?php
 /**
- * REST Controller Base.
+ * REST API Controller Base.
  *
- * @package AbsolutePlugins\RoxwpSiteMonitor
- * @author Azizul Hasan <azizulhasan.cr@gmail.com>
+ * @package UptimeMonster\SiteMonitor\API
  * @version 1.0.0
- * @since 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers;
+namespace UptimeMonster\SiteMonitor\Api\Controllers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -40,7 +38,7 @@ abstract class Controller_Base extends \WP_REST_Controller {
 	 * @return \WP_Error|boolean
 	 */
 	public function get_route_access( $request ) {
-		$api_keys        = get_option( 'roxwp_site_monitor_api_keys', [] );
+		$api_keys        = get_option( 'umsm_site_monitor_api_keys', [] );
 		$request_api_key = $request->get_header( 'X-Api-Key' ) ? $request->get_header( 'X-Api-Key' ) : '';
 		$signature       = $request->get_header( 'X-Api-Signature' ) ? $request->get_header( 'X-Api-Signature' ) : '';
 		$timestamp       = $request->get_header( 'X-Api-Timestamp' ) ? $request->get_header( 'X-Api-Timestamp' ) : '';
@@ -66,6 +64,6 @@ abstract class Controller_Base extends \WP_REST_Controller {
 			return true;
 		}
 
-		return new \WP_Error( 'invalid_signature', __( 'Invalid Signature', 'roxwp-site-mon' ), [] );
+		return new \WP_Error( 'invalid_signature', __( 'Invalid Signature', 'uptime' ), [] );
 	}
 }

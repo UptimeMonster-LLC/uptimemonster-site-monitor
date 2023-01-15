@@ -1,10 +1,22 @@
 <?php
+/**
+ * Theme Updater API
+ *
+ * @package UptimeMonster\SiteMonitor\API
+ * @version 1.0.0
+ */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1;
+namespace UptimeMonster\SiteMonitor\Api\Controllers\V1;
 
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\Controller_Base;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Debug_Data;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update_Check;
+use UptimeMonster\SiteMonitor\Api\Controllers\Controller_Base;
+use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Debug_Data;
+use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Update_Check;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.1 403 Forbidden' );
+	die();
+}
 
 /**
  * Class Theme
@@ -35,10 +47,10 @@ class Themes extends Controller_Base {
 	public function __construct()
 	{
 		// Health data
-		$this->update_check_model = new RoxWP_Update_Check();
+		$this->update_check_model = new UptimeMonster_Update_Check();
 
 		// Debug data.
-		$this->debug_model = new RoxWP_Debug_Data();
+		$this->debug_model = new UptimeMonster_Debug_Data();
 	}
 
 	public function register_routes()
@@ -118,7 +130,7 @@ class Themes extends Controller_Base {
 			return rest_ensure_response([
 					'status'=> false,
 					'data' 	=> [
-						'message' => __('No theme specified.', 'roxwp-site-mon'),
+						'message' => __('No theme specified.', 'uptime'),
 					],
 					'extra' => []
 				]
@@ -177,20 +189,20 @@ class Themes extends Controller_Base {
 					if ($wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->has_errors()) {
 						$status['message'] = esc_html($wp_filesystem->errors->get_error_message());
 					} else {
-						$status['message'] = __('Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-mon');
+						$status['message'] = __('Unable to connect to the filesystem. Please confirm your credentials.', 'uptime');
 					}
 
 				}
 
 				if (!isset($status['message'])) {
 					$status['status'] = true;
-					$status['message'] = sprintf(__('%s  installed.', 'roxwp-site-mon'), $slug);
+					$status['message'] = sprintf(__('%s  installed.', 'uptime'), $slug);
 					$is_installed = true;
 				}
 
 			} else {
 				$status['status'] = false;
-				$status['message'] = sprintf(__('%s already installed.', 'roxwp-site-mon'), $slug);
+				$status['message'] = sprintf(__('%s already installed.', 'uptime'), $slug);
 			}
 
 			$statuses[] = $status;
@@ -229,7 +241,7 @@ class Themes extends Controller_Base {
 			return rest_ensure_response([
 					'status'=> false,
 					'data' 	=> [
-						'message' => __('No theme specified.', 'roxwp-site-mon'),
+						'message' => __('No theme specified.', 'uptime'),
 					],
 					'extra' => []
 				]
@@ -242,16 +254,16 @@ class Themes extends Controller_Base {
 		if ( isset($data->slugs[0]) && $this->is_theme_exists($data->slugs[0]) ) {
 
 			if (wp_get_theme()->get_stylesheet() === $data->slugs[0]) {
-				$status['message'] = __('Theme already active.', 'roxwp-site-mon');
+				$status['message'] = __('Theme already active.', 'uptime');
 			} else {
 				switch_theme($data->slugs[0]);
 				$status['status'] = true;
-				$status['message'] = __('Theme activated.', 'roxwp-site-mon');
+				$status['message'] = __('Theme activated.', 'uptime');
 				$is_activated = true;
 			}
 
 		} else {
-			$status['message'] = __('Theme does\'nt exists.', 'roxwp-site-mon');
+			$status['message'] = __('Theme does\'nt exists.', 'uptime');
 		}
 
 		$response ['data'][] = $status;
@@ -286,7 +298,7 @@ class Themes extends Controller_Base {
 			return rest_ensure_response([
 					'status' => false,
 					'data' => [
-						'message' => __('No theme specified.', 'roxwp-site-mon'),
+						'message' => __('No theme specified.', 'uptime'),
 					],
 					'extra' => []
 				]
@@ -323,7 +335,7 @@ class Themes extends Controller_Base {
 					if ($wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->has_errors()) {
 						$status['message'] = esc_html($wp_filesystem->errors->get_error_message());
 					} else {
-						$status['message'] = __('Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-mon');
+						$status['message'] = __('Unable to connect to the filesystem. Please confirm your credentials.', 'uptime');
 					}
 
 					$statuses[] = $status;
@@ -332,7 +344,7 @@ class Themes extends Controller_Base {
 
 				if (wp_get_theme()->get_stylesheet() === $slug) {
 					$status['status'] = false;
-					$status['message'] = sprintf(__('%s is active theme. You cannot delete an active theme.', 'roxwp-site-mon'), $slug);
+					$status['message'] = sprintf(__('%s is active theme. You cannot delete an active theme.', 'uptime'), $slug);
 					$statuses[] = $status;
 					continue;
 				}
@@ -342,18 +354,18 @@ class Themes extends Controller_Base {
 				if (is_wp_error($result)) {
 					$status['message'] = $result->get_error_message();
 				} elseif (false === $result) {
-					$status['message'] = __('Theme could not be deleted.', 'roxwp-site-mon');
+					$status['message'] = __('Theme could not be deleted.', 'uptime');
 				}
 
 				if (!isset($status['message'])) {
 					$status['status'] = true;
-					$status['message'] = sprintf(__('%s deleted.', 'roxwp-site-mon'), $slug);
+					$status['message'] = sprintf(__('%s deleted.', 'uptime'), $slug);
 					$is_deleted = true;
 				}
 
 			} else {
 				$status['status'] = false;
-				$status['message'] = sprintf(__('%s does\'nt exists.', 'roxwp-site-mon'), $slug);
+				$status['message'] = sprintf(__('%s does\'nt exists.', 'uptime'), $slug);
 			}
 
 			$statuses[] = $status;
@@ -392,7 +404,7 @@ class Themes extends Controller_Base {
 			return rest_ensure_response([
 					'status' => false,
 					'data' => [
-						'message' => __('No theme specified.', 'roxwp-site-mon'),
+						'message' => __('No theme specified.', 'uptime'),
 					],
 					'extra' => []
 				]
@@ -444,19 +456,19 @@ class Themes extends Controller_Base {
 					if ($wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->has_errors()) {
 						$status['message'] = esc_html($wp_filesystem->errors->get_error_message());
 					} else {
-						$status['message'] = __('Unable to connect to the filesystem. Please confirm your credentials.', 'roxwp-site-mon');
+						$status['message'] = __('Unable to connect to the filesystem. Please confirm your credentials.', 'uptime');
 					}
 
 				}
 
 				if (!isset($status['message'])) {
 					$status['status'] = true;
-					$status['message'] = sprintf(__('%s  updated.', 'roxwp-site-mon'), $slug);
+					$status['message'] = sprintf(__('%s  updated.', 'uptime'), $slug);
 					$is_updated = true;
 				}
 
 			} else {
-				$status['message'] = sprintf(__('%s does\'nt exists.', 'roxwp-site-mon'), $slug);
+				$status['message'] = sprintf(__('%s does\'nt exists.', 'uptime'), $slug);
 			}
 
 			$statuses[] = $status;

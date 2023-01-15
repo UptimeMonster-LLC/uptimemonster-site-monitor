@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -38,7 +38,7 @@ class Monitor_Nav_Menu_Activity extends Activity_Monitor_Base {
 		 * @param null $menu
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_wp_export_activity', false !== $menu, $menu, $action );
+		return (bool) apply_filters( 'umsm_should_log_wp_export_activity', false !== $menu, $menu, $action );
 	}
 
 	protected function detect_action() {

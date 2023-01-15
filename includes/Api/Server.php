@@ -2,18 +2,16 @@
 /**
  * Plugin Loader.
  *
- * @package AbsolutePlugins\RoxwpSiteMonitor\Api
- * @author Azizul Hasan <azizulhasan.cr@gmail.com>
+ * @package UptimeMonster\SiteMonitor\Api
  * @version 1.0.0
- * @since 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Api;
+namespace UptimeMonster\SiteMonitor\Api;
 
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Health_Check;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Plugins;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Themes;
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Core_Update;
+use UptimeMonster\SiteMonitor\Api\Controllers\V1\Health_Check;
+use UptimeMonster\SiteMonitor\Api\Controllers\V1\Plugins;
+use UptimeMonster\SiteMonitor\Api\Controllers\V1\Themes;
+use UptimeMonster\SiteMonitor\Api\Controllers\V1\Core_Update;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -72,14 +70,14 @@ final class Server {
 	 * Prevent cloning.
 	 */
 	final public function __clone() {
-		_doing_it_wrong( __FUNCTION__, __( 'serializing instances of this class is forbidden.', 'roxwp-site-mon' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, __( 'serializing instances of this class is forbidden.', 'uptime' ), '1.0.0' );
 	}
 
 	/**
 	 * Prevent unserializing.
 	 */
 	final public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'roxwp-site-mon' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'uptime' ), '1.0.0' );
 	}
 }
 

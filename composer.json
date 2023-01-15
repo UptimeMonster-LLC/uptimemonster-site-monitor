@@ -1,17 +1,17 @@
 {
-    "name": "absolute-plugins/roxwp-site-monitor",
-    "description": "WordPress Site Activity Monitor For RoxWP",
+    "name": "pixelaar/uptimemonster-site-monitor",
+    "description": "WordPress Site Activity Monitor For UptimeMonster",
     "type": "project",
     "license": "GPL-v3",
     "authors": [
         {
-            "name": "AbsolutePlugins",
-            "email": "info@absoluteplugins.com"
+            "name": "UptimeMonster",
+            "email": "contact@uptimemonster.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "AbsolutePlugins\\RoxwpSiteMonitor\\": "includes/"
+            "UptimeMonster\\SiteMonitor\\": "includes/"
         }
     },
     "minimum-stability": "stable",

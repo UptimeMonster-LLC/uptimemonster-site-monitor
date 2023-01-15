@@ -2,14 +2,14 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
-use AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Client;
+use UptimeMonster\SiteMonitor\UptimeMonster_Client;
 use Exception;
 use InvalidArgumentException;
 use WP_User;
@@ -60,6 +60,11 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 */
 	protected $check_maybe_log = true;
 
+	/**
+	 * @param $name
+	 *
+	 * @return string
+	 */
 	protected function strip_activity_name( $name ) {
 		return wp_strip_all_tags( $name, true );
 	}
@@ -87,7 +92,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			throw new InvalidArgumentException(
 				sprintf(
 				/* translators: 1. PHP Argument Type. */
-					esc_html__( '$subtype expected to be a string, got %s.', 'roxwp-site-mon' ),
+					esc_html__( '$subtype expected to be a string, got %s.', 'uptime' ),
 					gettype( $subtype )
 				)
 			);
@@ -97,7 +102,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			throw new InvalidArgumentException(
 				sprintf(
 				/* translators: 1. PHP Argument Type. */
-					esc_html__( '$name expected to be a string, got %s.', 'roxwp-site-mon' ),
+					esc_html__( '$name expected to be a string, got %s.', 'uptime' ),
 					gettype( $name )
 				)
 			);
@@ -109,7 +114,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			throw new InvalidArgumentException(
 				sprintf(
 				/* translators: 1. PHP Argument Type. */
-					esc_html__( '$id expected to be an integer, got %s.', 'roxwp-site-mon' ),
+					esc_html__( '$id expected to be an integer, got %s.', 'uptime' ),
 					gettype( $object_id )
 				)
 			);
@@ -127,10 +132,11 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			'subtype'   => $subtype,
 			'object_id' => $_object_id,
 			'name'      => $this->strip_activity_name( $name ),
-			'timestamp' => roxwp_get_current_time(),
-			'actor'     => roxwp_get_current_actor(),
+			'timestamp' => umsm_get_current_time(),
+			'actor'     => umsm_get_current_actor(),
 			'extra'     => [
 				'wp_version' => get_bloginfo( 'version' ),
+				'locale'     => get_locale(),
 			],
 		];
 
@@ -143,7 +149,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 				throw new InvalidArgumentException(
 					sprintf(
 					/* translators: 1. PHP Argument Type. */
-						esc_html__( '$data expected to be an array or object, got %s.', 'roxwp-site-mon' ),
+						esc_html__( '$data expected to be an array or object, got %s.', 'uptime' ),
 						gettype( $data )
 					)
 				);
@@ -152,17 +158,17 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			if ( isset( $data['include_installed'] ) ) {
 				unset( $data['include_installed'] );
 				$data['installed'] = [
-					'plugins' => roxwp_get_all_plugins(),
-					'themes'  => roxwp_get_all_themes(),
+					'plugins' => umsm_get_all_plugins(),
+					'themes'  => umsm_get_all_themes(),
 				];
 			}
 
 			$log['extra'] = array_merge( $log['extra'], $data );
 		}
 
-		RoxWP_Client::get_instance()->send_log( $log );
+		UptimeMonster_Client::get_instance()->send_log( $log );
 
-		do_action( 'roxwp_log_sent', $log );
+		do_action( 'umsm_log_sent', $log );
 	}
 
 	/**
@@ -179,7 +185,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 		throw new Exception(
 			sprintf(
 			/* translators: 1. Method Name. */
-				esc_html__( '%s must be overridden by the subClass', 'roxwp-site-mon' ),
+				esc_html__( '%s must be overridden by the subClass', 'uptime' ),
 				__METHOD__
 			)
 		);

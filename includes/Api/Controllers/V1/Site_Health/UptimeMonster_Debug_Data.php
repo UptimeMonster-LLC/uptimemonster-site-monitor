@@ -1,15 +1,28 @@
 <?php
+/**
+ *
+ *
+ * @package UptimeMonster\SiteMonitor\API
+ * @version 1.0.0
+ */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health;
+namespace UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health;
 
-use AbsolutePlugins\RoxwpSiteMonitor\Api\Controllers\V1\Site_Health\RoxWP_Update_Check;
+use Imagick;
+use wpdb;
 
-class RoxWP_Debug_Data {
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.1 403 Forbidden' );
+	die();
+}
+
+class UptimeMonster_Debug_Data {
 	public $update_check;
 
 	public function __construct() {
 
-		$this->update_check = new RoxWP_Update_Check();
+		$this->update_check = new UptimeMonster_Update_Check();
 	}
 
 	/**
@@ -27,14 +40,7 @@ class RoxWP_Debug_Data {
 	 * Static function for generating site debug data when required.
 	 *
 	 * @return array The debug data for the site.
-	 * @throws ImagickException
-	 * @since 5.5.0 Added pretty permalinks support information.
-	 *
-	 * @since 5.2.0
 	 * @global wpdb $wpdb WordPress database abstraction object.
-	 *
-	 * @since 5.3.0 Added database charset, database collation,
-	 *              and timezone information.
 	 */
 	public function debug_data() {
 		global $wpdb;
@@ -1786,7 +1792,7 @@ class RoxWP_Debug_Data {
 				/* translators: %s: Support forums URL. */
 					__( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.' ),
 					__( 'https://wordpress.org/support/forums/' )
-				) . ' RoxWP_Debug_Data.php' . __( '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)' ),
+				) . ' UptimeMonster_Debug_Data.php' . __( '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)' ),
 				headers_sent() || WP_DEBUG ? E_USER_WARNING : E_USER_NOTICE
 			);
 			$response = wp_remote_get( $http_url, $options );

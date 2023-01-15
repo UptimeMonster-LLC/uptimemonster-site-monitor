@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 use WP_Comment;
 
@@ -38,7 +38,7 @@ class Monitor_Comment_Activity extends Monitor_Posts_Activity {
 		 * @param int|object $object
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_comment_activity', true, get_comment( $object_id ), $action );
+		return (bool) apply_filters( 'umsm_should_log_comment_activity', true, get_comment( $object_id ), $action );
 	}
 
 	protected function detect_action( $comment ) {

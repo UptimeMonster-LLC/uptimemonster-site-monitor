@@ -2,14 +2,10 @@
 /**
  * Helper Functions
  *
- * @package Package
- * @author Name <email>
- * @version
- * @since
- * @license
+ * @package UptimeMonster\SiteMonitor
  */
 
-use AbsolutePlugins\RoxwpSiteMonitor\RoxWP_Site_Monitor;
+use UptimeMonster\SiteMonitor\UptimeMonster_Site_Monitor;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -22,23 +18,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Must restore language after uses.
  *
- * @see roxwp_restore_locale()
+ * @see umsm_restore_locale()
  */
-function roxwp_switch_to_english() {
+function umsm_switch_to_english() {
 	if ( function_exists( 'switch_to_locale' ) ) {
 		switch_to_locale( 'en_US' );
 
 		// Filter on plugin_locale so other plugin/theme can load the correct locale.
 		add_filter( 'plugin_locale', 'get_locale' );
 
-		RoxWP_Site_Monitor::get_instance()->load_plugin_textdomain();
+		UptimeMonster_Site_Monitor::get_instance()->load_plugin_textdomain();
 	}
 }
 
 /**
  * Switch Plugin language to original.
  */
-function roxwp_restore_locale() {
+function umsm_restore_locale() {
 	if ( function_exists( 'restore_previous_locale' ) ) {
 		restore_previous_locale();
 
@@ -52,7 +48,7 @@ function roxwp_restore_locale() {
  *
  * @return string
  */
-function roxwp_get_current_time() {
+function umsm_get_current_time() {
 	return (string) current_time( 'mysql', 1 );
 }
 
@@ -61,60 +57,69 @@ function roxwp_get_current_time() {
  *
  * @return array|string[]
  */
-function roxwp_get_current_actor() {
+function umsm_get_current_actor() {
 	if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
 		$actor = [
 			'type' => 'cron',
 			'name' => 'WP Cron',
-			'ip'   => roxwp_get_ip_address(), // maybe cron triggered by visitor.
 		];
 	} elseif ( class_exists( '\WP_CLI', false ) ) {
 		$actor = [
 			'type' => 'wp-cli',
 			'name' => 'WP CLI',
-			'ip'   => roxwp_get_ip_address(), // maybe cron triggered by visitor.
 		];
 	} elseif ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		if ( ! function_exists( 'is_user_logged_in' ) ) {
+			require_once ABSPATH . 'wp-includes/pluggable.php';
+		}
+
 		$route     = trim( $GLOBALS['wp']->query_vars['rest_route'], '/' );
 		$parts     = explode( '/', $route );
 		$namespace = reset( $parts );
-
-		$actor = [
+		$actor     = [
 			'type'  => 'rest-api',
-			'name'  => $namespace,
-			'ip'    => roxwp_get_ip_address(),
 			'extra' => [
+				'method'    => $_SERVER['REQUEST_METHOD'] ?? 'N/A',
 				'namespace' => $namespace,
 				'route'     => $route,
-			]
+			],
 		];
+
+		if ( is_user_logged_in() ) {
+			$user           = wp_get_current_user();
+			$actor['id']    = $user->ID;
+			$actor['name']  = umsm_get_user_display_name( $user );
+			$actor['email'] = $user->user_email;
+			$actor['role']  = umsm_get_user_role( $user );
+		} else {
+			$actor['name'] = $namespace;
+		}
+
 	} else {
 		if ( ! function_exists( 'is_user_logged_in' ) ) {
 			require_once ABSPATH . 'wp-includes/pluggable.php';
 		}
 		if ( is_user_logged_in() ) {
-			$actor = wp_get_current_user();
+			$user = wp_get_current_user();
 			$actor = [
 				'type'  => 'user',
-				'id'    => $actor->ID,
-				'ip'    => roxwp_get_ip_address(),
-				'name'  => roxwp_get_user_display_name( $actor ),
-				'email' => $actor->user_email,
-				'role'  => roxwp_get_user_role( $actor ),
+				'id'    => $user->ID,
+				'name'  => umsm_get_user_display_name( $user ),
+				'email' => $user->user_email,
+				'role'  => umsm_get_user_role( $user ),
 			];
 		} else {
 			$actor = [
 				'type' => 'visitor',
 				'name' => 'Unknown Visitor',
-				'ip'   => roxwp_get_ip_address(),
 			];
 		}
-
 	}
 
-	return $actor; // @phpstan-ignore-line
-}
+	$actor['ip'] = umsm_get_ip_address();
 
+	return $actor;
+}
 
 /**
  * Get User by identity.
@@ -124,7 +129,7 @@ function roxwp_get_current_actor() {
  *
  * @return false|WP_User
  */
-function roxwp_get_user( $identity, $field = null ) {
+function umsm_get_user( $identity, $field = null ) {
 	if ( $identity instanceof WP_User ) {
 		return $identity;
 	}
@@ -148,7 +153,7 @@ function roxwp_get_user( $identity, $field = null ) {
  *
  * @return string
  */
-function roxwp_get_user_display_name( $user ) {
+function umsm_get_user_display_name( $user ) {
 	$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) ); // @phpstan-ignore-line
 
 	if ( empty( $name ) ) {
@@ -167,7 +172,7 @@ function roxwp_get_user_display_name( $user ) {
  *
  * @return string
  */
-function roxwp_get_user_role( $user ) {
+function umsm_get_user_role( $user ) {
 	return strtolower( (string) key( $user->caps ) );
 }
 
@@ -176,8 +181,10 @@ function roxwp_get_user_role( $user ) {
  *
  * @return string
  */
-function roxwp_get_ip_address() {
-	$server_ip_keys = [
+function umsm_get_ip_address() {
+	$ip     = '';
+	$lookup = [
+		'HTTP_X_REAL_IP',
 		'HTTP_CF_CONNECTING_IP', // CloudFlare
 		'HTTP_TRUE_CLIENT_IP', // CloudFlare Enterprise header
 		'HTTP_CLIENT_IP',
@@ -189,14 +196,20 @@ function roxwp_get_ip_address() {
 		'REMOTE_ADDR',
 	];
 
-	foreach ( $server_ip_keys as $key ) {
-		if ( isset( $_SERVER[ $key ] ) && filter_var( $_SERVER[ $key ], FILTER_VALIDATE_IP ) ) {
-			return sanitize_text_field( $_SERVER[ $key ] );
+	foreach ( $lookup as $item ) {
+		if ( isset( $_SERVER[ $item ] ) && ! empty( $_SERVER[ $item ] ) ) {
+			$ip = sanitize_text_field( wp_unslash( $_SERVER[ $item ] ) );
+
+			if ( strpos( $ip, ',' ) ) {
+				/** @noinspection PhpPregSplitWithoutRegExpInspection */
+				$ip = (string) rest_is_ip_address( trim( current( preg_split( '/,/', $ip ) ) ) );
+			}
+
+			break;
 		}
 	}
 
-	// Fallback local ip.
-	return '127.0.0.1';
+	return (string) filter_var( $ip, FILTER_VALIDATE_IP );
 }
 
 /**
@@ -204,7 +217,7 @@ function roxwp_get_ip_address() {
  *
  * @return array|false
  */
-function roxwp_get_plugin_data( $plugin_file ) {
+function umsm_get_plugin_data( $plugin_file ) {
 	if ( ! is_readable( $plugin_file ) ) {
 		return false;
 	}
@@ -221,12 +234,12 @@ function roxwp_get_plugin_data( $plugin_file ) {
 	return $plugin_data;
 }
 
-function roxwp_get_all_plugins() {
+function umsm_get_all_plugins() {
 	if ( ! function_exists( 'get_plugins' ) ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
 
-	roxwp_switch_to_english();
+	umsm_switch_to_english();
 
 	$plugins    = get_plugins();
 	$mu_plugins = get_mu_plugins();
@@ -258,9 +271,9 @@ function roxwp_get_all_plugins() {
 
 	$data = array_merge( $plugins, $mu_plugins, $dropins );
 
-	roxwp_restore_locale();
+	umsm_restore_locale();
 
-	if ( isset( $data['fatal-error-handler.php'] ) || isset( $data['roxwp-site-monitor/roxwp-site-monitor.php'] ) ) {
+	if ( isset( $data['fatal-error-handler.php'] ) || isset( $data['uptimemonster-site-monitor/uptimemonster-site-monitor.php'] ) ) {
 		$data['fatal-error-handler.php']['isRoxMon'] = true;
 	}
 
@@ -272,7 +285,7 @@ function roxwp_get_all_plugins() {
  *
  * @return array|array[]
  */
-function roxwp_get_all_themes() {
+function umsm_get_all_themes() {
 	if ( ! function_exists( 'wp_get_themes' ) ) {
 		require_once ABSPATH . 'wp-includes/theme.php';
 	}
@@ -285,7 +298,7 @@ function roxwp_get_all_themes() {
 
 	return array_map(
 		function ( $theme ) {
-			return roxwp_get_theme_data_headers( $theme );
+			return umsm_get_theme_data_headers( $theme );
 		},
 		$themes
 	);
@@ -296,7 +309,7 @@ function roxwp_get_all_themes() {
  *
  * @return array
  */
-function roxwp_get_theme_data_headers( $theme ) {
+function umsm_get_theme_data_headers( $theme ) {
 	$headers = [
 		'Name',
 		'Parent Theme',
@@ -328,117 +341,110 @@ function roxwp_get_theme_data_headers( $theme ) {
 }
 
 function get_site_health_tests() {
-	$tests = array(
-		'direct' => array(
-			'wordpress_version'         => array(
+	return [
+		'direct' => [
+			'wordpress_version'         => [
 				'label' => __( 'WordPress Version' ),
 				'test'  => 'wordpress_version',
-			),
-			'plugin_version'            => array(
+			],
+			'plugin_version'            => [
 				'label' => __( 'Plugin Versions' ),
 				'test'  => 'plugin_version',
-			),
-			'theme_version'             => array(
+			],
+			'theme_version'             => [
 				'label' => __( 'Theme Versions' ),
 				'test'  => 'theme_version',
-			),
-			'php_version'               => array(
+			],
+			'php_version'               => [
 				'label' => __( 'PHP Version' ),
 				'test'  => 'php_version',
-			),
-			'php_extensions'            => array(
+			],
+			'php_extensions'            => [
 				'label' => __( 'PHP Extensions' ),
 				'test'  => 'php_extensions',
-			),
-			'php_default_timezone'      => array(
+			],
+			'php_default_timezone'      => [
 				'label' => __( 'PHP Default Timezone' ),
 				'test'  => 'php_default_timezone',
-			),
-			'php_sessions'              => array(
+			],
+			'php_sessions'              => [
 				'label' => __( 'PHP Sessions' ),
 				'test'  => 'php_sessions',
-			),
-			'sql_server'                => array(
+			],
+			'sql_server'                => [
 				'label' => __( 'Database Server version' ),
 				'test'  => 'sql_server',
-			),
-			'utf8mb4_support'           => array(
+			],
+			'utf8mb4_support'           => [
 				'label' => __( 'MySQL utf8mb4 support' ),
 				'test'  => 'utf8mb4_support',
-			),
-			'ssl_support'               => array(
+			],
+			'ssl_support'               => [
 				'label' => __( 'Secure communication' ),
 				'test'  => 'ssl_support',
-			),
-			'scheduled_events'          => array(
+			],
+			'scheduled_events'          => [
 				'label' => __( 'Scheduled events' ),
 				'test'  => 'scheduled_events',
-			),
-			'http_requests'             => array(
+			],
+			'http_requests'             => [
 				'label' => __( 'HTTP Requests' ),
 				'test'  => 'http_requests',
-			),
-			'rest_availability'         => array(
+			],
+			'rest_availability'         => [
 				'label'     => __( 'REST API availability' ),
 				'test'      => 'rest_availability',
 				'skip_cron' => true,
-			),
-			'debug_enabled'             => array(
+			],
+			'debug_enabled'             => [
 				'label' => __( 'Debugging enabled' ),
 				'test'  => 'is_in_debug_mode',
-			),
-			'file_uploads'              => array(
+			],
+			'file_uploads'              => [
 				'label' => __( 'File uploads' ),
 				'test'  => 'file_uploads',
-			),
-			'plugin_theme_auto_updates' => array(
+			],
+			'plugin_theme_auto_updates' => [
 				'label' => __( 'Plugin and theme auto-updates' ),
 				'test'  => 'plugin_theme_auto_updates',
-			),
-		),
-		'async'  => array(
-			'dotorg_communication' => array(
+			],
+		],
+		'async'  => [
+			'dotorg_communication' => [
 				'label'             => __( 'Communication with WordPress.org' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/dotorg-communication' ),
 				'has_rest'          => true,
-				'async_direct_test' => array( WP_Site_Health::get_instance(), 'get_test_dotorg_communication' ),
-			),
-			'background_updates'   => array(
+				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_dotorg_communication' ],
+			],
+			'background_updates'   => [
 				'label'             => __( 'Background updates' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/background-updates' ),
 				'has_rest'          => true,
-				'async_direct_test' => array( WP_Site_Health::get_instance(), 'get_test_background_updates' ),
-			),
-			'loopback_requests'    => array(
+				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_background_updates' ],
+			],
+			'loopback_requests'    => [
 				'label'             => __( 'Loopback request' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/loopback-requests' ),
 				'has_rest'          => true,
-				'async_direct_test' => array( WP_Site_Health::get_instance(), 'get_test_loopback_requests' ),
-			),
-			'https_status'         => array(
+				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_loopback_requests' ],
+			],
+			'https_status'         => [
 				'label'             => __( 'HTTPS status' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/https-status' ),
 				'has_rest'          => true,
-				'async_direct_test' => array( WP_Site_Health::get_instance(), 'get_test_https_status' ),
-			),
-		),
-	);
-
-	return $tests;
+				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_https_status' ],
+			],
+		],
+	];
 }
 
-function roxlog( $data ) {
-
-	error_log( print_r( $data, true ) );
-}
-
-function roxwp_wp_version_compare( $since, $operator ) {
+function umsm_wp_version_compare( $since, $operator ) {
 	$wp_version = str_replace( '-src', '', $GLOBALS['wp_version'] );
 	$since      = str_replace( '-src', '', $since );
 	return version_compare( $wp_version, $since, $operator );
 }
 
-function roxwp_parse_boolval( $maby_bool ) {
+function umsm_parse_boolval( $maby_bool ) {
 
 	if ( is_numeric( $maby_bool ) ) {
 		return (bool) $maby_bool;
@@ -456,7 +462,7 @@ function roxwp_parse_boolval( $maby_bool ) {
  * @param string $original_version
  * @return string 'major', 'minor', 'patch'
  */
-function roxwp_get_named_sem_ver( $new_version, $original_version ) {
+function umsm_get_named_sem_ver( $new_version, $original_version ) {
 
 	if ( ! \Composer\Semver\Comparator::greaterThan( $new_version, $original_version ) ) {
 		return '';

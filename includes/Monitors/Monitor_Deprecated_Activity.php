@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 use Exception;
 use Plugin_Upgrader;
@@ -42,7 +42,7 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 		 * @param bool $status
 		 * @param string $which
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_deprecated_activity', true, $which );
+		return (bool) apply_filters( 'umsm_should_log_deprecated_activity', true, $which );
 	}
 
 	protected function log_deprecated_function( $function, $replacement, $version ) {

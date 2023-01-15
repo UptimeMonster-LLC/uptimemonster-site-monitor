@@ -13,4 +13,4 @@ parameters:
     excludePaths:
         - vendor/
     scanFiles:
-        - roxwp-site-monitor.php
+        - uptimemonster-site-monitor.php

@@ -2,12 +2,12 @@
 /**
  * Data Monitor Base
  *
- * @package RoxwpSiteMonitor\Monitors
+ * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since RoxwpSiteMonitor 1.0.0
+ * @since SiteMonitor 1.0.0
  */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Monitors;
 
 use Exception;
 use Theme_Upgrader;
@@ -66,7 +66,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 		 * @param string $action
 		 * @param string $file file path if one is being modified.
 		 */
-		return (bool) apply_filters( 'roxwp_should_log_plugins_activity', true, $theme, $action, $file );
+		return (bool) apply_filters( 'umsm_should_log_plugins_activity', true, $theme, $action, $file );
 	}
 
 	public function on_theme_change( $new_name, WP_Theme $new_theme, WP_Theme $old_theme ) {
@@ -74,13 +74,13 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		roxwp_switch_to_english();
+		umsm_switch_to_english();
 		/* translators: %1$s New Theme Name, %2$s: Old Theme Name */
-		$name = sprintf( __( 'Switched to %1$s theme from %2$s', 'roxwp-site-mon' ),
+		$name = sprintf( __( 'Switched to %1$s theme from %2$s', 'uptime' ),
 			$new_theme->get( 'Name' ), // @phpstan-ignore-line
 			$old_theme->get( 'Name' ) // @phpstan-ignore-line
 		);
-		roxwp_restore_locale();
+		umsm_restore_locale();
 
 		$this->log_activity(
 			Activity_Monitor_Base::ITEM_ACTIVATED,
@@ -111,7 +111,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 		$data = $this->get_theme_data( $stylesheet );
 
-		set_transient( 'roxwp_theme_data_' . $hash, $data, 5 * MINUTE_IN_SECONDS );
+		set_transient( 'umsm_theme_data_' . $hash, $data, 5 * MINUTE_IN_SECONDS );
 	}
 
 	public function on_theme_deleted( $stylesheet, $deleted ) {
@@ -121,13 +121,13 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 		$hash = md5( $stylesheet );
 
-		$data = get_transient( 'roxwp_theme_data_' . $hash );
+		$data = get_transient( 'umsm_theme_data_' . $hash );
 
 		if ( $data ) {
 			$this->theme[ $hash ] = $data;
 		}
 
-		delete_transient( 'roxwp_theme_data_' . $hash );
+		delete_transient( 'umsm_theme_data_' . $hash );
 
 		$data = $this->get_theme_data( $stylesheet );
 		$data = empty( $data ) ? [] : $data;
@@ -267,7 +267,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		$data = roxwp_get_theme_data_headers( $customize_manager->theme() );
+		$data = umsm_get_theme_data_headers( $customize_manager->theme() );
 
 		$data['customizer'] = true;
 
@@ -297,10 +297,10 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 				$_file = WP_PLUGIN_DIR . $theme; // @phpstan-ignore-line
 
 				if ( $this->maybe_log_theme( Activity_Monitor_Base::ITEM_UPDATED, $theme, $file ) && file_exists( $_file ) ) {
-					roxwp_switch_to_english();
+					umsm_switch_to_english();
 					/* translators: %1$s. Theme Name, %2$s. File path. */
-					$name = __( 'Modified file (%2$s) of “%1$s” theme', 'roxwp-site-mon' );
-					roxwp_restore_locale();
+					$name = __( 'Modified file (%2$s) of “%1$s” theme', 'uptime' );
+					umsm_restore_locale();
 
 					try {
 						$this->log_activity(
@@ -342,7 +342,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 				require_once ABSPATH . 'wp-includes/theme.php';
 			}
 
-			$this->theme[ $hash ] = roxwp_get_theme_data_headers( wp_get_theme( $theme ) );
+			$this->theme[ $hash ] = umsm_get_theme_data_headers( wp_get_theme( $theme ) );
 		}
 
 		if ( $header ) {

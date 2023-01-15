@@ -1,14 +1,24 @@
 <?php
+/**
+ * Upgrader Skin
+ *
+ * @package UptimeMonster\SiteMonitor
+ */
 
-namespace AbsolutePlugins\RoxwpSiteMonitor\CoreUpdate;
+namespace UptimeMonster\SiteMonitor\CoreUpdate;
 
 use WP_Upgrader_Skin;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.1 403 Forbidden' );
+	die();
+}
+
 /**
- * A Upgrader Skin for WordPress that only generates plain-text
- *
+ * An Upgrader Skin for WordPress that only generates plain-text
  */
-class RoxWPUpgraderSkin extends WP_Upgrader_Skin {
+class UptimeMonsterUpgraderSkin extends WP_Upgrader_Skin {
 
 	public $api;
 
