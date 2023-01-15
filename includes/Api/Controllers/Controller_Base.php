@@ -8,6 +8,9 @@
 
 namespace UptimeMonster\SiteMonitor\Api\Controllers;
 
+use WP_Error;
+use WP_REST_Request;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
@@ -33,9 +36,9 @@ abstract class Controller_Base extends \WP_REST_Controller {
 	/**
 	 * Get route access if request is valid.
 	 *
-	 * @param \WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 *
-	 * @return \WP_Error|boolean
+	 * @return WP_Error|boolean
 	 */
 	public function get_route_access( $request ) {
 		$api_keys        = get_option( 'umsm_site_monitor_api_keys', [] );
@@ -55,6 +58,7 @@ abstract class Controller_Base extends \WP_REST_Controller {
 
 		}
 
+		// @TODO api key missing in config.
 		$isValid = hash_equals(
 			$signature,
 			hash_hmac( 'sha256', $request_api_key . $method . $data . $timestamp, $api_keys['api_secret'] )
@@ -64,6 +68,6 @@ abstract class Controller_Base extends \WP_REST_Controller {
 			return true;
 		}
 
-		return new \WP_Error( 'invalid_signature', __( 'Invalid Signature', 'uptime' ), [] );
+		return new WP_Error( 'invalid_signature', __( 'Invalid Signature', 'uptime' ), [] );
 	}
 }
