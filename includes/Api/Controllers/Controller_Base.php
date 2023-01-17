@@ -62,8 +62,6 @@ abstract class Controller_Base extends WP_REST_Controller {
 			}
 		}
 
-		return true;
-
 		$isValid = hash_equals(
 			$signature,
 			hash_hmac( 'sha256', $api_keys['api_key'] . $method . $data . $timestamp, $api_keys['api_secret'] )
