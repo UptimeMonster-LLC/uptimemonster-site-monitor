@@ -405,7 +405,6 @@ class Core_Update extends Controller_Base {
 				'code' => $code,
 			] );
 		}
-//		error_log(print_r($response_body, true));
 
 		if ( ! $response_body || 200 !== (int) $code ) {
 			return new WP_Error( 'checksum-error', "Checksum request '{$url}' failed (HTTP {$code})." );

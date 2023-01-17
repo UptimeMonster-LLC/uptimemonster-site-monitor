@@ -23,6 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Health_Check extends Controller_Base {
 
+	/**
+	 * Route base.
+	 *
+	 * @var string
+	 */
+	protected $rest_base = '/site-health';
 
 	public function __construct() {}
 
@@ -31,30 +37,30 @@ class Health_Check extends Controller_Base {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base,
-			array(
-				array(
+			[
+				[
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'send_site_health_info' ),
-					'permission_callback' => array( $this, 'get_route_access' ),
-					'args'                => array(),
-				),
+					'callback'            => [ $this, 'send_site_health_info' ],
+					'permission_callback' => [ $this, 'get_route_access' ],
+					'args'                => [],
+				],
 
-			)
+			]
 		);
 
 		// Register ping route.
 		register_rest_route(
 			$this->namespace,
 			'/ping',
-			array(
-				array(
+			[
+				[
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_ping' ),
-					'permission_callback' => array( $this, 'get_route_access' ),
-					'args'                => array(),
-				),
+					'callback'            => [ $this, 'get_ping' ],
+					'permission_callback' => [ $this, 'get_route_access' ],
+					'args'                => [],
+				],
 
-			)
+			]
 		);
 	}
 

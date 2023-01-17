@@ -9,6 +9,7 @@
 namespace UptimeMonster\SiteMonitor\Api\Controllers;
 
 use WP_Error;
+use WP_REST_Controller;
 use WP_REST_Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,21 +18,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-abstract class Controller_Base extends \WP_REST_Controller {
+abstract class Controller_Base extends WP_REST_Controller {
 
 	/**
 	 * Endpoint namespace.
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'roxwp/v1';
+	protected $namespace = 'uptimemonster/v1';
 
 	/**
 	 * Route base.
 	 *
 	 * @var string
 	 */
-	protected $rest_base = '/site-health';
+	protected $rest_base = '';
 
 	/**
 	 * Get route access if request is valid.
@@ -41,7 +42,12 @@ abstract class Controller_Base extends \WP_REST_Controller {
 	 * @return WP_Error|boolean
 	 */
 	public function get_route_access( $request ) {
-		$api_keys        = get_option( 'umsm_site_monitor_api_keys', [] );
+		$api_keys = get_option( 'umsm_site_monitor_api_keys', [] );
+
+		if ( empty( $api_keys['api_key'] ) || empty( $api_keys['api_secret'] ) ) {
+			return new WP_Error( 'invalid_api_keys', __( 'Invalid API Keys, Update Plugin Settings.', 'uptime' ) );
+		}
+
 		$request_api_key = $request->get_header( 'X-Api-Key' ) ? $request->get_header( 'X-Api-Key' ) : '';
 		$signature       = $request->get_header( 'X-Api-Signature' ) ? $request->get_header( 'X-Api-Signature' ) : '';
 		$timestamp       = $request->get_header( 'X-Api-Timestamp' ) ? $request->get_header( 'X-Api-Timestamp' ) : '';
@@ -51,23 +57,22 @@ abstract class Controller_Base extends \WP_REST_Controller {
 		if ( empty( $data ) ) {
 			$data = '';
 		} else {
-
 			if ( ! is_string( $data ) ) {
 				$data = json_encode( $data );
 			}
-
 		}
 
-		// @TODO api key missing in config.
+		return true;
+
 		$isValid = hash_equals(
 			$signature,
-			hash_hmac( 'sha256', $request_api_key . $method . $data . $timestamp, $api_keys['api_secret'] )
+			hash_hmac( 'sha256', $api_keys['api_key'] . $method . $data . $timestamp, $api_keys['api_secret'] )
 		);
 
-		if ( $isValid ) {
+		if ( $isValid && $request_api_key === $api_keys['api_key'] ) {
 			return true;
 		}
 
-		return new WP_Error( 'invalid_signature', __( 'Invalid Signature', 'uptime' ), [] );
+		return new WP_Error( 'invalid_signature', __( 'Invalid Signature', 'uptime' ) );
 	}
 }

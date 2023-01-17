@@ -23,6 +23,8 @@ class Dashboard {
 
 	use Singleton;
 
+	const DROP_IN_ACTION = 'roxwp-install-drop-in';
+
 	protected function __construct() {
 		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
 		add_action( 'admin_menu', [ $this, 'register_menu' ] );
@@ -97,11 +99,11 @@ class Dashboard {
 			die();
 		}
 
-		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && 'install-drop-in' === $_GET['action'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			if ( wp_verify_nonce( $_GET['_wpnonce'], 'roxwp-install-drop-in' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && self::DROP_IN_ACTION === $_GET['action'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( wp_verify_nonce( $_GET['_wpnonce'], self::DROP_IN_ACTION ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				UptimeMonster_Site_Monitor::maybe_install_drop_in();
 
-				$this->add_settings_status( __( 'Error Logger Drop-In Updated.', 'uptime' ), 'success' );
+				$this->add_settings_status( __( 'Error Logger Drop-In Updated.', 'uptime' ) );
 
 				wp_safe_redirect( $this->get_page_url() );
 				die();
@@ -125,8 +127,6 @@ class Dashboard {
 						'extra'     => [],
 					] );
 				}
-
-
 
 				$cache_key = 'roxwp-is-connected';
 				delete_transient( $cache_key );
@@ -168,7 +168,7 @@ class Dashboard {
 
 				if ( ! is_wp_error( $response ) ) {
 
-					$new_keys   = [
+					$new_keys = [
 						'api_key'    => $api_key,
 						'api_secret' => $api_secret,
 					];
@@ -198,6 +198,7 @@ class Dashboard {
 
 	protected function is_connected( $cached = true ) {
 		$client = UptimeMonster_Client::get_instance();
+
 		if ( ! $client->has_keys() ) {
 			return false;
 		}
@@ -222,15 +223,10 @@ class Dashboard {
 	}
 
 	public function settings_page() {
-		$install_url = wp_nonce_url(
-			add_query_arg( [ 'action' => 'install-drop-in' ], $this->get_page_url() ),
-			'roxwp-install-drop-in'
-		);
-
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline">
-				<i class="dashicons dashicons-superhero" style="font-size:1.5em;display:inline-block;width:30px;height:30px;margin:-1px 10px 0 0;"></i>
+				<i class="dashicons dashicons-superhero" style="font-size:1.5em;display:inline-block;width:30px;height:30px;margin:-1px 10px 0 0;" aria-hidden="true"></i>
 				<?php echo esc_html( get_admin_page_title() ); ?>
 			</h1>
 			<hr class="wp-header-end">
@@ -238,47 +234,38 @@ class Dashboard {
 				<?php wp_nonce_field( 'uptimemonster-site-monitor-settings' ); ?>
 				<table class="form-table" role="presentation">
 					<tbody>
-					<?php
-					if( $this->is_connected() ) {
-						?>
-						<tr>
-							<th scope="row">
-								<label for="roxwp-api-status"><?php esc_html_e( 'Status', 'uptime' ); ?></label>
-							</th>
-							<td>
-								<div style="display:flex;align-items:center;gap:10px;">
-									<?php esc_html_e( 'Connected', 'uptime' ); ?>
-									<button class="button button-secondary button-warning" type="submit" name="rwp-disconnect-api" value="1"><?php esc_html_e( 'Disconnect', 'uptime' ); ?></button>
-								</div>
-							</td>
-						</tr>
-						<?php
-					}else{
-						?>
-						<tr>
-							<th scope="row"><label for="roxwp-api-key"><?php esc_html_e( 'Api Key', 'uptime' ); ?></label></th>
-							<td><input name="roxwp[api_key]" type="text" id="roxwp-api-key" value="" class="regular-text" autocomplete="off"></td>
-						</tr>
-						<tr>
-							<th scope="row"><label for="roxwp-api-secret"><?php esc_html_e( 'Api Secret', 'uptime' ); ?></label></th>
-							<td><input name="roxwp[api_secret]" type="password" id="roxwp-api-secret" value="" class="regular-text" autocomplete="off"></td>
-						</tr>
-						<?php
-					}
-					?>
+					<?php if ( $this->is_connected() ) { ?>
 					<tr>
 						<th scope="row">
-							<label><?php esc_html_e( 'Error Logging Drop-in', 'uptime' ); ?></label>
+							<label for="roxwp-api-status"><?php esc_html_e( 'Status', 'uptime' ); ?></label>
 						</th>
+						<td>
+							<div style="display:flex;align-items:center;gap:10px;">
+								<?php esc_html_e( 'Connected', 'uptime' ); ?>
+								<button class="button button-secondary button-warning" type="submit" name="rwp-disconnect-api" value="1"><?php esc_html_e( 'Disconnect', 'uptime' ); ?></button>
+							</div>
+						</td>
+					</tr>
+					<?php } else { ?>
+					<tr>
+						<th scope="row"><label for="roxwp-api-key"><?php esc_html_e( 'Api Key', 'uptime' ); ?></label></th>
+						<td><input name="roxwp[api_key]" type="text" id="roxwp-api-key" value="" class="regular-text" autocomplete="off"></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="roxwp-api-secret"><?php esc_html_e( 'Api Secret', 'uptime' ); ?></label></th>
+						<td><input name="roxwp[api_secret]" type="password" id="roxwp-api-secret" value="" class="regular-text" autocomplete="off"></td>
+					</tr>
+					<?php } ?>
+					<tr>
+						<th scope="row"><label><?php esc_html_e( 'Error Logging Drop-in', 'uptime' ); ?></label></th>
 						<td>
 							<table>
 								<tbody>
 								<tr>
-									<th scope="row" style="padding:0;">
-										<strong><?php esc_html_e( 'Status:', 'uptime' ); ?></strong></th>
+									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Status:', 'uptime' ); ?></strong></th>
 									<td style="padding:0;">
 										<?php
-
+										$install_url = wp_nonce_url( add_query_arg( [ 'action' => self::DROP_IN_ACTION ], $this->get_page_url() ), self::DROP_IN_ACTION );
 										if ( UptimeMonster_Site_Monitor::is_drop_in_installed() ) {
 											if ( UptimeMonster_Site_Monitor::drop_in_need_update() ) {
 												printf(
@@ -296,33 +283,29 @@ class Dashboard {
 											}
 										} else {
 											?>
-											<p class="help">
-												<?php
-												if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
-													printf(
-													/* translators: 1. Installation URL */
-														__( 'Click <a href="%s">here</a> to install the drop-in.', 'uptime' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-														esc_url( $install_url )
-													);
-												} else {
-													printf(
-													/* translators: 1. Source file path. 2. Destination file path. */
-														__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'uptime' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-														esc_html( UptimeMonster_Site_Monitor::get_drop_in_dist_file() ),
-														esc_html( UptimeMonster_Site_Monitor::get_drop_in_file() )
-													);
-												}
-												?>
-											</p>
+											<p class="help"><?php
+											if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
+												printf(
+												/* translators: 1. Installation URL */
+													__( 'Click <a href="%s">here</a> to install the drop-in.', 'uptime' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													esc_url( $install_url )
+												);
+											} else {
+												printf(
+												/* translators: 1. Source file path. 2. Destination file path. */
+													__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'uptime' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													esc_html( UptimeMonster_Site_Monitor::get_drop_in_dist_file() ),
+													esc_html( UptimeMonster_Site_Monitor::get_drop_in_file() )
+												);
+											}
+											?></p>
 											<?php
 										}
 										?>
 									</td>
 								</tr>
 								<tr>
-									<th scope="row" style="padding:0;">
-										<strong><?php esc_html_e( 'WP Content Directory', 'uptime' ); ?></strong>
-									</th>
+									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'WP Content Directory', 'uptime' ); ?></strong></th>
 									<td style="padding:0;">
 										<?php
 										if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
@@ -335,8 +318,7 @@ class Dashboard {
 								</tr>
 								<?php if ( UptimeMonster_Site_Monitor::is_drop_in_installed() ) { ?>
 									<tr>
-										<th scope="row" style="padding:0;">
-											<strong><?php esc_html_e( 'Drop-In', 'uptime' ); ?></strong></th>
+										<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Drop-In', 'uptime' ); ?></strong></th>
 										<td style="padding:0;">
 											<?php
 											if ( UptimeMonster_Site_Monitor::is_drop_in_writable() ) {

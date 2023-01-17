@@ -73,7 +73,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 * Log Activity.
 	 *
 	 * @param string $action Log Type
-	 * @param int|string $object_id Object Id
+	 * @param int|string $object_id Object ID
 	 * @param string $subtype Object Type
 	 * @param array|string|false $name Object Name.
 	 * @param array|object $data [Optional] Extra data.
@@ -83,6 +83,11 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 * @throws Exception
 	 */
 	protected function log_activity( $action, $object_id, $subtype, $name, $data = null ) {
+
+		if ( false !== strpos( $subtype, '_transient_' ) || false !== strpos( $subtype, 'action_scheduler_lock_async' ) ) {
+			return;
+		}
+
 		if ( ! $this->activity ) {
 			$this->activity = str_replace( [ __NAMESPACE__, 'Monitor_', '_Activity' ], '', get_called_class() );
 			$this->activity = ltrim( $this->activity, '\\' );
@@ -146,13 +151,11 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			}
 
 			if ( ! is_array( $data ) ) {
-				throw new InvalidArgumentException(
-					sprintf(
-					/* translators: 1. PHP Argument Type. */
-						esc_html__( '$data expected to be an array or object, got %s.', 'uptime' ),
-						gettype( $data )
-					)
-				);
+				throw new InvalidArgumentException( sprintf(
+				/* translators: 1. PHP Argument Type. */
+					esc_html__( '$data expected to be an array or object, got %s.', 'uptime' ),
+					gettype( $data )
+				) );
 			}
 
 			if ( isset( $data['include_installed'] ) ) {

@@ -20,7 +20,8 @@ class UptimeMonster_Client {
 
 	use Singleton;
 
-	private $host = 'https://app.uptimemonster.com/';
+//	private $host = 'https://app.uptimemonster.com/';
+	private $host = 'https://rox-wp.test/';
 
 	private $version = 'v1';
 
@@ -167,7 +168,7 @@ class UptimeMonster_Client {
 		);
 
 		if ( ! empty( $data ) ) {
-			$args['body'] = 'get' === $method ? $data : wp_json_encode( $data );
+			$args['body'] = 'get' === $method ? $data : wp_json_encode( $data, JSON_UNESCAPED_SLASHES );
 		}
 
 		$route       = ltrim( $route, '\\/' );
@@ -178,6 +179,7 @@ class UptimeMonster_Client {
 		if ( false !== strpos( $this->get_host(), '.test/' ) ) {
 			$response = wp_remote_request( $request_url, $args );
 		} elseif ( function_exists( 'vip_safe_wp_remote_request' ) ) {
+			/** @noinspection PhpUndefinedFunctionInspection */
 			$response = vip_safe_wp_remote_request( $request_url, '', 3, 5, 20, $args ); // @phpstan-ignore-line
 		} else {
 			$response = wp_safe_remote_request( $request_url, $args );
@@ -238,7 +240,7 @@ class UptimeMonster_Client {
 			$data = '';
 		} else {
 			if ( ! is_string( $data ) ) {
-				$data = wp_json_encode( $data );
+				$data = wp_json_encode( $data, JSON_UNESCAPED_SLASHES );
 			}
 		}
 

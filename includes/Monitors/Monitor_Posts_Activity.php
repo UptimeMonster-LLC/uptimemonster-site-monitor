@@ -40,10 +40,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		$status = true;
 
 		// Attachment & Menu item should be logged separately.
-		// @TODO log WC Product & variation in separate monitor.
-
 		$excluded_post_types = self::get_excluded_post_types();
-		array_push( $excluded_post_types, [ 'nav_menu_item', 'attachment' ] );
 
 		if (
 			in_array( $post->post_type, $excluded_post_types ) ||
@@ -78,15 +75,19 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		if ( ! $this->maybe_log_activity( $action, $post->ID ) ) {
 			return;
 		}
+
 		$this->log_activity(
 			$action,
 			$post->ID,
 			$post->post_type,
-			$this->get_name( $post )
+			$this->get_name( $post ),
+			[ 'status' => $post->post_status ]
 		);
 	}
 
 	/**
+	 * @param string|int $post_ID
+	 *
 	 * @throws Exception
 	 */
 	public function log_on_change( $post_ID ) {
@@ -99,8 +100,9 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		$this->log_activity(
 			Activity_Monitor_Base::ITEM_UPDATED,
 			$post_ID,
-			get_post_type( $post_ID ), // @phpstan-ignore-line
-			$this->get_name( $post ) // @phpstan-ignore-line
+			$post->post_type,
+			$this->get_name( $post ), // @phpstan-ignore-line
+			[ 'status' => $post->post_status ]
 		);
 	}
 
@@ -111,7 +113,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 	 *
 	 * @throws Exception
 	 */
-	public function log_delete( $post_id ) {
+	public function log_delete( $post_id, $post ) {
 		if ( ! $this->maybe_log_activity( Activity_Monitor_Base::ITEM_DELETED, $post_id ) ) {
 			return;
 		}
@@ -119,8 +121,9 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		$this->log_activity(
 			Activity_Monitor_Base::ITEM_DELETED,
 			$post_id,
-			get_post_type( $post_id ), // @phpstan-ignore-line
-			$this->get_name( $post_id )
+			$post->post_type,
+			$this->get_name( $post_id ),
+			[ 'status' => $post->post_status ]
 		);
 	}
 
@@ -131,7 +134,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 			return Activity_Monitor_Base::ITEM_TRASHED;
 		} elseif ( 'trash' === $old_status ) {
 			return Activity_Monitor_Base::ITEM_RESTORED;
-		} elseif ( 'auto-draft' === $new_status || ( 'new' === $old_status && 'inherit' === $new_status ) ) {
+		} elseif ( ( 'publish' === $new_status && 'publish' === $old_status ) || 'auto-draft' === $new_status || ( 'new' === $old_status && 'inherit' === $new_status ) ) {
 			// @XXX we dont need to log auto-draft or drafts. Keep it for the record.
 			return Activity_Monitor_Base::ITEM_CREATED;
 		} else {

@@ -158,21 +158,11 @@ class UptimeMonster_Debug_Data {
 			'fields'      => array(),
 		);
 
-		$info['wp-active-theme'] = array(
-			'label'  => __( 'Active Theme' ),
-			'fields' => array(),
-		);
+		$info['wp-active-theme'] = [];
 
-		$info['wp-parent-theme'] = array(
-			'label'  => __( 'Parent Theme' ),
-			'fields' => array(),
-		);
+		$info['wp-parent-theme'] = [];
 
-		$info['wp-themes-inactive'] = array(
-			'label'      => __( 'Inactive Themes' ),
-			'show_count' => true,
-			'fields'     => array(),
-		);
+		$info['wp-themes-inactive'] = [];
 
 		$info['wp-mu-plugins'] = array(
 			'label'      => __( 'Must Use Plugins' ),
@@ -409,9 +399,9 @@ class UptimeMonster_Debug_Data {
 			);
 		}
 
-		if ( function_exists('get_user_count') ) {
+		if ( function_exists( 'get_user_count' ) ) {
 			$info['wp-core']['fields']['user_count'] = array(
-				'label' => __('User count'),
+				'label' => __( 'User count' ),
 				'value' => get_user_count(),
 			);
 		}
@@ -796,7 +786,6 @@ class UptimeMonster_Debug_Data {
 			$info['wp-server']['fields']['curl_version'] = array(
 				'label' => __( 'cURL version' ),
 				'value' => $not_available,
-				'debug' => 'not available',
 			);
 		}
 
@@ -806,7 +795,6 @@ class UptimeMonster_Debug_Data {
 		$info['wp-server']['fields']['suhosin'] = array(
 			'label' => __( 'Is SUHOSIN installed?' ),
 			'value' => ( $suhosin_loaded ? __( 'Yes' ) : __( 'No' ) ),
-			'debug' => $suhosin_loaded,
 		);
 
 		// Imagick.
@@ -815,17 +803,15 @@ class UptimeMonster_Debug_Data {
 		$info['wp-server']['fields']['imagick_availability'] = array(
 			'label' => __( 'Is the Imagick library available?' ),
 			'value' => ( $imagick_loaded ? __( 'Yes' ) : __( 'No' ) ),
-			'debug' => $imagick_loaded,
 		);
 
 		// Pretty permalinks.
 		$pretty_permalinks_supported = $this->update_check->got_url_rewrite();
 
-		$info['wp-server']['fields']['pretty_permalinks'] = array(
+		$info['wp-server']['fields']['pretty_permalinks'] = [
 			'label' => __( 'Are pretty permalinks supported?' ),
 			'value' => ( $pretty_permalinks_supported ? __( 'Yes' ) : __( 'No' ) ),
-			'debug' => $pretty_permalinks_supported,
-		);
+		];
 
 		// Check if a .htaccess file exists.
 		if ( is_file( ABSPATH . '.htaccess' ) ) {
@@ -869,6 +855,7 @@ class UptimeMonster_Debug_Data {
 			$client_version = $wpdb->dbh->client_info;
 		} else {
 			// phpcs:ignore WordPress.DB.RestrictedFunctions.mysql_mysql_get_client_info,PHPCompatibility.Extensions.RemovedExtensions.mysql_DeprecatedRemoved
+			/** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
 			if ( preg_match( '|[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}|', mysql_get_client_info(), $matches ) ) {
 				$client_version = $matches[0];
 			} else {
@@ -941,36 +928,20 @@ class UptimeMonster_Debug_Data {
 		$mu_plugins = get_mu_plugins();
 
 		foreach ( $mu_plugins as $plugin_path => $plugin ) {
-			$plugin_version = $plugin['Version'];
-			$plugin_author  = $plugin['Author'];
-
-			$plugin_version_string       = __( 'No version or author information is available.' );
-			$plugin_version_string_debug = 'author: (undefined), version: (undefined)';
-
-			if ( ! empty( $plugin_version ) && ! empty( $plugin_author ) ) {
-				/* translators: 1: Plugin version number. 2: Plugin author name. */
-				$plugin_version_string       = sprintf( __( 'Version %1$s by %2$s' ), $plugin_version, $plugin_author );
-				$plugin_version_string_debug = sprintf( 'version: %s, author: %s', $plugin_version, $plugin_author );
-			} else {
-				if ( ! empty( $plugin_author ) ) {
-					/* translators: %s: Plugin author name. */
-					$plugin_version_string       = sprintf( __( 'By %s' ), $plugin_author );
-					$plugin_version_string_debug = sprintf( 'author: %s, version: (undefined)', $plugin_author );
-				}
-
-				if ( ! empty( $plugin_version ) ) {
-					/* translators: %s: Plugin version number. */
-					$plugin_version_string       = sprintf( __( 'Version %s' ), $plugin_version );
-					$plugin_version_string_debug = sprintf( 'author: (undefined), version: %s', $plugin_version );
-				}
-			}
-
-			$info['wp-mu-plugins']['fields'][ sanitize_text_field( $plugin['Name'] ) ] = array(
+			$info['wp-mu-plugins']['fields'][] = [
 				'label' => $plugin['Name'],
-				'value' => $plugin_version_string,
-				'debug' => $plugin_version_string_debug,
-				'slug'  => $plugin_path
-			);
+				'slug'  => $plugin_path,
+				'value' => [
+					'author'      => $plugin['Author'] ?: 'unavailable',
+					'version'     => $plugin['Version'] ?: 'unavailable',
+					'plugin_uri'  => $plugin['PluginURI'],
+					'author_uri'  => $plugin['AuthorURI'],
+					'network'     => $plugin['Network'],
+					'new_version' => null,
+					'need_update' => null,
+					'auto_update' => null,
+				],
+			];
 		}
 
 		// List all available plugins.
@@ -978,51 +949,36 @@ class UptimeMonster_Debug_Data {
 		$plugin_updates = $this->update_check->get_plugin_updates();
 		$transient      = get_site_transient( 'update_plugins' );
 
-		$auto_updates = array();
+		$auto_updates = [];
 
 		$auto_updates_enabled = $this->update_check->wp_is_auto_update_enabled_for_type( 'plugin' );
 
 		if ( $auto_updates_enabled ) {
-			$auto_updates = (array) get_site_option( 'auto_update_plugins', array() );
+			$auto_updates = (array) get_site_option( 'auto_update_plugins', [] );
 		}
 
 		foreach ( $plugins as $plugin_path => $plugin ) {
 			$plugin_part = ( is_plugin_active( $plugin_path ) ) ? 'wp-plugins-active' : 'wp-plugins-inactive';
 
-			$plugin_version = $plugin['Version'];
-			$plugin_author  = $plugin['Author'];
+			$plugin_data = [
+				'author'      => $plugin['Author'] ?: 'unavailable',
+				'version'     => $plugin['Version'] ?: 'unavailable',
+				'plugin_uri'  => $plugin['PluginURI'],
+				'author_uri'  => $plugin['AuthorURI'],
+				'network'     => $plugin['Network'],
+				'new_version' => null,
+				'need_update' => false,
+				'auto_update' => 'disabled',
+			];
 
-			$plugin_version_string       = __( 'No version or author information is available.' );
-			$plugin_version_string_debug = 'author: (undefined), version: (undefined)';
-
-			if ( ! empty( $plugin_version ) && ! empty( $plugin_author ) ) {
-				/* translators: 1: Plugin version number. 2: Plugin author name. */
-				$plugin_version_string       = sprintf( __( 'Version %1$s by %2$s' ), $plugin_version, $plugin_author );
-				$plugin_version_string_debug = sprintf( 'version: %s, author: %s', $plugin_version, $plugin_author );
-			} else {
-				if ( ! empty( $plugin_author ) ) {
-					/* translators: %s: Plugin author name. */
-					$plugin_version_string       = sprintf( __( 'By %s' ), $plugin_author );
-					$plugin_version_string_debug = sprintf( 'author: %s, version: (undefined)', $plugin_author );
-				}
-
-				if ( ! empty( $plugin_version ) ) {
-					/* translators: %s: Plugin version number. */
-					$plugin_version_string       = sprintf( __( 'Version %s' ), $plugin_version );
-					$plugin_version_string_debug = sprintf( 'author: (undefined), version: %s', $plugin_version );
-				}
-			}
-			$need_to_update_plugin = false;
 			if ( array_key_exists( $plugin_path, $plugin_updates ) ) {
 				/* translators: %s: Latest plugin version number. */
-				$plugin_version_string       .= ' ' . sprintf( __( '(Latest version: %s)' ), $plugin_updates[ $plugin_path ]->update->new_version );
-				$plugin_version_string_debug .= sprintf( ' (latest version: %s)', $plugin_updates[ $plugin_path ]->update->new_version );
+				$plugin_data['new_version'] = $plugin_updates[ $plugin_path ]->update->new_version;
 
-				if ( version_compare( $plugin_version, $plugin_updates[ $plugin_path ]->update->new_version, '<' ) ) {
-					$need_to_update_plugin = true;
+				if ( version_compare( $plugin['Version'], $plugin_updates[ $plugin_path ]->update->new_version, '<' ) ) {
+					$plugin_data['need_update'] = true;
 				}
 			}
-
 
 			if ( $auto_updates_enabled ) {
 				if ( isset( $transient->response[ $plugin_path ] ) ) {
@@ -1030,20 +986,20 @@ class UptimeMonster_Debug_Data {
 				} elseif ( isset( $transient->no_update[ $plugin_path ] ) ) {
 					$item = $transient->no_update[ $plugin_path ];
 				} else {
-					$item = array(
+					$item = [
 						'id'            => $plugin_path,
 						'slug'          => '',
 						'plugin'        => $plugin_path,
 						'new_version'   => '',
 						'url'           => '',
 						'package'       => '',
-						'icons'         => array(),
-						'banners'       => array(),
-						'banners_rtl'   => array(),
+						'icons'         => [],
+						'banners'       => [],
+						'banners_rtl'   => [],
 						'tested'        => '',
 						'requires_php'  => '',
 						'compatibility' => new \stdClass(),
-					);
+					];
 					$item = wp_parse_args( $plugin, $item );
 				}
 
@@ -1056,40 +1012,20 @@ class UptimeMonster_Debug_Data {
 				}
 
 				if ( $enabled ) {
-					$auto_updates_string = __( 'Auto-updates enabled' );
-				} else {
-					$auto_updates_string = __( 'Auto-updates disabled' );
+					$plugin_data['auto_update'] = 'enabled';
 				}
-
-				/**
-				 * Filters the text string of the auto-updates setting for each plugin in the Site Health debug data.
-				 *
-				 * @param string $auto_updates_string The string output for the auto-updates column.
-				 * @param string $plugin_path The path to the plugin file.
-				 * @param array $plugin An array of plugin data.
-				 * @param bool $enabled Whether auto-updates are enabled for this item.
-				 *
-				 * @since 5.5.0
-				 *
-				 */
-				$auto_updates_string = apply_filters( 'plugin_auto_update_debug_string', $auto_updates_string, $plugin_path, $plugin, $enabled );
-
-				$plugin_version_string       .= ' | ' . $auto_updates_string;
-				$plugin_version_string_debug .= ', ' . $auto_updates_string;
 			}
 
-			$info[ $plugin_part ]['fields'][ sanitize_text_field( $plugin['Name'] ) ] = array(
-				'label'  => $plugin['Name'],
-				'value'  => $plugin_version_string,
-				'debug'  => $plugin_version_string_debug,
-				'slug'   => $plugin_path,
-				'update' => $need_to_update_plugin,
-			);
+			$info[ $plugin_part ]['fields'][] = [
+				'label' => $plugin['Name'],
+				'slug'  => $plugin_path,
+				'value' => $plugin_data,
+			];
 		}
 
 		// Populate the section for the currently active theme.
 		global $_wp_theme_features;
-		$theme_features = array();
+		$theme_features = [];
 
 		if ( ! empty( $_wp_theme_features ) ) {
 			foreach ( $_wp_theme_features as $feature => $options ) {
@@ -1101,87 +1037,46 @@ class UptimeMonster_Debug_Data {
 		$theme_updates = $this->get_theme_updates();
 		$transient     = get_site_transient( 'update_themes' );
 
-		$active_theme_version       = $active_theme->version;
-		$active_theme_version_debug = $active_theme_version;
-
-		$auto_updates         = array();
+		$auto_updates         = [];
 		$auto_updates_enabled = $this->update_check->wp_is_auto_update_enabled_for_type( 'theme' );
 		if ( $auto_updates_enabled ) {
-			$auto_updates = (array) get_site_option( 'auto_update_themes', array() );
+			$auto_updates = (array) get_site_option( 'auto_update_themes', [] );
 		}
 
-		$need_to_update_theme = false;
+		$need_to_update_theme     = false;
+		$theme_update_new_version = null;
 		if ( array_key_exists( $active_theme->stylesheet, $theme_updates ) ) {
 			$theme_update_new_version = $theme_updates[ $active_theme->stylesheet ]->update['new_version'];
-
-			/* translators: %s: Latest theme version number. */
-			$active_theme_version       .= ' ' . sprintf( __( '(Latest version: %s)' ), $theme_update_new_version );
-			$active_theme_version_debug .= sprintf( ' (latest version: %s)', $theme_update_new_version );
-
-			if ( version_compare( $plugin_version, $theme_update_new_version, '<' ) ) {
+			if ( version_compare( $active_theme->version, $theme_update_new_version, '<' ) ) {
 				$need_to_update_theme = true;
 			}
 		}
 
-		$active_theme_author_uri = $active_theme->display( 'AuthorURI' );
+		$parent_theme = [
+			'name' => __( 'None' ),
+			'slug' => 'none',
+		];
 
 		if ( $active_theme->parent_theme ) {
-			$active_theme_parent_theme       = sprintf(
-			/* translators: 1: Theme name. 2: Theme slug. */
-				__( '%1$s (%2$s)' ),
-				$active_theme->parent_theme,
-				$active_theme->template
-			);
-			$active_theme_parent_theme_debug = sprintf(
-				'%s (%s)',
-				$active_theme->parent_theme,
-				$active_theme->template
-			);
-		} else {
-			$active_theme_parent_theme       = __( 'None' );
-			$active_theme_parent_theme_debug = 'none';
+			$parent_theme = [
+				'name' => $active_theme->parent_theme,
+				'slug' => $active_theme->template,
+			];
 		}
 
-		$info['wp-active-theme']['fields'] = array(
-			'slug' => $active_theme->stylesheet,
-			'update' => $need_to_update_theme,
-			'name'           => array(
-				'label' => __( 'Name' ),
-				'value' => sprintf(
-				/* translators: 1: Theme name. 2: Theme slug. */
-					__( '%1$s (%2$s)' ),
-					$active_theme->name,
-					$active_theme->stylesheet
-				),
-			),
-			'version'        => array(
-				'label' => __( 'Version' ),
-				'value' => $active_theme_version,
-				'debug' => $active_theme_version_debug,
-			),
-			'author'         => array(
-				'label' => __( 'Author' ),
-				'value' => wp_kses( $active_theme->author, array() ),
-			),
-			'author_website' => array(
-				'label' => __( 'Author website' ),
-				'value' => ( $active_theme_author_uri ? $active_theme_author_uri : __( 'Undefined' ) ),
-				'debug' => ( $active_theme_author_uri ? $active_theme_author_uri : '(undefined)' ),
-			),
-			'parent_theme'   => array(
-				'label' => __( 'Parent theme' ),
-				'value' => $active_theme_parent_theme,
-				'debug' => $active_theme_parent_theme_debug,
-			),
-			'theme_features' => array(
-				'label' => __( 'Theme features' ),
-				'value' => implode( ', ', $theme_features ),
-			),
-			'theme_path'     => array(
-				'label' => __( 'Theme directory location' ),
-				'value' => get_stylesheet_directory(),
-			),
-		);
+		$info['wp-active-theme'] = [
+			'name'           => $active_theme->name,
+			'slug'           => $active_theme->stylesheet,
+			'version'        => $active_theme->version,
+			'latest_version' => $theme_update_new_version,
+			'update'         => $need_to_update_theme,
+			'author'         => wp_kses( $active_theme->author, [] ),
+			'author_website' => $active_theme->display( 'AuthorURI' ),
+			'parent_theme'   => $parent_theme,
+			'theme_features' => $theme_features,
+			'theme_path'     => get_stylesheet_directory(),
+			'auto_update'    => 'disabled',
+		];
 
 		if ( $auto_updates_enabled ) {
 			if ( isset( $transient->response[ $active_theme->stylesheet ] ) ) {
@@ -1189,14 +1084,14 @@ class UptimeMonster_Debug_Data {
 			} elseif ( isset( $transient->no_update[ $active_theme->stylesheet ] ) ) {
 				$item = $transient->no_update[ $active_theme->stylesheet ];
 			} else {
-				$item = array(
+				$item = [
 					'theme'        => $active_theme->stylesheet,
 					'new_version'  => $active_theme->version,
 					'url'          => '',
 					'package'      => '',
 					'requires'     => '',
 					'requires_php' => '',
-				);
+				];
 			}
 
 			$auto_update_forced = $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
@@ -1208,67 +1103,35 @@ class UptimeMonster_Debug_Data {
 			}
 
 			if ( $enabled ) {
-				$auto_updates_string = __( 'Enabled' );
-			} else {
-				$auto_updates_string = __( 'Disabled' );
+				$info['wp-active-theme']['auto_update'] = 'enabled';
 			}
-
-			/** This filter is documented in wp-admin/includes/class-wp-debug-data.php */
-			$auto_updates_string = apply_filters( 'theme_auto_update_debug_string', $auto_updates_string, $active_theme, $enabled );
-
-			$info['wp-active-theme']['fields']['auto_update'] = array(
-				'label' => __( 'Auto-updates' ),
-				'value' => $auto_updates_string,
-				'debug' => $auto_updates_string,
-			);
 		}
 
 		$parent_theme = $active_theme->parent();
 
 		if ( $parent_theme ) {
-			$parent_theme_version       = $parent_theme->version;
-			$parent_theme_version_debug = $parent_theme_version;
-
+			$need_to_update_parent_theme     = false;
+			$parent_theme_update_new_version = null;
 			if ( array_key_exists( $parent_theme->stylesheet, $theme_updates ) ) {
 				$parent_theme_update_new_version = $theme_updates[ $parent_theme->stylesheet ]->update['new_version'];
-
-				/* translators: %s: Latest theme version number. */
-				$parent_theme_version       .= ' ' . sprintf( __( '(Latest version: %s)' ), $parent_theme_update_new_version );
-				$parent_theme_version_debug .= sprintf( ' (latest version: %s)', $parent_theme_update_new_version );
+				if ( version_compare( $parent_theme->version, $parent_theme_update_new_version, '<' ) ) {
+					$need_to_update_parent_theme = true;
+				}
 			}
 
-			$parent_theme_author_uri = $parent_theme->display( 'AuthorURI' );
 
-			$info['wp-parent-theme']['fields'] = array(
-				'slug' => $parent_theme->stylesheet,
-				'name'           => array(
-					'label' => __( 'Name' ),
-					'value' => sprintf(
-					/* translators: 1: Theme name. 2: Theme slug. */
-						__( '%1$s (%2$s)' ),
-						$parent_theme->name,
-						$parent_theme->stylesheet
-					),
-				),
-				'version'        => array(
-					'label' => __( 'Version' ),
-					'value' => $parent_theme_version,
-					'debug' => $parent_theme_version_debug,
-				),
-				'author'         => array(
-					'label' => __( 'Author' ),
-					'value' => wp_kses( $parent_theme->author, array() ),
-				),
-				'author_website' => array(
-					'label' => __( 'Author website' ),
-					'value' => ( $parent_theme_author_uri ? $parent_theme_author_uri : __( 'Undefined' ) ),
-					'debug' => ( $parent_theme_author_uri ? $parent_theme_author_uri : '(undefined)' ),
-				),
-				'theme_path'     => array(
-					'label' => __( 'Theme directory location' ),
-					'value' => get_template_directory(),
-				),
-			);
+			$info['wp-parent-theme'] = [
+				'slug'           => $parent_theme->stylesheet,
+				'name'           => $parent_theme->name,
+				'version'        => $parent_theme->version,
+				'latest_version' => $parent_theme_update_new_version,
+				'update'         => $need_to_update_parent_theme,
+				'author'         => wp_kses( $parent_theme->author, [] ),
+				'author_website' => $parent_theme->display( 'AuthorURI' ),
+				'theme_features' => null,
+				'theme_path'     => get_template_directory(),
+				'auto_update'    => 'disabled',
+			];
 
 			if ( $auto_updates_enabled ) {
 				if ( isset( $transient->response[ $parent_theme->stylesheet ] ) ) {
@@ -1295,23 +1158,12 @@ class UptimeMonster_Debug_Data {
 				}
 
 				if ( $enabled ) {
-					$parent_theme_auto_update_string = __( 'Enabled' );
-				} else {
-					$parent_theme_auto_update_string = __( 'Disabled' );
+					$info['wp-parent-theme']['auto_update'] = 'enabled';
 				}
-
-				/** This filter is documented in wp-admin/includes/class-wp-debug-data.php */
-				$parent_theme_auto_update_string = apply_filters( 'theme_auto_update_debug_string', $auto_updates_string, $parent_theme, $enabled );
-
-				$info['wp-parent-theme']['fields']['auto_update'] = array(
-					'label' => __( 'Auto-update' ),
-					'value' => $parent_theme_auto_update_string,
-					'debug' => $parent_theme_auto_update_string,
-				);
 			}
 		}
 
-		// Populate a list of all themes available in the install.
+		// Populate a list of all themes available in the `wp-content/themes` directory.
 		$all_themes = wp_get_themes();
 
 		foreach ( $all_themes as $theme_slug => $theme ) {
@@ -1325,40 +1177,23 @@ class UptimeMonster_Debug_Data {
 				continue;
 			}
 
-			$theme_version = $theme->version;
-			$theme_author  = $theme->author;
+			$data = [
+				'slug'           => $theme->stylesheet,
+				'name'           => $theme->name,
+				'version'        => $theme->version,
+				'latest_version' => null,
+				'update'         => false,
+				'author'         => wp_kses( $theme->author, [] ),
+				'author_website' => $theme->display( 'AuthorURI' ),
+				'theme_features' => null,
+				'theme_path'     => get_template_directory(),
+				'auto_update'    => 'disabled',
+			];
 
-			// Sanitize.
-			$theme_author = wp_kses( $theme_author, array() );
-
-			$theme_version_string       = __( 'No version or author information is available.' );
-			$theme_version_string_debug = 'undefined';
-
-			if ( ! empty( $theme_version ) && ! empty( $theme_author ) ) {
-				/* translators: 1: Theme version number. 2: Theme author name. */
-				$theme_version_string       = sprintf( __( 'Version %1$s by %2$s' ), $theme_version, $theme_author );
-				$theme_version_string_debug = sprintf( 'version: %s, author: %s', $theme_version, $theme_author );
-			} else {
-				if ( ! empty( $theme_author ) ) {
-					/* translators: %s: Theme author name. */
-					$theme_version_string       = sprintf( __( 'By %s' ), $theme_author );
-					$theme_version_string_debug = sprintf( 'author: %s, version: (undefined)', $theme_author );
-				}
-
-				if ( ! empty( $theme_version ) ) {
-					/* translators: %s: Theme version number. */
-					$theme_version_string       = sprintf( __( 'Version %s' ), $theme_version );
-					$theme_version_string_debug = sprintf( 'author: (undefined), version: %s', $theme_version );
-				}
-			}
-			$need_to_update_theme = false;
 			if ( array_key_exists( $theme_slug, $theme_updates ) ) {
-				/* translators: %s: Latest theme version number. */
-				$theme_version_string       .= ' ' . sprintf( __( '(Latest version: %s)' ), $theme_updates[ $theme_slug ]->update['new_version'] );
-				$theme_version_string_debug .= sprintf( ' (latest version: %s)', $theme_updates[ $theme_slug ]->update['new_version'] );
-
-				if ( version_compare( $theme_version, $theme_updates[ $theme_slug ]->update['new_version'], '<' ) ) {
-					$need_to_update_theme = true;
+				$data['latest_version'] = $theme_updates[ $theme_slug ]->update['new_version'];
+				if ( version_compare( $theme->version, $theme_updates[ $theme_slug ]->update['new_version'], '<' ) ) {
+					$data['update'] = true;
 				}
 			}
 
@@ -1368,14 +1203,14 @@ class UptimeMonster_Debug_Data {
 				} elseif ( isset( $transient->no_update[ $theme_slug ] ) ) {
 					$item = $transient->no_update[ $theme_slug ];
 				} else {
-					$item = array(
+					$item = [
 						'theme'        => $theme_slug,
 						'new_version'  => $theme->version,
 						'url'          => '',
 						'package'      => '',
 						'requires'     => '',
 						'requires_php' => '',
-					);
+					];
 				}
 
 				$auto_update_forced = $this->update_check->wp_is_auto_update_forced_for_item( 'theme', null, (object) $item );
@@ -1387,113 +1222,22 @@ class UptimeMonster_Debug_Data {
 				}
 
 				if ( $enabled ) {
-					$auto_updates_string = __( 'Auto-updates enabled' );
-				} else {
-					$auto_updates_string = __( 'Auto-updates disabled' );
+					$data['auto_update'] = 'enabled';
 				}
-
-				/**
-				 * Filters the text string of the auto-updates setting for each theme in the Site Health debug data.
-				 *
-				 * @param string $auto_updates_string The string output for the auto-updates column.
-				 * @param WP_Theme $theme An object of theme data.
-				 * @param bool $enabled Whether auto-updates are enabled for this item.
-				 *
-				 * @since 5.5.0
-				 *
-				 */
-				$auto_updates_string = apply_filters( 'theme_auto_update_debug_string', $auto_updates_string, $theme, $enabled );
-
-				$theme_version_string       .= ' | ' . $auto_updates_string;
-				$theme_version_string_debug .= ', ' . $auto_updates_string;
 			}
 
-			$info['wp-themes-inactive']['fields'][ sanitize_text_field( $theme->name ) ] = array(
-				'label'  => sprintf(
-				/* translators: 1: Theme name. 2: Theme slug. */
-					__( '%1$s (%2$s)' ),
-					$theme->name,
-					$theme_slug
-				),
-				'value'  => $theme_version_string,
-				'debug'  => $theme_version_string_debug,
-				'slug'   => $theme_slug,
-				'update' => $need_to_update_theme,
-			);
+			$info['wp-themes-inactive'][] = $data;
 		}
 
 		// Add more filesystem checks.
 		if ( defined( 'WPMU_PLUGIN_DIR' ) && is_dir( WPMU_PLUGIN_DIR ) ) {
 			$is_writable_wpmu_plugin_dir = wp_is_writable( WPMU_PLUGIN_DIR );
 
-			$info['wp-filesystem']['fields']['mu-plugins'] = array(
+			$info['wp-filesystem']['fields']['mu-plugins'] = [
 				'label' => __( 'The must use plugins directory' ),
-				'value' => ( $is_writable_wpmu_plugin_dir ? __( 'Writable' ) : __( 'Not writable' ) ),
-				'debug' => ( $is_writable_wpmu_plugin_dir ? 'writable' : 'not writable' ),
-			);
+				'value' => ( $is_writable_wpmu_plugin_dir ? 'writable' : 'not-writable' ),
+			];
 		}
-
-		/**
-		 * Add to or modify the debug information shown on the Tools -> Site Health -> Info screen.
-		 *
-		 * Plugin or themes may wish to introduce their own debug information without creating
-		 * additional admin pages. They can utilize this filter to introduce their own sections
-		 * or add more data to existing sections.
-		 *
-		 * Array keys for sections added by core are all prefixed with `wp-`. Plugins and themes
-		 * should use their own slug as a prefix, both for consistency as well as avoiding
-		 * key collisions. Note that the array keys are used as labels for the copied data.
-		 *
-		 * All strings are expected to be plain text except `$description` that can contain
-		 * inline HTML tags (see below).
-		 *
-		 * @param array $args {
-		 *     The debug information to be added to the core information page.
-		 *
-		 *     This is an associative multi-dimensional array, up to three levels deep.
-		 *     The topmost array holds the sections, keyed by section ID.
-		 *
-		 * @type array ...$0 {
-		 *         Each section has a `$fields` associative array (see below), and each `$value` in `$fields`
-		 *         can be another associative array of name/value pairs when there is more structured data
-		 *         to display.
-		 *
-		 * @type string $label Required. The title for this section of the debug output.
-		 * @type string $description Optional. A description for your information section which
-		 *                                   may contain basic HTML markup, inline tags only as it is
-		 *                                   outputted in a paragraph.
-		 * @type bool $show_count Optional. If set to `true`, the amount of fields will be included
-		 *                                   in the title for this section. Default false.
-		 * @type bool $private Optional. If set to `true`, the section and all associated fields
-		 *                                   will be excluded from the copied data. Default false.
-		 * @type array $fields {
-		 *             Required. An associative array containing the fields to be displayed in the section,
-		 *             keyed by field ID.
-		 *
-		 * @type array ...$0 {
-		 *                 An associative array containing the data to be displayed for the field.
-		 *
-		 * @type string $label Required. The label for this piece of information.
-		 * @type mixed $value Required. The output that is displayed for this field.
-		 *                                        Text should be translated. Can be an associative array
-		 *                                        that is displayed as name/value pairs.
-		 *                                        Accepted types: `string|int|float|(string|int|float)[]`.
-		 * @type string $debug Optional. The output that is used for this field when
-		 *                                        the user copies the data. It should be more concise and
-		 *                                        not translated. If not set, the content of `$value`
-		 *                                        is used. Note that the array keys are used as labels
-		 *                                        for the copied data.
-		 * @type bool $private Optional. If set to `true`, the field will be excluded
-		 *                                        from the copied data, allowing you to show, for example,
-		 *                                        API keys here. Default false.
-		 *             }
-		 *         }
-		 *     }
-		 * }
-		 * @since 5.2.0
-		 *
-		 */
-		$info = apply_filters( 'debug_information', $info );
 
 		return $info;
 	}
@@ -1955,5 +1699,4 @@ class UptimeMonster_Debug_Data {
 
 		return $message;
 	}
-
 }
