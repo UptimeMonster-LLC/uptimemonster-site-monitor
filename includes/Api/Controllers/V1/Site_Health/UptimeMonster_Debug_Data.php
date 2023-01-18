@@ -56,30 +56,29 @@ class UptimeMonster_Debug_Data {
 		$environment_type       = wp_get_environment_type();
 		$core_version           = get_bloginfo( 'version' );
 		$core_updates           = $this->update_check->get_core_updates();
-		$core_update_needed     = '';
+		$core_update_needed     = null;
 
 		if ( is_array( $core_updates ) ) {
 			foreach ( $core_updates as $core => $update ) {
 				if ( 'upgrade' === $update->response ) {
-					/* translators: %s: Latest WordPress version number. */
-					$core_update_needed = ' ' . sprintf( __( '(Latest version: %s)' ), $update->version );
+					$core_update_needed = $update->version;
 				} else {
-					$core_update_needed = '';
+					$core_update_needed = null;
 				}
 			}
 		}
 
 		// Set up the array that holds all debug information.
-		$info = array();
+		$info = [
+			'version' => '1.0.0'
+		];
 
 		$info['wp-core'] = array(
 			'label'  => __( 'WordPress' ),
+			'version'        => $core_version,
+			'latest_version' => $core_update_needed,
+			'update'         => version_compare( $core_version, $core_update_needed, '<' ),
 			'fields' => array(
-				'version'                => array(
-					'label' => __( 'Version' ),
-					'value' => $core_version . $core_update_needed,
-					'debug' => $core_version,
-				),
 				'site_language'          => array(
 					'label' => __( 'Site Language' ),
 					'value' => get_locale(),
