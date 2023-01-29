@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * WP Debug Data.
  *
  * @package UptimeMonster\SiteMonitor\API
  * @version 1.0.0
@@ -21,14 +21,11 @@ class UptimeMonster_Debug_Data {
 	public $update_check;
 
 	public function __construct() {
-
 		$this->update_check = new UptimeMonster_Update_Check();
 	}
 
 	/**
 	 * Calls all core functions to check for updates.
-	 *
-	 * @since 5.2.0
 	 */
 	public static function check_for_updates() {
 		wp_version_check();
@@ -56,88 +53,86 @@ class UptimeMonster_Debug_Data {
 		$environment_type       = wp_get_environment_type();
 		$core_version           = get_bloginfo( 'version' );
 		$core_updates           = $this->update_check->get_core_updates();
-		$core_update_needed     = null;
+		$core_update_needed     = $core_version;
 
 		if ( is_array( $core_updates ) ) {
-			foreach ( $core_updates as $core => $update ) {
+			foreach ( $core_updates as $update ) {
 				if ( 'upgrade' === $update->response ) {
 					$core_update_needed = $update->version;
 				} else {
-					$core_update_needed = null;
+					$core_update_needed = $core_version;
 				}
 			}
 		}
 
 		// Set up the array that holds all debug information.
-		$info = [
-			'version' => '1.0.0'
-		];
+		$info = [];
 
-		$info['wp-core'] = array(
+		$info['wp-core'] = [
 			'label'  => __( 'WordPress' ),
 			'version'        => $core_version,
 			'latest_version' => $core_update_needed,
 			'update'         => version_compare( $core_version, $core_update_needed, '<' ),
-			'fields' => array(
-				'site_language'          => array(
+			'fields' => [
+				'site_language'          => [
 					'label' => __( 'Site Language' ),
 					'value' => get_locale(),
-				),
-				'user_language'          => array(
+				],
+				'user_language'          => [
 					'label' => __( 'User Language' ),
 					'value' => get_user_locale(),
-				),
-				'timezone'               => array(
+				],
+				'timezone'               => [
 					'label' => __( 'Timezone' ),
 					'value' => wp_timezone_string(),
-				),
-				'home_url'               => array(
+				],
+				'home_url'               => [
 					'label'   => __( 'Home URL' ),
 					'value'   => get_bloginfo( 'url' ),
 					'private' => true,
-				),
-				'site_url'               => array(
+				],
+				'site_url'               => [
 					'label'   => __( 'Site URL' ),
 					'value'   => get_bloginfo( 'wpurl' ),
 					'private' => true,
-				),
-				'permalink'              => array(
+				],
+				'permalink'              => [
 					'label' => __( 'Permalink structure' ),
 					'value' => $permalink_structure ? $permalink_structure : __( 'No permalink structure set' ),
 					'debug' => $permalink_structure,
-				),
-				'https_status'           => array(
+				],
+				'https_status'           => [
 					'label' => __( 'Is this site using HTTPS?' ),
 					'value' => $is_ssl ? __( 'Yes' ) : __( 'No' ),
 					'debug' => $is_ssl,
-				),
-				'multisite'              => array(
+				],
+				'multisite'              => [
 					'label' => __( 'Is this a multisite?' ),
 					'value' => $is_multisite ? __( 'Yes' ) : __( 'No' ),
 					'debug' => $is_multisite,
-				),
-				'user_registration'      => array(
+				],
+				'user_registration'      => [
 					'label' => __( 'Can anyone register on this site?' ),
 					'value' => $users_can_register ? __( 'Yes' ) : __( 'No' ),
 					'debug' => $users_can_register,
-				),
-				'blog_public'            => array(
+				],
+				'blog_public'            => [
 					'label' => __( 'Is this site discouraging search engines?' ),
 					'value' => $blog_public ? __( 'No' ) : __( 'Yes' ),
 					'debug' => $blog_public,
-				),
-				'default_comment_status' => array(
+				],
+				'default_comment_status' => [
 					'label' => __( 'Default comment status' ),
 					'value' => 'open' === $default_comment_status ? _x( 'Open', 'comment status' ) : _x( 'Closed', 'comment status' ),
 					'debug' => $default_comment_status,
-				),
-				'environment_type'       => array(
+				],
+				'environment_type'       => [
 					'label' => __( 'Environment type' ),
 					'value' => $environment_type,
 					'debug' => $environment_type,
-				),
-			),
-		);
+				],
+			],
+		];
 
 		if ( ! $is_multisite ) {
 			$info['wp-paths-sizes'] = array(
@@ -485,18 +480,24 @@ class UptimeMonster_Debug_Data {
 		$dropins = get_dropins();
 
 		// Get dropins descriptions.
-		$dropin_descriptions = _get_dropins();
+		//$dropin_descriptions = _get_dropins();
 
 		// Spare few function calls.
 		$not_available = __( 'Not available' );
+		$common_data   = [
+			'new_version' => null,
+			'need_update' => null,
+			'auto_update' => null,
+		];
 
 		foreach ( $dropins as $dropin_key => $dropin ) {
-			$info['wp-dropins']['fields'][ sanitize_text_field( $dropin_key ) ] = array(
-				'label' => $dropin_key,
-				'value' => $dropin_descriptions[ $dropin_key ][0],
-				'debug' => 'true',
-			);
+			$info['wp-dropins']['fields'][] = [
+				'label' => $dropin['Name'],
+				'slug'  => $dropin_key,
+				'value' => array_merge( umsm_prepare_plugin_data( $dropin ), $common_data ),
+			];
 		}
+
 		// Populate the media fields.
 		$info['wp-media']['fields']['image_editor'] = array(
 			'label' => __( 'Active editor' ),
@@ -927,19 +928,11 @@ class UptimeMonster_Debug_Data {
 		$mu_plugins = get_mu_plugins();
 
 		foreach ( $mu_plugins as $plugin_path => $plugin ) {
+
 			$info['wp-mu-plugins']['fields'][] = [
 				'label' => $plugin['Name'],
 				'slug'  => $plugin_path,
-				'value' => [
-					'author'      => $plugin['Author'] ?: 'unavailable',
-					'version'     => $plugin['Version'] ?: 'unavailable',
-					'plugin_uri'  => $plugin['PluginURI'],
-					'author_uri'  => $plugin['AuthorURI'],
-					'network'     => $plugin['Network'],
-					'new_version' => null,
-					'need_update' => null,
-					'auto_update' => null,
-				],
+				'value' => array_merge( umsm_prepare_plugin_data( $plugin ), $common_data ),
 			];
 		}
 
@@ -956,19 +949,10 @@ class UptimeMonster_Debug_Data {
 			$auto_updates = (array) get_site_option( 'auto_update_plugins', [] );
 		}
 
+
 		foreach ( $plugins as $plugin_path => $plugin ) {
 			$plugin_part = ( is_plugin_active( $plugin_path ) ) ? 'wp-plugins-active' : 'wp-plugins-inactive';
-
-			$plugin_data = [
-				'author'      => $plugin['Author'] ?: 'unavailable',
-				'version'     => $plugin['Version'] ?: 'unavailable',
-				'plugin_uri'  => $plugin['PluginURI'],
-				'author_uri'  => $plugin['AuthorURI'],
-				'network'     => $plugin['Network'],
-				'new_version' => null,
-				'need_update' => false,
-				'auto_update' => 'disabled',
-			];
+			$plugin_data = umsm_prepare_plugin_data( $plugin );
 
 			if ( array_key_exists( $plugin_path, $plugin_updates ) ) {
 				/* translators: %s: Latest plugin version number. */
@@ -1238,14 +1222,14 @@ class UptimeMonster_Debug_Data {
 			];
 		}
 
-		return $info;
+		return [
+			'version' => '1.0.0',
+			'data'    => $info,
+		];
 	}
-
 
 	/**
 	 * @return array
-	 * @since 2.9.0
-	 *
 	 */
 	function get_plugin_updates() {
 		$all_plugins     = get_plugins();
@@ -1267,10 +1251,8 @@ class UptimeMonster_Debug_Data {
 	 * @param string $mysql_var Name of the MySQL system variable.
 	 *
 	 * @return string|null The variable value on success. Null if the variable does not exist.
-	 * @since 5.9.0
 	 *
 	 * @global wpdb $wpdb WordPress database abstraction object.
-	 *
 	 */
 	public static function get_mysql_var( $mysql_var ) {
 		global $wpdb;
@@ -1294,8 +1276,6 @@ class UptimeMonster_Debug_Data {
 	 * @param string $data_type The data type to return, either 'info' or 'debug'.
 	 *
 	 * @return string The formatted data.
-	 * @since 5.2.0
-	 *
 	 */
 	public static function format( $info_array, $data_type ) {
 		$return = "`\n";
@@ -1361,8 +1341,6 @@ class UptimeMonster_Debug_Data {
 	 * Fetch the total size of all the database tables for the active database user.
 	 *
 	 * @return int The size of the database, in bytes.
-	 * @since 5.2.0
-	 *
 	 */
 	public static function get_database_size() {
 		global $wpdb;
@@ -1383,8 +1361,6 @@ class UptimeMonster_Debug_Data {
 	 * Intended to supplement the array returned by `WP_Debug_Data::debug_data()`.
 	 *
 	 * @return array The sizes of the directories, also the database size and total installation size.
-	 * @since 5.2.0
-	 *
 	 */
 	public static function get_sizes() {
 		$size_db    = self::get_database_size();
@@ -1504,7 +1480,6 @@ class UptimeMonster_Debug_Data {
 		return $all_sizes;
 	}
 
-
 	/**
 	 * Gets and caches the checksums for the given version of WordPress.
 	 *
@@ -1512,8 +1487,6 @@ class UptimeMonster_Debug_Data {
 	 * @param string $locale Locale to query.
 	 *
 	 * @return array|false An array of checksums on success, false on failure.
-	 * @since 3.7.0
-	 *
 	 */
 	public function get_core_checksums( $version, $locale ) {
 		$http_url = 'http://api.wordpress.org/core/checksums/1.0/?' . http_build_query( compact( 'version', 'locale' ), '', '&' );
@@ -1555,11 +1528,8 @@ class UptimeMonster_Debug_Data {
 		return $body['checksums'];
 	}
 
-
 	/**
 	 * @return array
-	 * @since 2.9.0
-	 *
 	 */
 	public function get_theme_updates() {
 		$current = get_site_transient( 'update_themes' );
@@ -1577,7 +1547,6 @@ class UptimeMonster_Debug_Data {
 		return $update_themes;
 	}
 
-
 	/**
 	 * Prints the JavaScript templates for update admin notices.
 	 *
@@ -1591,18 +1560,14 @@ class UptimeMonster_Debug_Data {
 	 * @type string message   The notice's message.
 	 * @type string type      The type of update the notice is for. Either 'plugin' or 'theme'.
 	 *     }
-	 *
-	 * @since 4.6.0
 	 */
 	public function wp_print_admin_notice_templates() {
 		?>
 		<script id="tmpl-wp-updates-admin-notice" type="text/html">
-			<div <# if ( data.id ) { #>id="{{ data.id }}"<# } #> class="notice {{ data.className }}"><p>{{{ data.message
-				}}}</p></div>
+			<div <# if ( data.id ) { #>id="{{ data.id }}"<# } #> class="notice {{ data.className }}"><p>{{{ data.message }}}</p></div>
 		</script>
 		<script id="tmpl-wp-bulk-updates-admin-notice" type="text/html">
-			<div id="{{ data.id }}"
-				 class="{{ data.className }} notice <# if ( data.errors ) { #>notice-error<# } else { #>notice-success<# } #>">
+			<div id="{{ data.id }}" class="{{ data.className }} notice <# if ( data.errors ) { #>notice-error<# } else { #>notice-success<# } #>">
 				<p>
 					<# if ( data.successes ) { #>
 					<# if ( 1 === data.successes ) { #>
@@ -1661,13 +1626,10 @@ class UptimeMonster_Debug_Data {
 		<?php
 	}
 
-
 	/**
 	 * Determines the appropriate auto-update message to be displayed.
 	 *
 	 * @return string The update message to be shown.
-	 * @since 5.5.0
-	 *
 	 */
 	public function wp_get_auto_update_message() {
 		$next_update_time = wp_next_scheduled( 'wp_version_check' );

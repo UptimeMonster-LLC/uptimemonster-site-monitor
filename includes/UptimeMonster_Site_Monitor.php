@@ -108,7 +108,7 @@ final class UptimeMonster_Site_Monitor {
 	public static function is_drop_in_installed() {
 		$data = self::get_drop_in_data();
 
-		return isset( $data['Name'] ) && 'Roxwp Site Error Logger Drop-in' === $data['Name'];
+		return isset( $data['Name'] ) && 'UptimeMonster WordPress Error Monitor ' === $data['Name'];
 	}
 
 	/**

@@ -25,10 +25,19 @@ class UptimeMonster_Update_Check {
 		}
 
 		$site_health = \WP_Site_Health::get_instance();
-		$tests       = $site_health::get_tests();
+		$tests       = \WP_Site_Health::get_tests();
 
 		$results = [];
-		foreach ( $tests['direct'] as $test ) {
+		$include_test  = [
+			'get_test_wordpress_version',
+			'get_test_plugin_version',
+			'get_test_plugin_theme_auto_updates',
+			'detect_plugin_theme_auto_update_issues',
+			'get_test_theme_version',
+			'get_test_php_version',
+		];
+
+		foreach ( $tests['direct'] as $key => $test ) {
 			if ( ! empty( $test['skip_cron'] ) ) {
 				continue;
 			}
@@ -36,45 +45,23 @@ class UptimeMonster_Update_Check {
 			if ( is_string( $test['test'] ) ) {
 				$test_function = sprintf( 'get_test_%s', $test['test'] );
 
-				$include_test = [
-					'get_test_wordpress_version',
-					'get_test_plugin_version',
-					'get_test_plugin_theme_auto_updates',
-					'detect_plugin_theme_auto_update_issues',
-					'get_test_theme_version',
-					'get_test_php_version',
-				];
-//				$exclude_tests = [
-//					'get_test_plugin_theme_auto_updates',
-//				];
-//
-//				if( in_array( $test_function, $exclude_tests  ) ) {
-//					continue;
-//				}
-
-				if ( in_array( $test_function, $include_test ) && method_exists( $this, $test_function ) && is_callable( array(
-						$this,
-						$test_function
-					) ) ) {
-					$results[] = $this->perform_test( array( $this, $test_function ) );
+				if ( in_array( $test_function, $include_test ) && method_exists( $this, $test_function ) && is_callable( [ $this, $test_function ] ) ) {
+					$results[ $key ] = $this->perform_test( [ $this, $test_function ] );
 					continue;
 				}
 
-				if ( method_exists( $site_health, $test_function ) && is_callable( array(
-						$site_health,
-						$test_function
-					) ) ) {
-					$results[] = $this->perform_test( array( $site_health, $test_function ) );
+				if ( method_exists( $site_health, $test_function ) && is_callable( [ $site_health, $test_function ] ) ) {
+					$results[ $key ] = $this->perform_test( [ $site_health, $test_function ] );
 					continue;
 				}
 			}
 
 			if ( is_callable( $test['test'] ) ) {
-				$results[] = $this->perform_test( $test['test'] );
+				$results[ $key ] = $this->perform_test( $test['test'] );
 			}
 		}
 
-		foreach ( $tests['async'] as $test ) {
+		foreach ( $tests['async'] as $key => $test ) {
 			if ( ! empty( $test['skip_cron'] ) ) {
 				continue;
 			}
@@ -82,7 +69,7 @@ class UptimeMonster_Update_Check {
 			// Local endpoints may require authentication, so asynchronous tests can pass a direct test runner as well.
 			if ( ! empty( $test['async_direct_test'] ) && is_callable( $test['async_direct_test'] ) ) {
 				// This test is callable, do so and continue to the next asynchronous check.
-				$results[] = $this->perform_test( $test['async_direct_test'] );
+				$results[ $key ] = $this->perform_test( $test['async_direct_test'] );
 				continue;
 			}
 
@@ -91,21 +78,21 @@ class UptimeMonster_Update_Check {
 				if ( isset( $test['has_rest'] ) && $test['has_rest'] ) {
 					$result_fetch = wp_remote_get(
 						$test['test'],
-						array(
-							'body' => array(
+						[
+							'body' => [
 								'_wpnonce' => wp_create_nonce( 'wp_rest' ),
-							),
-						)
+							],
+						]
 					);
 				} else {
 					$result_fetch = wp_remote_post(
 						admin_url( 'admin-ajax.php' ),
-						array(
-							'body' => array(
+						[
+							'body' => [
 								'action'   => $test['test'],
 								'_wpnonce' => wp_create_nonce( 'Api-site-status' ),
-							),
-						)
+							],
+						]
 					);
 				}
 
@@ -116,17 +103,20 @@ class UptimeMonster_Update_Check {
 				}
 
 				if ( is_array( $result ) ) {
-					$results[] = $result;
+					$results[ $key ] = $result;
 				} else {
-					$results[] = array(
+					$results[ $key ] = [
 						'status' => 'recommended',
 						'label'  => __( 'A test is unavailable' ),
-					);
+					];
 				}
 			}
 		}
 
-		return $results;
+		return [
+			'version' => '1.0.0',
+			'data'    => $results,
+		];
 	}
 
 
@@ -134,24 +124,22 @@ class UptimeMonster_Update_Check {
 	 * Test if plugin and theme auto-updates appear to be configured correctly.
 	 *
 	 * @return array The test results.
-	 * @since 5.5.0
-	 *
 	 */
 	public function get_test_plugin_theme_auto_updates() {
-		$result = array(
+		$result = [
 			'label'       => __( 'Plugin and theme auto-updates appear to be configured correctly' ),
-			'status'      => 'good',
-			'badge'       => array(
+			//'status'      => 'good',
+			'badge'       => [
 				'label' => __( 'Security' ),
 				'color' => 'blue',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Plugin and theme auto-updates ensure that the latest versions are always installed.' )
 			),
 			'actions'     => '',
 			'test'        => 'plugin_theme_auto_updates',
-		);
+		];
 
 		$check_plugin_theme_updates = $this->detect_plugin_theme_auto_update_issues();
 
@@ -177,38 +165,36 @@ class UptimeMonster_Update_Check {
 	 * potentially cause unexpected behaviors.
 	 *
 	 * @return object The test results.
-	 * @since 5.5.0
-	 *
 	 */
 	public function detect_plugin_theme_auto_update_issues() {
-		$mock_plugin = (object) array(
+		$mock_plugin = (object) [
 			'id'           => 'w.org/plugins/a-fake-plugin',
 			'slug'         => 'a-fake-plugin',
 			'plugin'       => 'a-fake-plugin/a-fake-plugin.php',
 			'new_version'  => '9.9',
 			'url'          => 'https://wordpress.org/plugins/a-fake-plugin/',
 			'package'      => 'https://downloads.wordpress.org/plugin/a-fake-plugin.9.9.zip',
-			'icons'        => array(
+			'icons'        => [
 				'2x' => 'https://ps.w.org/a-fake-plugin/assets/icon-256x256.png',
 				'1x' => 'https://ps.w.org/a-fake-plugin/assets/icon-128x128.png',
-			),
-			'banners'      => array(
+			],
+			'banners'      => [
 				'2x' => 'https://ps.w.org/a-fake-plugin/assets/banner-1544x500.png',
 				'1x' => 'https://ps.w.org/a-fake-plugin/assets/banner-772x250.png',
-			),
-			'banners_rtl'  => array(),
+			],
+			'banners_rtl'  => [],
 			'tested'       => '5.5.0',
 			'requires_php' => '5.6.20',
-		);
+		];
 
-		$mock_theme = (object) array(
+		$mock_theme = (object) [
 			'theme'        => 'a-fake-theme',
 			'new_version'  => '9.9',
 			'url'          => 'https://wordpress.org/themes/a-fake-theme/',
 			'package'      => 'https://downloads.wordpress.org/theme/a-fake-theme.9.9.zip',
 			'requires'     => '5.0.0',
 			'requires_php' => '5.6.20',
-		);
+		];
 
 		$test_plugins_enabled = $this->wp_is_auto_update_forced_for_item( 'plugin', true, $mock_plugin );
 		$test_themes_enabled  = $this->wp_is_auto_update_forced_for_item( 'theme', true, $mock_theme );
@@ -218,38 +204,34 @@ class UptimeMonster_Update_Check {
 		$plugin_filter_present  = has_filter( 'auto_update_plugin' );
 		$theme_filter_present   = has_filter( 'auto_update_theme' );
 
-		if ( ( ! $test_plugins_enabled && $ui_enabled_for_plugins )
-		     || ( ! $test_themes_enabled && $ui_enabled_for_themes )
-		) {
-			return (object) array(
+		if ( ( ! $test_plugins_enabled && $ui_enabled_for_plugins ) || ( ! $test_themes_enabled && $ui_enabled_for_themes ) ) {
+			return (object) [
 				'status'  => 'critical',
 				'message' => __( 'Auto-updates for plugins and/or themes appear to be disabled, but settings are still set to be displayed. This could cause auto-updates to not work as expected.' ),
-			);
+			];
 		}
 
-		if ( ( ! $test_plugins_enabled && $plugin_filter_present )
-		     && ( ! $test_themes_enabled && $theme_filter_present )
-		) {
-			return (object) array(
+		if ( ( ! $test_plugins_enabled && $plugin_filter_present ) && ( ! $test_themes_enabled && $theme_filter_present ) ) {
+			return (object) [
 				'status'  => 'recommended',
 				'message' => __( 'Auto-updates for plugins and themes appear to be disabled. This will prevent your site from receiving new versions automatically when available.' ),
-			);
+			];
 		} elseif ( ! $test_plugins_enabled && $plugin_filter_present ) {
-			return (object) array(
+			return (object) [
 				'status'  => 'recommended',
 				'message' => __( 'Auto-updates for plugins appear to be disabled. This will prevent your site from receiving new versions automatically when available.' ),
-			);
+			];
 		} elseif ( ! $test_themes_enabled && $theme_filter_present ) {
-			return (object) array(
+			return (object) [
 				'status'  => 'recommended',
 				'message' => __( 'Auto-updates for themes appear to be disabled. This will prevent your site from receiving new versions automatically when available.' ),
-			);
+			];
 		}
 
-		return (object) array(
+		return (object) [
 			'status'  => 'good',
 			'message' => __( 'There appear to be no issues with plugin and theme auto-updates.' ),
-		);
+		];
 	}
 
 
@@ -259,8 +241,6 @@ class UptimeMonster_Update_Check {
 	 * @param string $type The type of update being checked: 'theme' or 'plugin'.
 	 *
 	 * @return bool True if auto-updates are enabled for `$type`, false otherwise.
-	 * @since 5.5.0
-	 *
 	 */
 	function wp_is_auto_update_enabled_for_type( $type ) {
 		if ( ! class_exists( 'WP_Automatic_Updater' ) ) {
@@ -305,8 +285,6 @@ class UptimeMonster_Update_Check {
 	 * @param object $item The update offer.
 	 *
 	 * @return bool True if auto-updates are forced for `$item`, false otherwise.
-	 * @since 5.6.0
-	 *
 	 */
 	function wp_is_auto_update_forced_for_item( $type, $update, $item ) {
 		/** This filter is documented in wp-admin/includes/class-wp-automatic-updater.php */
@@ -320,9 +298,6 @@ class UptimeMonster_Update_Check {
 	 *
 	 * @return bool Whether the server supports URL rewriting.
 	 * @global bool $is_nginx
-	 *
-	 * @since 3.7.0
-	 *
 	 */
 	function got_url_rewrite() {
 		$got_url_rewrite = ( $this->got_mod_rewrite() || $GLOBALS['is_nginx'] || $this->iis7_supports_permalinks() );
@@ -331,9 +306,6 @@ class UptimeMonster_Update_Check {
 		 * Filters whether URL rewriting is available.
 		 *
 		 * @param bool $got_url_rewrite Whether URL rewriting is available.
-		 *
-		 * @since 3.7.0
-		 *
 		 */
 		return apply_filters( 'got_url_rewrite', $got_url_rewrite );
 	}
@@ -343,9 +315,6 @@ class UptimeMonster_Update_Check {
 	 *
 	 * @return bool Whether IIS7 supports permalinks.
 	 * @global bool $is_iis7
-	 *
-	 * @since 2.8.0
-	 *
 	 */
 	function iis7_supports_permalinks() {
 		global $is_iis7;
@@ -368,9 +337,6 @@ class UptimeMonster_Update_Check {
 		 * Filters whether IIS 7+ supports pretty permalinks.
 		 *
 		 * @param bool $supports_permalinks Whether IIS7 supports permalinks. Default false.
-		 *
-		 * @since 2.8.0
-		 *
 		 */
 		return apply_filters( 'iis7_supports_permalinks', $supports_permalinks );
 	}
@@ -379,8 +345,6 @@ class UptimeMonster_Update_Check {
 	 * Returns whether the server is running Apache with the mod_rewrite module loaded.
 	 *
 	 * @return bool Whether the server is running Apache with the mod_rewrite module loaded.
-	 * @since 2.0.0
-	 *
 	 */
 	function got_mod_rewrite() {
 		$got_rewrite = apache_mod_loaded( 'mod_rewrite', true );
@@ -394,9 +358,6 @@ class UptimeMonster_Update_Check {
 		 * @param bool $got_rewrite Whether Apache and mod_rewrite are present.
 		 *
 		 * @see got_url_rewrite()
-		 *
-		 * @since 2.5.0
-		 *
 		 */
 		return apply_filters( 'got_rewrite', $got_rewrite );
 	}
@@ -405,23 +366,21 @@ class UptimeMonster_Update_Check {
 	 * Test if the supplied PHP version is supported.
 	 *
 	 * @return array The test results.
-	 * @since 5.2.0
-	 *
 	 */
 	public function get_test_php_version() {
 		$response = $this->wp_check_php_version();
 
-		$result = array(
+		$result = [
 			'label'       => sprintf(
 			/* translators: %s: The current PHP version. */
 				__( 'Your site is running the current version of PHP (%s)' ),
 				PHP_VERSION
 			),
 			'status'      => 'good',
-			'badge'       => array(
+			'badge'       => [
 				'label' => __( 'Performance' ),
 				'color' => 'blue',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				sprintf(
@@ -438,7 +397,7 @@ class UptimeMonster_Update_Check {
 				__( '(opens in a new tab)' )
 			),
 			'test'        => 'php_version',
-		);
+		];
 
 		// PHP is up to date.
 		if ( ! $response || version_compare( PHP_VERSION, $response['recommended_version'], '>=' ) ) {
@@ -484,7 +443,7 @@ class UptimeMonster_Update_Check {
 	/**
 	 * Fallback function replicating core behavior from WordPress 5.1.0 to check PHP versions.
 	 *
-	 * @return array|bool|mixed|object|WP_Error
+	 * @return array|bool|mixed|object|\WP_Error
 	 */
 	function wp_check_php_version() {
 		$version = phpversion();
@@ -549,21 +508,19 @@ class UptimeMonster_Update_Check {
 	 * the user to install security updates as a priority.
 	 *
 	 * @return array The test result.
-	 * @since 5.2.0
-	 *
 	 */
 	public function get_test_wordpress_version() {
-		$result = array(
+		$result = [
 			'label'       => '',
 			'status'      => '',
-			'badge'       => array(
+			'badge'       => [
 				'label' => __( 'Performance' ),
 				'color' => 'blue',
-			),
+			],
 			'description' => '',
 			'actions'     => '',
 			'test'        => 'wordpress_version',
-		);
+		];
 
 		$core_current_version = get_bloginfo( 'version' );
 		$core_updates         = $this->get_core_updates();
@@ -652,17 +609,15 @@ class UptimeMonster_Update_Check {
 	 * that are not needed.
 	 *
 	 * @return array The test results.
-	 * @since 5.2.0
-	 *
 	 */
 	public function get_test_theme_version() {
-		$result = array(
+		$result = [
 			'label'       => __( 'Your themes are all up to date' ),
 			'status'      => 'good',
-			'badge'       => array(
+			'badge'       => [
 				'label' => __( 'Security' ),
 				'color' => 'blue',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Themes add your site&#8217;s look and feel. It&#8217;s important to keep them up to date, to stay consistent with your brand and keep your site secure.' )
@@ -673,7 +628,7 @@ class UptimeMonster_Update_Check {
 				__( 'Manage your themes' )
 			),
 			'test'        => 'theme_version',
-		);
+		];
 
 		$theme_updates = $this->get_theme_updates();
 
@@ -882,8 +837,6 @@ class UptimeMonster_Update_Check {
 
 	/**
 	 * @return array
-	 * @since 2.9.0
-	 *
 	 */
 	function get_theme_updates() {
 		$current = get_site_transient( 'update_themes' );
@@ -908,21 +861,19 @@ class UptimeMonster_Update_Check {
 	 *                       set $options['available'] to false to skip not-dismissed updates.
 	 *
 	 * @return array|false Array of the update objects on success, false on failure.
-	 * @since 2.7.0
-	 *
 	 */
 	function get_core_updates( $options = array() ) {
 		$options   = array_merge(
-			array(
+			[
 				'available' => true,
 				'dismissed' => false,
-			),
+			],
 			$options
 		);
 		$dismissed = get_site_option( 'dismissed_update_core' );
 
 		if ( ! is_array( $dismissed ) ) {
-			$dismissed = array();
+			$dismissed = [];
 		}
 
 		$from_api = get_site_transient( 'update_core' );
@@ -932,7 +883,7 @@ class UptimeMonster_Update_Check {
 		}
 
 		$updates = $from_api->updates;
-		$result  = array();
+		$result  = [];
 		foreach ( $updates as $update ) {
 			if ( 'autoupdate' === $update->response ) {
 				continue;
@@ -961,17 +912,15 @@ class UptimeMonster_Update_Check {
 	 * that are not in use.
 	 *
 	 * @return array The test result.
-	 * @since 5.2.0
-	 *
 	 */
 	public function get_test_plugin_version() {
-		$result = array(
+		$result = [
 			'label'       => __( 'Your plugins are all up to date' ),
 			'status'      => 'good',
-			'badge'       => array(
+			'badge'       => [
 				'label' => __( 'Security' ),
 				'color' => 'blue',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Plugins extend your site&#8217;s functionality with things like contact forms, ecommerce and much more. That means they have deep access to your site, so it&#8217;s vital to keep them up to date.' )
@@ -982,7 +931,7 @@ class UptimeMonster_Update_Check {
 				__( 'Manage your plugins' )
 			),
 			'test'        => 'plugin_version',
-		);
+		];
 
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -1093,8 +1042,6 @@ class UptimeMonster_Update_Check {
 
 	/**
 	 * @return array
-	 * @since 2.9.0
-	 *
 	 */
 	public function get_plugin_updates() {
 		$all_plugins     = get_plugins();
@@ -1116,7 +1063,6 @@ class UptimeMonster_Update_Check {
 	 * @return mixed|void
 	 */
 	public function perform_test( $callback ) {
-
 		return apply_filters( 'site_status_test_result', call_user_func( $callback ) );
 	}
 }

@@ -1,10 +1,10 @@
 <?php
 /**
- * Error handler drop-in for UptimeMonster Site Monitor Error Monitoring Support.
+ * Error handler drop-in for UptimeMonster WordPress Error Monitoring Support.
  *
- * Plugin Name: Roxwp Site Error Logger Drop-in
+ * Plugin Name: UptimeMonster WordPress Error Monitor
  * Plugin URI: https://uptimemonster.com/
- * Description: Error Logger UptimeMonster WordPress Site Activity Monitor Plugin.
+ * Description: Monitor and report php (and related) errors to UptimeMonster.
  * Author: UptimeMonster
  * Author URI: https://uptimemonster.com/
  * Version: 1.0.0

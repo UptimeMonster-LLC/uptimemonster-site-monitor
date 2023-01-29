@@ -105,7 +105,9 @@ class Core_Update extends Controller_Base {
 
 		set_time_limit( 0 );
 
+
 		$update = $this->update( $request );
+		return rest_ensure_response( $update );
 
 		if ( $update['need_db_update'] ) {
 			$update_db = $this->update_db();
@@ -122,15 +124,15 @@ class Core_Update extends Controller_Base {
 		return rest_ensure_response( [ 'status' => true, 'message' => $update['message'] ] );
 	}
 
-	public function update( $request ) {
+	public function update( $request ): array {
 		global $wp_version;
 
 		$update = null;
 		// Specific version is given
-		$version = $request['version'];
+		$version = $request['version'] ?? '';
 		$locale  = $request['locale'] ? $request['locale'] : get_locale();
-		$force   = umsm_parse_boolval( $request['force'] );
-		$minor   = umsm_parse_boolval( $request['minor'] );
+		$force   = umsm_parse_boolval( $request['force'] ?? false );
+		$minor   = umsm_parse_boolval( $request['minor'] ?? false );
 
 		if ( 'trunk' === $request['version'] ) {
 			$request['version'] = 'nightly';
@@ -432,6 +434,10 @@ class Core_Update extends Controller_Base {
 	 * @return string|WP_Error
 	 */
 	private function get_download_url( $version, $locale = 'en_US', $file_type = 'zip' ) {
+
+		if ( ! $version ) {
+			return 'https://wordpress.org/latest.zip';
+		}
 
 		if ( 'nightly' === $version ) {
 			if ( 'zip' === $file_type ) {

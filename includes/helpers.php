@@ -444,13 +444,42 @@ function umsm_wp_version_compare( $since, $operator ) {
 	return version_compare( $wp_version, $since, $operator );
 }
 
-function umsm_parse_boolval( $maby_bool ) {
-
-	if ( is_numeric( $maby_bool ) ) {
-		return (bool) $maby_bool;
+function umsm_parse_boolval( $maybe_bool ): bool {
+	if ( is_bool( $maybe_bool ) ) {
+		return $maybe_bool;
 	}
 
-	return 'true' === strtolower( $maby_bool );
+	if ( is_numeric( $maybe_bool ) ) {
+		return (bool) $maybe_bool;
+	}
+
+	$maybe_bool = strtolower( $maybe_bool );
+
+	return 'true' === $maybe_bool || 'yes' === $maybe_bool || 'on' === $maybe_bool;
+}
+
+function umsm_prepare_plugin_data( $plugin ): array {
+	$data = [
+		'author'      => $plugin['Author'] ?: ( $plugin['AuthorName'] ?? 'unavailable' ),
+		'version'     => $plugin['Version'] ?: 'unavailable',
+		'plugin_uri'  => $plugin['PluginURI'],
+		'author_uri'  => $plugin['AuthorURI'],
+		'network'     => $plugin['Network'],
+		'description' => $plugin['Description'],
+		'new_version' => null,
+		'need_update' => false,
+		'auto_update' => 'disabled',
+	];
+
+	unset(
+		$plugin['Author'], $plugin['AuthorName'],
+		$plugin['Version'], $plugin['PluginURI'],
+		$plugin['AuthorURI'], $plugin['Network'],
+		$plugin['Description'], $plugin['Name'],
+		$plugin['Title'], $plugin['Woo'],
+	);
+
+	return array_merge( $data, $plugin );
 }
 
 /**

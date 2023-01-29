@@ -11,6 +11,10 @@ namespace UptimeMonster\SiteMonitor\Api\Controllers\V1;
 use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Debug_Data;
 use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Update_Check;
 use UptimeMonster\SiteMonitor\Api\Controllers\Controller_Base;
+use WP_Error;
+use WP_HTTP_Response;
+use WP_REST_Request;
+use WP_REST_Response;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -29,8 +33,6 @@ class Health_Check extends Controller_Base {
 	 * @var string
 	 */
 	protected $rest_base = '/site-health';
-
-	public function __construct() {}
 
 	public function register_routes() {
 		// Register site health route.
@@ -65,37 +67,30 @@ class Health_Check extends Controller_Base {
 	}
 
 	/**
-	 * @param $request
 	 *
-	 * @param \WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 *
-	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function get_ping( $request ) {
-
 		return rest_ensure_response( 'ok' );
 	}
 
 
 	/**
-	 * @param \WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 *
-	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function send_site_health_info( $request ) {
+		$response = [];
 
-		// Health data
-		$update_check = new UptimeMonster_Update_Check();
-		$site_healths = $update_check->get_site_health() ? $update_check->get_site_health() : [];
-
-		// Debug data.
-		$debug_data = new UptimeMonster_Debug_Data();
-		$debug_info = $debug_data->debug_data() ? $debug_data->debug_data() : [];
+		$this->add_extra_data( $response );
 
 		return rest_ensure_response( [
 			'status'      => true,
-			'site_health' => $site_healths,
-			'site_info'   => $debug_info,
+			'site_health' => $response['extra']['site_health'] ?? [],
+			'site_info'   => $response['extra']['site_info'] ?? [],
 		] );
 	}
 
