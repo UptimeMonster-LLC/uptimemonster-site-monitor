@@ -95,7 +95,7 @@ class Plugins extends Controller_Base {
 		);
 
 		// Register uninstall plugin.
-		register_rest_route(
+		/*register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/uninstall',
 			[
@@ -106,7 +106,7 @@ class Plugins extends Controller_Base {
 					'args'                => [],
 				],
 			]
-		);
+		);*/
 
 		// Register delete plugin.
 		register_rest_route(
@@ -507,7 +507,9 @@ class Plugins extends Controller_Base {
 				continue;
 			}
 
-			$deleted = delete_plugins( $plugin );
+			$plugin = plugin_basename( sanitize_text_field( wp_unslash( $plugin ) ) );
+
+			$deleted = delete_plugins( [ $plugin ] );
 
 			if ( null === $deleted ) {
 				$count    = count( $plugins );
@@ -526,11 +528,12 @@ class Plugins extends Controller_Base {
 			} else {
 				$status  = [
 					'status'  => true,
-					'message' => sprintf( __( '“%s” deleted successfully.', 'uptime' ), $plugin_data['Name'] ),
+					'message' => sprintf( __( '“%s” was deleted successfully.', 'uptime' ), $plugin_data['Name'] ),
 				];
 				$changed = true;
 			}
 
+			$status['$deleted'] = $deleted;
 			$response[ $plugin ] = $status;
 		}
 

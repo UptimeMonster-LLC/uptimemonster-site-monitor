@@ -999,6 +999,8 @@ class UptimeMonster_Debug_Data {
 				}
 			}
 
+			$plugin_data['is_uninstallable'] = is_uninstallable_plugin( $plugin_path );
+
 			$info[ $plugin_part ]['fields'][] = [
 				'label' => $plugin['Name'],
 				'slug'  => $plugin_path,
