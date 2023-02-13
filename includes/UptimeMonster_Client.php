@@ -20,8 +20,7 @@ class UptimeMonster_Client {
 
 	use Singleton;
 
-//	private $host = 'https://app.uptimemonster.com/';
-	private $host = 'https://rox-wp.test/';
+	private $host = 'https://app.uptimemonster.com/';
 
 	private $version = 'v1';
 
