@@ -219,7 +219,7 @@ class Plugins extends Controller_Base {
 				$status['message'] = sprintf( $failed, $api->name, $skin->get_error_messages() );
 			} else {
 				$status['status']  = true;
-				$status['message'] = sprintf( __( 'Plugin %s successfully installed.', 'uptime' ), $api->name );
+				$status['message'] = sprintf( __( '%s successfully installed.', 'uptime' ), $api->name );
 				$is_installed      = true;
 			}
 
@@ -262,7 +262,7 @@ class Plugins extends Controller_Base {
 			if ( ! $plugin_data ) {
 				$response[ $plugin ] = [
 					'status'  => false,
-					'message' => sprintf( __( 'Plugin (%s) does not exists.', 'uptime' ), $plugin ),
+					'message' => sprintf( __( 'Plugin %s does not exists or already deleted.', 'uptime' ), $plugin ),
 				];
 
 				$changed = true;
@@ -333,7 +333,7 @@ class Plugins extends Controller_Base {
 			if ( ! $plugin_data ) {
 				$response[ $plugin ] = [
 					'status'  => false,
-					'message' => sprintf( __( 'Plugin (%s) does not exists.', 'uptime' ), $plugin ),
+					'message' => sprintf( __( 'Plugin %s does not exists or already deleted.', 'uptime' ), $plugin ),
 				];
 
 				$changed = true;
@@ -405,7 +405,7 @@ class Plugins extends Controller_Base {
 			if ( ! $plugin_data ) {
 				$response[ $plugin ] = [
 					'status'  => false,
-					'message' => sprintf( __( 'Plugin (%s) does not exists.', 'uptime' ), $plugin ),
+					'message' => sprintf( __( 'Plugin %s does not exists or already deleted.', 'uptime' ), $plugin ),
 				];
 
 				$changed = true;
@@ -484,7 +484,7 @@ class Plugins extends Controller_Base {
 			if ( ! $plugin_data ) {
 				$response[ $plugin ] = [
 					'status'  => false,
-					'message' => sprintf( __( 'Plugin (%s) does not exists.', 'uptime' ), $plugin ),
+					'message' => sprintf( __( 'Plugin %s does not exists or already deleted.', 'uptime' ), $plugin ),
 				];
 
 				$changed = true;
@@ -507,7 +507,7 @@ class Plugins extends Controller_Base {
 			} else {
 				$status  = [
 					'status'  => true,
-					'message' => sprintf( __( 'Plugin %s successfully deleted.', 'uptime' ), $plugin_data['Name'] ),
+					'message' => sprintf( __( '%s successfully deleted.', 'uptime' ), $plugin_data['Name'] ),
 				];
 				$changed = true;
 			}
@@ -563,7 +563,7 @@ class Plugins extends Controller_Base {
 			if ( ! $plugin_data ) {
 				$response[ $plugin ] = [
 					'status'  => false,
-					'message' => sprintf( __( 'Plugin (%s) does not exists.', 'uptime' ), $plugin ),
+					'message' => sprintf( __( 'Plugin %s does not exists or already deleted.', 'uptime' ), $plugin ),
 				];
 
 				// Send plugin list to uptime.

@@ -127,17 +127,17 @@ class Themes extends Controller_Base {
 			return new WP_Error( 'no-theme-specified', __( 'No theme specified.', 'uptime' ) );
 		}
 
-		$skin         = new WP_Ajax_Upgrader_Skin();
-		$upgrader     = new Theme_Upgrader( $skin );
-		$response     = [];
-		$is_installed = false;
+		$skin     = new WP_Ajax_Upgrader_Skin();
+		$upgrader = new Theme_Upgrader( $skin );
+		$response = [];
+		$changed  = false;
 
 		foreach ( $data->slugs as $slug ) {
 			$slug  = sanitize_key( wp_unslash( $slug ) );
 			$theme = wp_get_theme( $slug );
 
 			if ( $theme->exists() ) {
-				$is_installed = true;
+				$changed           = true;
 				$response[ $slug ] = [
 					'status'  => false,
 					'message' => sprintf( __( 'Theme %s already installed.', 'uptime' ), (string) $theme ),
@@ -176,10 +176,10 @@ class Themes extends Controller_Base {
 			} elseif ( $skin->get_errors()->has_errors() ) {
 				$status['message'] = sprintf( $failed, $api->name, $skin->get_error_messages() );
 			} else {
-				$theme = wp_get_theme( $slug );
+				$theme             = wp_get_theme( $slug );
 				$status['status']  = true;
-				$status['message'] = sprintf( __( 'Theme %s successfully installed.', 'uptime' ), (string) $theme );
-				$is_installed      = true;
+				$status['message'] = sprintf( __( '%s successfully installed.', 'uptime' ), (string) $theme );
+				$changed           = true;
 			}
 
 			$response[ $slug ] = $status;
@@ -190,7 +190,7 @@ class Themes extends Controller_Base {
 			'data'   => $response,
 		];
 
-		if ( $is_installed ) {
+		if ( $changed ) {
 			$this->add_extra_data( $response );
 		}
 
@@ -214,37 +214,41 @@ class Themes extends Controller_Base {
 		}
 
 		if ( get_stylesheet() === $slug ) {
-			return new WP_Error( 'active-theme', __( 'Requested theme already been activated.', 'uptime' ) );
-		}
-
-		$theme = wp_get_theme( $slug );
-
-		if ( ! $theme->exists() ) {
-			return new WP_Error( 'theme-not-installed', __( 'Requested theme is not installed.', 'uptime' ) );
-		}
-
-		$requirements = validate_theme_requirements( $slug );
-		if ( is_wp_error( $requirements ) ) {
-			return $requirements;
-		}
-
-		switch_theme( $slug );
-
-		if ( get_stylesheet() === $slug ) {
-			$response = [
-				'status'  => true,
-				'message' => sprintf( __( 'Theme %s successfully activated.', 'uptime' ), (string) $theme ),
-			];
-		} else {
 			$response = [
 				'status'  => false,
-				'message' => sprintf( __( 'Unable to activate requested theme (%s).', 'uptime' ), (string) $theme ),
+				'message' => __( 'Requested theme already been activated.', 'uptime' ),
 			];
+		} else {
+			$theme = wp_get_theme( $slug );
+
+			if ( ! $theme->exists() ) {
+				$response = [
+					'status'  => false,
+					'message' => __( 'Requested theme is not installed.', 'uptime' ),
+				];
+			}
+
+			$requirements = validate_theme_requirements( $slug );
+			if ( is_wp_error( $requirements ) ) {
+				return $requirements;
+			}
+
+			switch_theme( $slug );
+
+			if ( get_stylesheet() === $slug ) {
+				$response = [
+					'status'  => true,
+					'message' => sprintf( __( '%s successfully activated.', 'uptime' ), (string) $theme ),
+				];
+			} else {
+				$response = [
+					'status'  => false,
+					'message' => sprintf( __( 'Unable to activate requested theme (%s).', 'uptime' ), (string) $theme ),
+				];
+			}
 		}
 
-		if ( $response['status'] ) {
-			$this->add_extra_data( $response );
-		}
+		$this->add_extra_data( $response );
 
 		return rest_ensure_response( $response );
 	}
@@ -265,18 +269,17 @@ class Themes extends Controller_Base {
 		}
 
 		$response = [];
-
-		$is_deleted = false;
+		$changed  = false;
 
 		foreach ( $data->slugs as $slug ) {
 			$slug  = sanitize_key( wp_unslash( $slug ) );
 			$theme = wp_get_theme( $slug );
 
 			if ( ! $theme->exists() ) {
-				$is_deleted = true;
+				$changed           = true;
 				$response[ $slug ] = [
 					'status'  => false,
-					'message' => sprintf( __( 'Theme (%s) does not exists or already deleted.', 'uptime' ), $slug ),
+					'message' => sprintf( __( 'Theme %s does not exists or already deleted.', 'uptime' ), $slug ),
 				];
 
 				continue;
@@ -320,8 +323,8 @@ class Themes extends Controller_Base {
 				$status['message'] = sprintf( __( 'Unable to delete requested theme (%s).', 'uptime' ), (string) $theme );
 			} else {
 				$status['status']  = true;
-				$status['message'] = sprintf( __( 'Theme %s successfully deleted.', 'uptime' ), (string) $theme );
-				$is_deleted        = true;
+				$status['message'] = sprintf( __( '%s successfully deleted.', 'uptime' ), (string) $theme );
+				$changed           = true;
 			}
 
 			$response[ $slug ] = $status;
@@ -329,7 +332,7 @@ class Themes extends Controller_Base {
 
 		$response = [ 'status' => true, 'data' => $response ];
 
-		if ( $is_deleted ) {
+		if ( $changed ) {
 			$this->add_extra_data( $response );
 		}
 
@@ -350,10 +353,10 @@ class Themes extends Controller_Base {
 			return new WP_Error( 'no-theme-specified', __( 'No theme specified.', 'uptime' ) );
 		}
 
-		$response   = [];
-		$skin       = new WP_Ajax_Upgrader_Skin();
-		$upgrader   = new Theme_Upgrader( $skin );
-		$is_updated = false;
+		$response = [];
+		$skin     = new WP_Ajax_Upgrader_Skin();
+		$upgrader = new Theme_Upgrader( $skin );
+		$changed  = false;
 
 		// checking update can output error if system failed to connect wp.org api.
 		ob_start();
@@ -399,7 +402,7 @@ class Themes extends Controller_Base {
 			} else {
 				$status['status']  = true;
 				$status['message'] = sprintf( __( '%s  updated.', 'uptime' ), (string) $theme );
-				$is_updated        = true;
+				$changed           = true;
 			}
 
 			$response[ $slug ] = $status;
@@ -407,7 +410,7 @@ class Themes extends Controller_Base {
 
 		$response = [ 'status' => true, 'data' => $response ];
 
-		if ( $is_updated ) {
+		if ( $changed ) {
 			$this->add_extra_data( $response );
 		}
 
