@@ -518,4 +518,25 @@ function umsm_get_named_sem_ver( $new_version, $original_version ) {
 	return 'major';
 }
 
+function umsm_need_filesystem_credentials( $redirect ) {
+	if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+	}
+
+	if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+
+	ob_start();
+	$credentials = request_filesystem_credentials( $redirect );
+	ob_end_clean();
+
+	// Check if credentials aren't provided or wrong credentials.
+	if ( false === $credentials || ! \WP_Filesystem( $credentials ) ) {
+		return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptime' ) );
+	}
+
+	return false;
+}
+
 // End of file helpers.php.

@@ -18,11 +18,11 @@ use UptimeMonster\SiteMonitor\Api\Controllers\Controller_Base;
 use UptimeMonster\SiteMonitor\CoreUpdate\UptimeMonsterCoreUpgrader;
 use UptimeMonster\SiteMonitor\CoreUpdate\UptimeMonsterUpgraderSkin;
 use WP_Error;
+use WP_REST_Server;
 
 require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 require_once ABSPATH . 'wp-admin/includes/class-core-upgrader.php';
 require_once ABSPATH . 'wp-includes/class-wp-error.php';
-
 
 /**
  * Class Core_Update
@@ -35,13 +35,13 @@ class Core_Update extends Controller_Base {
 	 */
 	public $rest_base = '/core';
 
-	public function __construct() {
+	/*public function __construct() {
 		// Health data
-//		$this->update_check_model = new UptimeMonster_Update_Check();
+		$this->update_check_model = new UptimeMonster_Update_Check();
 
 		// Debug data.
-//		$this->debug_model = new UptimeMonster_Debug_Data();
-	}
+		$this->debug_model = new UptimeMonster_Debug_Data();
+	}*/
 
 	/**
 	 * Register routes.
@@ -54,7 +54,7 @@ class Core_Update extends Controller_Base {
 			$this->rest_base . '/update',
 			[
 				[
-					'methods'             => \WP_REST_Server::CREATABLE,
+					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'core_update' ],
 					'permission_callback' => [ $this, 'get_route_access' ],
 					'args'                => [
@@ -107,7 +107,7 @@ class Core_Update extends Controller_Base {
 
 
 		$update = $this->update( $request );
-		return rest_ensure_response( $update );
+		//return rest_ensure_response( $update );
 
 		if ( $update['need_db_update'] ) {
 			$update_db = $this->update_db();
@@ -121,10 +121,14 @@ class Core_Update extends Controller_Base {
 			return $update;
 		}
 
-		return rest_ensure_response( [ 'status' => true, 'message' => $update['message'] ] );
+		$response = [ 'status' => true, 'message' => $update['message'] ];
+
+		$this->add_extra_data( $response );
+
+		return rest_ensure_response( $response );
 	}
 
-	public function update( $request ): array {
+	protected function update( $request ): array {
 		global $wp_version;
 
 		$update = null;
@@ -235,7 +239,7 @@ class Core_Update extends Controller_Base {
 		}
 	}
 
-	public function update_db() {
+	protected function update_db() {
 		global $wpdb, $wp_db_version, $wp_current_db_version;
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -255,9 +259,9 @@ class Core_Update extends Controller_Base {
 
 			wp_upgrade();
 
-			return __( "WordPress database upgraded successfully from db version {$wp_current_db_version} to {$wp_db_version}.", 'uptime');
+			return __( "WordPress database upgraded successfully from db version {$wp_current_db_version} to {$wp_db_version}.", 'uptime' );
 		} else {
-			return __( "WordPress database already at latest db version {$wp_db_version}.",  'uptime' );
+			return __( "WordPress database already at latest db version {$wp_db_version}.", 'uptime' );
 		}
 	}
 
@@ -265,8 +269,8 @@ class Core_Update extends Controller_Base {
 	 * Clean up extra files.
 	 *
 	 * @param string $version_from Starting version that the installation was updated from.
-	 * @param string $version_to   Target version that the installation is updated to.
-	 * @param string $locale       Locale of the installation.
+	 * @param string $version_to Target version that the installation is updated to.
+	 * @param string $locale Locale of the installation.
 	 */
 	private function cleanup_extra_files( $version_from, $version_to, $locale ) {
 		if ( ! $version_from || ! $version_to ) {
@@ -275,11 +279,12 @@ class Core_Update extends Controller_Base {
 
 		$old_checksums = self::get_core_checksums( $version_from, $locale ?: 'en_US' );
 		if ( ! is_array( $old_checksums ) ) {
-			return new WP_Error( 'cleanup-error-old-checksum', "{$old_checksums} Please cleanup files manually." );
+			return new WP_Error( 'cleanup-error-old-checksum', "WordPress core update failed. Please cleanup files manually." );
 		}
+
 		$new_checksums = self::get_core_checksums( $version_to, $locale ?: 'en_US' );
 		if ( ! is_array( $new_checksums ) ) {
-			return new WP_Error( 'cleanup-error-new-checksum', "{$new_checksums} Please cleanup files manually." );
+			return new WP_Error( 'cleanup-error-old-checksum', "WordPress core update failed. Please cleanup files manually." );
 		}
 
 		// Compare the files from the old version and the new version in a case-insensitive manner,
@@ -288,14 +293,14 @@ class Core_Update extends Controller_Base {
 		// The main logic for this was taken from the Joomla project and adapted for WP.
 		// See: https://github.com/joomla/joomla-cms/blob/bb5368c7ef9c20270e6e9fcc4b364cd0849082a5/administrator/components/com_admin/script.php#L8158
 
-		$old_filepaths = array_keys( $old_checksums );
-		$new_filepaths = array_keys( $new_checksums );
+		$old_file_paths = array_keys( $old_checksums );
+		$new_file_paths = array_keys( $new_checksums );
 
-		$new_filepaths = array_combine( array_map( 'strtolower', $new_filepaths ), $new_filepaths );
+		$new_file_paths = array_combine( array_map( 'strtolower', $new_file_paths ), $new_file_paths );
 
-		$old_filepaths_to_check = array_diff( $old_filepaths, $new_filepaths );
+		$old_file_paths_to_check = array_diff( $old_file_paths, $new_file_paths );
 
-		foreach ( $old_filepaths_to_check as $old_filepath_to_check ) {
+		foreach ( $old_file_paths_to_check as $old_filepath_to_check ) {
 			$old_realpath = realpath( ABSPATH . $old_filepath_to_check );
 
 			// On Unix without incorrectly cased file.
@@ -305,7 +310,7 @@ class Core_Update extends Controller_Base {
 
 			$lowercase_old_filepath_to_check = strtolower( $old_filepath_to_check );
 
-			if ( ! array_key_exists( $lowercase_old_filepath_to_check, $new_filepaths ) ) {
+			if ( ! array_key_exists( $lowercase_old_filepath_to_check, $new_file_paths ) ) {
 				$files_to_remove[] = $old_filepath_to_check;
 				continue;
 			}
@@ -313,7 +318,7 @@ class Core_Update extends Controller_Base {
 			// We are now left with only the files that are similar from old to new except for their case.
 
 			$old_basename      = basename( $old_realpath );
-			$new_filepath      = $new_filepaths[ $lowercase_old_filepath_to_check ];
+			$new_filepath      = $new_file_paths[ $lowercase_old_filepath_to_check ];
 			$expected_basename = basename( $new_filepath );
 			$new_realpath      = realpath( ABSPATH . $new_filepath );
 			$new_basename      = basename( $new_realpath );
@@ -350,28 +355,18 @@ class Core_Update extends Controller_Base {
 		$count = 0;
 
 		if ( ! empty( $files_to_remove ) ) {
-			//WP_CLI::log( 'Cleaning up files...' );
-
 			foreach ( $files_to_remove as $file ) {
 
-				// wp-content should be considered user data
-				if ( 0 === stripos( $file, 'wp-content' ) ) {
+				// wp-content should be considered user data.
+				if ( 'wp-content' === substr( $file, 0, 10 ) ) {
 					continue;
 				}
 
 				if ( file_exists( ABSPATH . $file ) ) {
 					unlink( ABSPATH . $file );
-					//WP_CLI::log( "File removed: {$file}" );
-					$count++;
+					$count ++;
 				}
 			}
-
-			/*if ( $count ) {
-				//WP_CLI::log( number_format( $count ) . ' files cleaned up.' );
-			} else {
-				//WP_CLI::log( 'No files found that need cleaning up.' );
-			}*/
-
 		}
 
 		return $count;
@@ -380,26 +375,29 @@ class Core_Update extends Controller_Base {
 	/**
 	 * Security copy of the core function with Requests - Gets the checksums for the given version of WordPress.
 	 *
-	 * @param string $version  Version string to query.
-	 * @param string $locale   Locale to query.
+	 * @param string $version Version string to query.
+	 * @param string $locale Locale to query.
+	 *
 	 * @return WP_Error|array String message on failure. An array of checksums on success.
 	 */
 	private static function get_core_checksums( $version, $locale ) {
-		$query = http_build_query( compact( 'version', 'locale' ), null, '&' );
-		$url   = "https://api.wordpress.org/core/checksums/1.0/?{$query}";
+		$url = add_query_arg( [
+			'version' => $version,
+			'locale'  => $locale,
+		], 'https://api.wordpress.org/core/checksums/1.0/' );
 
 		$raw_response = wp_remote_get( $url, [
-			'timeout' => 30,
-			'blocking' => true,
+			'timeout'   => 30,
+			'blocking'  => true,
 			'sslverify' => true,
-			'headers' => [
+			'headers'   => [
 				'Accept' => 'application/json',
 			],
 		] );
 
-		$code = wp_remote_retrieve_response_code( $raw_response );
+		$code          = wp_remote_retrieve_response_code( $raw_response );
 		$response_body = wp_remote_retrieve_body( $raw_response );
-		$response = json_decode( $response_body );
+		$response      = json_decode( $response_body );
 
 		if ( ! $response ) {
 			return new WP_Error( 'json-decode-error', json_last_error_msg(), [
@@ -415,9 +413,7 @@ class Core_Update extends Controller_Base {
 		$body = trim( $response_body );
 		$body = json_decode( $body, true );
 
-		if ( ! is_array( $body )
-		     || ! isset( $body['checksums'] )
-		     || ! is_array( $body['checksums'] ) ) {
+		if ( ! is_array( $body ) || ! isset( $body['checksums'] ) || ! is_array( $body['checksums'] ) ) {
 			return new WP_Error( 'checksum-error', "Checksums not available for WordPress {$version}/{$locale}." );
 		}
 
@@ -456,17 +452,15 @@ class Core_Update extends Controller_Base {
 	/**
 	 * Gets version information from `wp-includes/version.php`.
 	 *
-	 * @return array {
-	 *     @type string $wp_version The WordPress version.
-	 *     @type int $wp_db_version The WordPress DB revision.
-	 *     @type string $tinymce_version The TinyMCE version.
-	 *     @type string $wp_local_package The TinyMCE version.
+	 * @return WP_Error|array {
+	 * @type string $wp_version The WordPress version.
+	 * @type int $wp_db_version The WordPress DB revision.
+	 * @type string $tinymce_version The TinyMCE version.
+	 * @type string $wp_local_package The TinyMCE version.
 	 * }
-	 *
-	 * @return array|WP_Error
 	 */
-	private static function get_wp_details( $abspath = ABSPATH ) {
-		$versions_path = $abspath . 'wp-includes/version.php';
+	private static function get_wp_details() {
+		$versions_path = ABSPATH . 'wp-includes/version.php';
 
 		if ( ! is_readable( $versions_path ) ) {
 			return new WP_Error( 'version-not-readable', "This does not seem to be a WordPress installation. Pass --path=`path/to/wordpress` or run `wp core download`." );
@@ -517,7 +511,7 @@ class Core_Update extends Controller_Base {
 	 * @param string|WP_Error|\Exception|\Throwable $errors
 	 *
 	 * @return string
-	 *@throws \InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 *
 	 */
 	public static function error_to_string( $errors ) {
@@ -526,7 +520,7 @@ class Core_Update extends Controller_Base {
 		}
 
 		// Only json_encode() the data when it needs it
-		$render_data = function( $data ) {
+		$render_data = function ( $data ) {
 			if ( is_array( $data ) || is_object( $data ) ) {
 				return json_encode( $data );
 			}

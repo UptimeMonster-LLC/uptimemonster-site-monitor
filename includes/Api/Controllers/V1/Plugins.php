@@ -16,11 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Plugin_Upgrader;
 use UptimeMonster\SiteMonitor\Api\Controllers\Controller_Base;
-use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Debug_Data;
-use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Update_Check;
 use WP_Ajax_Upgrader_Skin;
 use WP_Error;
-use WP_Filesystem_Base;
 use WP_HTTP_Response;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -30,6 +27,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
 	die();
+}
+
+if ( ! function_exists( 'deactivate_plugins' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+}
+
+if ( ! class_exists( '\WP_Upgrader' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+}
+
+if ( ! function_exists( 'plugins_api' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+}
+
+if ( ! class_exists( '\WP_Ajax_Upgrader_Skin' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/class-wp-ajax-upgrader-skin.php';
+}
+
+if ( ! class_exists( '\WP_Filesystem_Base' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+}
+
+if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/file.php';
 }
 
 /**
@@ -56,28 +77,28 @@ class Plugins extends Controller_Base {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/install',
-			array(
-				array(
+			[
+				[
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'install_plugins' ),
-					'permission_callback' => array( $this, 'get_route_access' ),
-					'args'                => array(),
-				),
-			)
+					'callback'            => [ $this, 'install_plugins' ],
+					'permission_callback' => [ $this, 'get_route_access' ],
+					'args'                => [],
+				],
+			]
 		);
 
 		// Register activate plugin.
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/activate',
-			array(
-				array(
+			[
+				[
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'activate_plugins' ),
-					'permission_callback' => array( $this, 'get_route_access' ),
-					'args'                => array(),
-				),
-			)
+					'callback'            => [ $this, 'activate_plugins' ],
+					'permission_callback' => [ $this, 'get_route_access' ],
+					'args'                => [],
+				],
+			]
 		);
 
 		// Register deactivate plugin.
@@ -142,98 +163,72 @@ class Plugins extends Controller_Base {
 	 *
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response|
 	 */
-	public function install_plugins( WP_REST_Request $request ) {
+	public function install_plugins( $request ) {
 		set_time_limit( 0 );
 
-		$response = [];
-
-		$data = json_decode( $request->get_body() );
-
+		$data  = json_decode( $request->get_body() );
 		$check = $this->check_slug( $data );
 
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
 
-		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-
-		if ( ! class_exists( 'WP_Ajax_Upgrader_Skin' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-ajax-upgrader-skin.php';
-		}
-
-		if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
-		}
-
-		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-
-		if ( ! function_exists( 'is_plugin_active' ) || ! function_exists( 'get_plugin_data' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
 		$skin         = new WP_Ajax_Upgrader_Skin();
 		$upgrader     = new Plugin_Upgrader( $skin );
 		$is_installed = false;
 		$response     = [];
-		$plugins      = $data->slugs;
+		$plugins_data = $this->get_plugins();
 
-		foreach ( $plugins as $plugin ) {
-			$status = array( 'status' => false );
-			$slug   = $this->get_slug( $plugin );
+		foreach ( $data->slugs as $plugin ) {
+			$plugin      = sanitize_text_field( wp_unslash( $plugin ) );
+			$slug        = $this->get_slug( $plugin );
+			$plugin_data = $plugins_data[ $plugin ] ?? false;
 
-			if ( ! $this->is_plugin_exists( $plugin ) ) {
-				$api = plugins_api(
-					'plugin_information',
-					array(
-						'slug'   => $slug,
-						'fields' => array(
-							'sections' => false,
-						),
-					)
-				);
-
-				if ( is_wp_error( $api ) ) {
-					$status['message'] = $api->get_error_message();
-					continue;
-				}
-
-				$result = $upgrader->install( $api->download_link );
-
-				if ( is_wp_error( $result ) ) {
-					$status['message'] = $result->get_error_message();
-				} elseif ( is_wp_error( $skin->result ) ) {
-					$status['message'] = $skin->result->get_error_message();
-				} elseif ( $skin->get_errors()->has_errors() ) {
-					$status['message'] = $skin->get_error_messages();
-				} elseif ( is_null( $result ) ) {
-					global $wp_filesystem;
-
-					// Pass through the error from WP_Filesystem if one was raised.
-					if ( $wp_filesystem instanceof WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
-						$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
-					} else {
-						$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.' );
-					}
-				}
-
-				if ( ! isset( $status['message'] ) ) {
-					$status['status']  = true;
-					$status['message'] = sprintf( __( '%s installed.', 'uptime' ), $slug );
-					$is_installed      = true;
-				}
-
-			} else {
-				$status['status']  = false;
-				$status['message'] = sprintf( __( '%s already exists.', 'uptime' ), $slug );
+			if ( $plugin_data ) {
+				$response[ $plugin ] = [
+					'status'  => false,
+					'message' => sprintf( __( '%s already exists.', 'uptime' ), $plugin_data['Name'] ),
+				];
+				continue;
 			}
-			$response[ $plugin ] = $status;
 
+			$api = plugins_api( 'plugin_information', [ 'slug' => $slug, 'fields' => [ 'sections' => false ] ] );
+
+			if ( is_wp_error( $api ) ) {
+				$response[ $plugin ] = [
+					'status'  => false,
+					'message' => $api->get_error_message(),
+				];
+				continue;
+			}
+
+			$status = [ 'status' => false ];
+			$result = $upgrader->install( $api->download_link );
+
+			if ( false === $result ) {
+				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptime' ) );
+			}
+
+			if ( is_wp_error( $result ) ) {
+				$status['message'] = $result->get_error_message();
+			} elseif ( is_wp_error( $skin->result ) ) {
+				$status['message'] = $skin->result->get_error_message();
+			} elseif ( $skin->get_errors()->has_errors() ) {
+				$status['message'] = $skin->get_error_messages();
+			} else {
+				$plugin_file       = '/' . $result[ $plugin ]['destination_name'];
+				$plugin_data_new   = get_plugins( $plugin_file );
+				$plugin_data_new   = $plugin_data_new[ plugin_basename( $plugin_file ) ];
+				$status['status']  = true;
+				$status['message'] = sprintf( __( '%s installed.', 'uptime' ), $plugin_data_new['Name'] );
+				$is_installed      = true;
+			}
+
+			$response[ $plugin ] = $status;
 		}
 
 		$response = [ 'status' => true, 'data' => $response ];
+
 		if ( $is_installed ) {
 			$this->add_extra_data( $response );
 		}
@@ -248,23 +243,21 @@ class Plugins extends Controller_Base {
 	 */
 	public function activate_plugins( $request ) {
 		set_time_limit( 0 );
-		$data = json_decode( $request->get_body() );
 
+		$data  = json_decode( $request->get_body() );
 		$check = $this->check_slug( $data );
 
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
 
-		if ( ! function_exists( 'is_plugin_active' ) || ! function_exists( 'get_plugin_data' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
 
 		$response     = [];
 		$changed      = false;
 		$plugins_data = $this->get_plugins();
 
 		foreach ( $data->slugs as $plugin ) {
+			$plugin      = sanitize_text_field( wp_unslash( $plugin ) );
 			$plugin_data = $plugins_data[ $plugin ] ?? false;
 
 			if ( ! $plugin_data ) {
@@ -278,32 +271,33 @@ class Plugins extends Controller_Base {
 				continue;
 			}
 
-			$status = [];
-
-			$plugin = esc_attr( $plugin );
-
 			if ( is_plugin_active( $plugin ) ) {
-				$status = [
+				$response[ $plugin ] = [
 					'status'  => false,
 					'message' => sprintf( __( '“%s” already active', 'uptime' ), $plugin_data['Name'] ),
 				];
-			} else {
-				$activate = activate_plugin( $plugin, '', false, false );
 
-				if ( is_wp_error( $activate ) ) {
-					$status['status']  = false;
-					$status['message'] = sprintf( __( 'Error activating “%1$s”. Error: %2$s', 'uptime' ), $plugin_data['Name'], $activate->get_error_message() );
-				} else {
-					$status['status']  = true;
-					$status['message'] = sprintf( __( '“%s” activated', 'uptime' ), $plugin_data['Name'] );
-					$changed           = true;
-				}
+				continue;
+			}
+
+			$status   = [ 'status' => false ];
+			$activate = activate_plugin( $plugin, '', false, false );
+
+			if ( is_wp_error( $activate ) ) {
+				$status['message'] = sprintf( __( 'Error activating “%1$s”. Error: %2$s', 'uptime' ), $plugin_data['Name'], $activate->get_error_message() );
+			} else {
+				$status['status']  = true;
+				$status['message'] = sprintf( __( '“%s” activated', 'uptime' ), $plugin_data['Name'] );
+				$changed           = true;
 			}
 
 			$response[ $plugin ] = $status;
 		}
 
-		$response = [ 'status' => true, 'data' => $response ];
+		$response = [
+			'status' => true,
+			'data'   => $response,
+		];
 
 		if ( $changed ) {
 			$this->add_extra_data( $response );
@@ -320,26 +314,21 @@ class Plugins extends Controller_Base {
 	public function deactivate_plugins( WP_REST_Request $request ) {
 		set_time_limit( 0 );
 
-		$data = json_decode( $request->get_body() );
-
+		$data  = json_decode( $request->get_body() );
 		$check = $this->check_slug( $data );
 
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
 
-		if ( ! function_exists( 'deactivate_plugins' ) || ! function_exists( 'get_plugin_data' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
 		$response     = [];
-		$plugins      = $data->slugs;
 		$changed      = false;
 		$plugins_data = $this->get_plugins();
 
-		$this->self_check( $plugins, $response, $plugins_data );
+		$this->self_check( $data->slugs, $response );
 
-		foreach ( $plugins as $plugin ) {
+		foreach ( $data->slugs as $plugin ) {
+			$plugin      = sanitize_text_field( wp_unslash( $plugin ) );
 			$plugin_data = $plugins_data[ $plugin ] ?? false;
 
 			if ( ! $plugin_data ) {
@@ -396,27 +385,22 @@ class Plugins extends Controller_Base {
 	public function uninstall_plugins( WP_REST_Request $request ) {
 		set_time_limit( 0 );
 
-		$data = json_decode( $request->get_body() );
-
+		$data  = json_decode( $request->get_body() );
 		$check = $this->check_slug( $data );
 
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
 
-		if ( ! function_exists( 'is_plugin_active' ) || ! function_exists( 'get_plugin_data' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
 		$response     = [];
-		$plugins      = $data->slugs;
 		$changed      = false;
 		$plugins_data = $this->get_plugins();
 
 		// Prevent from uninstall self.
-		$this->self_check( $plugins, $response, $plugins_data );
+		$this->self_check( $data->slugs, $response );
 
-		foreach ( $plugins as $plugin ) {
+		foreach ( $data->slugs as $plugin ) {
+			$plugin      = sanitize_text_field( wp_unslash( $plugin ) );
 			$plugin_data = $plugins_data[ $plugin ] ?? false;
 
 			if ( ! $plugin_data ) {
@@ -430,27 +414,37 @@ class Plugins extends Controller_Base {
 				continue;
 			}
 
-			$status = [];
+			if ( is_plugin_active( $plugin ) ) {
+				$response[ $plugin ] = [
+					'status'  => false,
+					'message' => __( 'Failed to uninstallation “%s”. This Plugin is currently Active.', 'uptime' ),
+				];
 
-			if ( is_uninstallable_plugin( $plugin ) ) {
-				uninstall_plugin( $plugin );
-
-				if ( is_plugin_active( $plugin ) ) {
-					$status['status']  = false;
-					$status['message'] = __( 'Failed to uninstallation “%s”. This Plugin is currently Active.', 'uptime' );
-				} else {
-					$status  = [
-						'status'  => true,
-						'message' => sprintf( __( '“%s” uninstalled successfully.', 'uptime' ), $plugin_data['Name'] ),
-					];
-					$changed = true;
-				}
-			} else {
-				$status['status']  = false;
-				$status['message'] = sprintf( __( "“%s” can't be uninstalled.", 'uptime' ), $plugin_data['Name'] );
+				continue;
 			}
 
-			$response[ $plugin ] = $status;
+			if ( ! is_uninstallable_plugin( $plugin ) ) {
+				$response[ $plugin ] = [
+					'status'  => false,
+					'message' => sprintf( __( 'Plugin “%s” can not be uninstalled.', 'uptime' ), $plugin_data['Name'] ),
+				];
+
+				continue;
+			}
+
+			if ( true === uninstall_plugin( $plugin ) ) {
+				$response[ $plugin ] = [
+					'status'  => true,
+					'message' => sprintf( __( 'Plugin “%s” uninstalled successfully.', 'uptime' ), $plugin_data['Name'] ),
+				];
+
+				$changed = true;
+			} else {
+				$response[ $plugin ] = [
+					'status'  => true,
+					'message' => sprintf( __( 'Plugin “%s” does not have uninstall.php included.', 'uptime' ), $plugin_data['Name'] ),
+				];
+			}
 		}
 
 		$response = [ 'status' => true, 'data' => $response ];
@@ -469,31 +463,23 @@ class Plugins extends Controller_Base {
 	 */
 	public function delete_plugins( WP_REST_Request $request ) {
 		set_time_limit( 0 );
-		$data = json_decode( $request->get_body() );
 
+		$data  = json_decode( $request->get_body() );
 		$check = $this->check_slug( $data );
 
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
 
-		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-
-		if ( ! function_exists( 'delete_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
 		$response     = [];
-		$plugins      = $data->slugs;
 		$changed      = false;
 		$plugins_data = $this->get_plugins();
 
 		// Prevent from delete self.
-		$this->self_check( $plugins, $response, $plugins_data );
+		$this->self_check( $data->slugs, $response );
 
-		foreach ( $plugins as $plugin ) {
+		foreach ( $data->slugs as $plugin ) {
+			$plugin      = sanitize_text_field( wp_unslash( $plugin ) );
 			$plugin_data = $plugins_data[ $plugin ] ?? false;
 
 			if ( ! $plugin_data ) {
@@ -507,20 +493,14 @@ class Plugins extends Controller_Base {
 				continue;
 			}
 
-			$plugin = plugin_basename( sanitize_text_field( wp_unslash( $plugin ) ) );
-
+			$plugin  = plugin_basename( $plugin );
 			$deleted = delete_plugins( [ $plugin ] );
 
 			if ( null === $deleted ) {
-				$count    = count( $plugins );
-				$response = [
-					'status'  => false,
-					'message' => _n( 'Unable to delete plugin. Filesystem is readonly.', 'Unable to delete plugins. Filesystem is readonly.', $count, 'uptime' ),
-				];
-				// file system is not writable, we can't delete anything, no need to loop.
-				// break;
-				return rest_ensure_response( $response );
-			} else if ( is_wp_error( $deleted ) ) {
+				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptime' ) );
+			}
+
+			if ( is_wp_error( $deleted ) ) {
 				$status = [
 					'status'  => false,
 					'message' => sprintf( __( 'Failed to delete “%1$s”. Error: %2$s', 'uptime' ), $plugin_data['Name'], $deleted->get_error_message() ),
@@ -533,7 +513,6 @@ class Plugins extends Controller_Base {
 				$changed = true;
 			}
 
-			$status['$deleted'] = $deleted;
 			$response[ $plugin ] = $status;
 		}
 
@@ -563,30 +542,23 @@ class Plugins extends Controller_Base {
 			return $check;
 		}
 
-		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-
-		if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
-		}
-
-		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-
 		$response     = [];
-		$plugins      = $data->slugs;
 		$changed      = false;
 		$plugins_data = $this->get_plugins();
 
 		// Prevent from uninstall self.
-		$this->self_check( $plugins, $response, $plugins_data );
+		$this->self_check( $data->slugs, $response );
 
+		// checking update can output error if system failed to connect wp.org api.
+		ob_start();
 		wp_update_plugins();
+		ob_get_clean();
 
 		$skin     = new WP_Ajax_Upgrader_Skin();
 		$upgrader = new Plugin_Upgrader( $skin );
 
-		foreach ( $plugins as $plugin ) {
+		foreach ( $data->slugs as $plugin ) {
+			$plugin      = sanitize_text_field( wp_unslash( $plugin ) );
 			$plugin_data = $plugins_data[ $plugin ] ?? false;
 
 			if ( ! $plugin_data ) {
@@ -595,66 +567,46 @@ class Plugins extends Controller_Base {
 					'message' => sprintf( __( 'Plugin (%s) does not exists.', 'uptime' ), $plugin ),
 				];
 
+				// Send plugin list to uptime.
 				$changed = true;
 
 				continue;
 			}
 
-			$status = [];
+			$plugin  = plugin_basename( sanitize_text_field( wp_unslash( $plugin ) ) );
+			$results = $upgrader->bulk_upgrade( [ $plugin ] );
+			$result  = isset( $results[ $plugin ] ) ? $results[ $plugin ] : false;
 
-			$plugin = plugin_basename( sanitize_text_field( wp_unslash( $plugin ) ) );
-			$result = $upgrader->bulk_upgrade( [ $plugin ] );
+			if ( false === $results || false === $result ) {
+				// File system is not writable, we can't update anything, no need to loop.
+				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptime' ) );
+			}
 
-			$status['status'] = true;
+			$status = [ 'status' => false ];
 			if ( is_wp_error( $skin->result ) ) {
-				$status['status']  = false;
 				$status['message'] = sprintf( __( 'Failed to update “%1$s”. Error: %2$s', 'uptime' ), $plugin_data['Name'], $skin->result->get_error_message() );
 			} elseif ( $skin->get_errors()->has_errors() ) {
-				$status['status']  = false;
 				$status['message'] = sprintf( __( 'Failed to update “%1$s”. Error: %2$s', 'uptime' ), $plugin_data['Name'], $skin->get_error_messages() );
-			} elseif ( is_array( $result ) && ! empty( $result[ $plugin ] ) ) {
-				/*
-				 * Plugin is already at the latest version.
-				 *
-				 * This may also be the return value if the `update_plugins` site transient is empty,
-				 * e.g. when you update two plugins in quick succession before the transient repopulates.
-				 *
-				 * Preferably something can be done to ensure `update_plugins` isn't empty.
-				 * For now, surface some sort of error here.
-				 */
-				if ( true === $result[ $plugin ] ) {
-					$status['message'] = sprintf( __( '“%s” is at the latest version.', 'uptime' ), $plugin_data['Name'] );
-				} else {
-					$plugin_data_new   = get_plugins( '/' . $result[ $plugin ]['destination_name'] );
-					$plugin_data_new   = reset( $plugin_data_new );
-					$version           = ! empty( $plugin_data['Version'] ) ? $plugin_data['Version'] : __( 'Unknown', 'uptime' );
-					$version_new       = ! empty( $plugin_data_new['Version'] ) ? $plugin_data_new['Version'] : '';
-					$status['message'] = sprintf( __( '“%1$s” Updated from version %2$s to %3$s.', 'uptime' ), $plugin_data['Name'], $version, $version_new );
-					$changed           = true;
-				}
-			} elseif ( false === $result ) {
-				$count    = count( $plugins );
-				$response = [
-					'status'  => false,
-					'message' => _n( 'Unable to delete plugin. Filesystem is readonly.', 'Unable to delete plugins. Filesystem is readonly.', $count, 'uptime' ),
-				];
-				// file system is not writable, we can't delete anything, no need to loop.
-				// break;
-				return rest_ensure_response( $response );
-
-				/*global $wp_filesystem;
-				// Pass through the error from WP_Filesystem if one was raised.
-				if ( $wp_filesystem instanceof WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
-					$status['message'] = esc_html( $wp_filesystem->errors->get_error_message() );
-				} else {
-					$status['message'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'uptimemonster-site-monitor' );
-				}*/
+			} elseif ( true === $result ) {
+				$status['message'] = sprintf( __( '“%s” is at the latest version.', 'uptime' ), $plugin_data['Name'] );
+			} else {
+				$status['status']  = true;
+				$plugin_file       = '/' . $result[ $plugin ]['destination_name'];
+				$plugin_data_new   = get_plugins( $plugin_file );
+				$plugin_data_new   = $plugin_data_new[ plugin_basename( $plugin_file ) ];
+				$version           = ! empty( $plugin_data['Version'] ) ? $plugin_data['Version'] : __( 'Unknown', 'uptime' );
+				$version_new       = ! empty( $plugin_data_new['Version'] ) ? $plugin_data_new['Version'] : '';
+				$status['message'] = sprintf( __( '“%1$s” Updated from version %2$s to %3$s.', 'uptime' ), $plugin_data['Name'], $version, $version_new );
+				$changed           = true;
 			}
 
 			$response[ $plugin ] = $status;
 		}
 
-		$response = [ 'status' => true, 'data' => $response ];
+		$response = [
+			'status' => true,
+			'data'   => $response,
+		];
 
 		if ( $changed ) {
 			$this->add_extra_data( $response );
@@ -671,10 +623,10 @@ class Plugins extends Controller_Base {
 	private function get_slug( $plugin_path ) {
 
 		if ( strpos( $plugin_path, '/' ) > 0 ) {
-			$temparr = explode( '/', $plugin_path );
+			$temp = explode( '/', $plugin_path );
 
-			if ( isset( $temparr[0] ) ) {
-				return $temparr[0];
+			if ( isset( $temp[0] ) ) {
+				return $temp[0];
 			}
 
 		}
@@ -687,28 +639,15 @@ class Plugins extends Controller_Base {
 	 */
 	protected function get_plugins() {
 		if ( null === self::$installed_plugins ) {
-			if ( ! function_exists( 'get_plugins' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/plugin.php';
-			}
 			self::$installed_plugins = apply_filters( 'all_plugins', get_plugins() );
 		}
 
 		return self::$installed_plugins;
 	}
 
-	/**
-	 * @param $plugin
-	 *
-	 * @return bool
-	 */
-	private function is_plugin_exists( $plugin ): bool {
-		$plugins = $this->get_plugins();
-
-		return isset( $plugins[ $plugin ] );
-	}
-
-	protected function self_check( &$plugins, &$response, $plugins_data ) {
-		$plugins = array_filter( $plugins ); // clean up.
+	protected function self_check( &$plugins, &$response ) {
+		$plugins_data = $this->get_plugins();
+		$plugins      = array_filter( $plugins ); // clean up.
 
 		if ( in_array( UMSM_PLUGIN_BASENAME, $plugins, true ) ) {
 			$plugins = array_flip( $plugins );
@@ -725,28 +664,9 @@ class Plugins extends Controller_Base {
 	}
 
 	/**
-	 * @param $plugins
-	 *
-	 * @return array|WP_Error|WP_HTTP_Response|WP_REST_Response
-	 */
-	private function existed_plugins( $plugins ) {
-		$existed_plugins = [];
-
-		foreach ( $plugins as $plugin ) {
-
-			if ( $this->is_plugin_exists( $plugin ) ) {
-				$existed_plugins[] = $plugin;
-			}
-
-		}
-
-		return $existed_plugins;
-	}
-
-	/**
 	 * @param $data
 	 *
-	 * @return bool|WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @return bool|WP_Error
 	 */
 	private function check_slug( $data ) {
 		if ( empty( $data->slugs ) || ! is_array( $data->slugs ) ) {

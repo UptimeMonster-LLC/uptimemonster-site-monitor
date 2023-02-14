@@ -49,7 +49,6 @@ abstract class Controller_Base extends WP_REST_Controller {
 	 * @return WP_Error|boolean
 	 */
 	public function get_route_access( $request ) {
-		return true;
 		$api_keys = get_option( 'umsm_site_monitor_api_keys', [] );
 
 		if ( empty( $api_keys['api_key'] ) || empty( $api_keys['api_secret'] ) ) {
