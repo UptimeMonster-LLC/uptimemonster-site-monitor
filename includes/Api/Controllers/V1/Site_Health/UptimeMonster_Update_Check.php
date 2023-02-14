@@ -8,6 +8,8 @@
 
 namespace UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health;
 
+use WP_Theme;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );

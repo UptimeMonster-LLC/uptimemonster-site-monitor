@@ -137,6 +137,7 @@ class Themes extends Controller_Base {
 			$theme = wp_get_theme( $slug );
 
 			if ( $theme->exists() ) {
+				$is_installed = true;
 				$response[ $slug ] = [
 					'status'  => false,
 					'message' => sprintf( __( 'Theme %s already installed.', 'uptime' ), (string) $theme ),
@@ -172,8 +173,9 @@ class Themes extends Controller_Base {
 			} elseif ( $skin->get_errors()->has_errors() ) {
 				$status['message'] = $skin->get_error_messages();
 			} else {
+				$theme = wp_get_theme( $slug );
 				$status['status']  = true;
-				$status['message'] = sprintf( __( 'Theme %s  installed.', 'uptime' ), $slug );
+				$status['message'] = sprintf( __( 'Theme %s successfully installed.', 'uptime' ), (string) $theme );
 				$is_installed      = true;
 			}
 
@@ -268,9 +270,10 @@ class Themes extends Controller_Base {
 			$theme = wp_get_theme( $slug );
 
 			if ( ! $theme->exists() ) {
+				$is_deleted = true;
 				$response[ $slug ] = [
 					'status'  => false,
-					'message' => sprintf( __( 'Theme (%s) does not exists.', 'uptime' ), $slug ),
+					'message' => sprintf( __( 'Theme (%s) does not exists or already deleted.', 'uptime' ), $slug ),
 				];
 
 				continue;
