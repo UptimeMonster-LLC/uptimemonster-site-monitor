@@ -209,15 +209,17 @@ class Plugins extends Controller_Base {
 				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptime' ) );
 			}
 
+			/* translators: 1. Theme/plugin name, 2. Error details */
+			$failed = __( '%1$s installation failed. Error: %2$s', 'uptime' );
 			if ( is_wp_error( $result ) ) {
-				$status['message'] = $result->get_error_message();
+				$status['message'] = sprintf( $failed, $api->name, $result->get_error_message() );
 			} elseif ( is_wp_error( $skin->result ) ) {
-				$status['message'] = $skin->result->get_error_message();
+				$status['message'] = sprintf( $failed, $api->name, $skin->result->get_error_message() );
 			} elseif ( $skin->get_errors()->has_errors() ) {
-				$status['message'] = $skin->get_error_messages();
+				$status['message'] = sprintf( $failed, $api->name, $skin->get_error_messages() );
 			} else {
 				$status['status']  = true;
-				$status['message'] = sprintf( __( 'Plugin %s installed.', 'uptime' ), $api->name );
+				$status['message'] = sprintf( __( 'Plugin %s successfully installed.', 'uptime' ), $api->name );
 				$is_installed      = true;
 			}
 
@@ -580,10 +582,13 @@ class Plugins extends Controller_Base {
 			}
 
 			$status = [ 'status' => false ];
+
+			/* translators: 1. Theme/plugin name, 2. Error details */
+			$failed = __( 'Failed to update %1$s. Error: %2$s', 'uptime' );
 			if ( is_wp_error( $skin->result ) ) {
-				$status['message'] = sprintf( __( 'Failed to update “%1$s”. Error: %2$s', 'uptime' ), $plugin_data['Name'], $skin->result->get_error_message() );
+				$status['message'] = sprintf( $failed, $plugin_data['Name'], $skin->result->get_error_message() );
 			} elseif ( $skin->get_errors()->has_errors() ) {
-				$status['message'] = sprintf( __( 'Failed to update “%1$s”. Error: %2$s', 'uptime' ), $plugin_data['Name'], $skin->get_error_messages() );
+				$status['message'] = sprintf( $failed, $plugin_data['Name'], $skin->get_error_messages() );
 			} elseif ( true === $result ) {
 				$status['message'] = sprintf( __( '“%s” is at the latest version.', 'uptime' ), $plugin_data['Name'] );
 			} else {

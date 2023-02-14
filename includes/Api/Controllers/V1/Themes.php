@@ -166,12 +166,15 @@ class Themes extends Controller_Base {
 
 			$status = [ 'status' => false ];
 
+			/* translators: 1. Theme/plugin name, 2. Error details */
+			$failed = __( '%1$s installation failed. Error: %2$s', 'uptime' );
+
 			if ( is_wp_error( $result ) ) {
-				$status['message'] = $result->get_error_message();
+				$status['message'] = sprintf( $failed, $api->name, $result->get_error_message() );
 			} elseif ( is_wp_error( $skin->result ) ) {
-				$status['message'] = $skin->result->get_error_message();
+				$status['message'] = sprintf( $failed, $api->name, $skin->result->get_error_message() );
 			} elseif ( $skin->get_errors()->has_errors() ) {
-				$status['message'] = $skin->get_error_messages();
+				$status['message'] = sprintf( $failed, $api->name, $skin->get_error_messages() );
 			} else {
 				$theme = wp_get_theme( $slug );
 				$status['status']  = true;
@@ -383,10 +386,13 @@ class Themes extends Controller_Base {
 
 			$status = [ 'status' => false ];
 
+			/* translators: 1. Theme/plugin name, 2. Error details */
+			$failed = __( 'Failed to update %1$s. Error: %2$s', 'uptime' );
+
 			if ( is_wp_error( $skin->result ) ) {
-				$status['message'] = $skin->result->get_error_message();
+				$status['message'] = sprintf( $failed, (string) $theme, $skin->result->get_error_message() );
 			} elseif ( $skin->get_errors()->has_errors() ) {
-				$status['message'] = $skin->get_error_messages();
+				$status['message'] = sprintf( $failed, (string) $theme, $skin->get_error_messages() );
 			} elseif ( true === $result ) {
 				// Theme is already at the latest version.
 				$status['message'] = $upgrader->strings['up_to_date'];
