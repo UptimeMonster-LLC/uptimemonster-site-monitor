@@ -505,7 +505,7 @@ class Plugins extends Controller_Base {
 			} else {
 				$status  = [
 					'status'  => true,
-					'message' => sprintf( __( '“%s” was deleted successfully.', 'uptime' ), $plugin_data['Name'] ),
+					'message' => sprintf( __( 'Plugin %s successfully deleted.', 'uptime' ), $plugin_data['Name'] ),
 				];
 				$changed = true;
 			}
