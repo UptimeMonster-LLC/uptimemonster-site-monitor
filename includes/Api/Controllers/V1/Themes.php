@@ -317,7 +317,7 @@ class Themes extends Controller_Base {
 				$status['message'] = sprintf( __( 'Unable to delete requested theme (%s).', 'uptime' ), (string) $theme );
 			} else {
 				$status['status']  = true;
-				$status['message'] = sprintf( __( 'Theme %s has been deleted.', 'uptime' ), (string) $theme );
+				$status['message'] = sprintf( __( 'Theme %s successfully deleted.', 'uptime' ), (string) $theme );
 				$is_deleted        = true;
 			}
 
