@@ -540,6 +540,7 @@ class Plugins extends Controller_Base {
 		$response = [ 'status' => true, 'data' => $response ];
 
 		if ( $changed ) {
+			wp_clean_plugins_cache();
 			$this->add_extra_data( $response );
 		}
 
