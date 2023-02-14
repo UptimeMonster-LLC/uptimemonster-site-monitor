@@ -187,7 +187,7 @@ class Plugins extends Controller_Base {
 			if ( $plugin_data ) {
 				$response[ $plugin ] = [
 					'status'  => false,
-					'message' => sprintf( __( '%s already exists.', 'uptime' ), $plugin_data['Name'] ),
+					'message' => sprintf( __( '%s already installed.', 'uptime' ), $plugin_data['Name'] ),
 				];
 				continue;
 			}
@@ -216,11 +216,8 @@ class Plugins extends Controller_Base {
 			} elseif ( $skin->get_errors()->has_errors() ) {
 				$status['message'] = $skin->get_error_messages();
 			} else {
-				$plugin_file       = '/' . $result[ $plugin ]['destination_name'];
-				$plugin_data_new   = get_plugins( $plugin_file );
-				$plugin_data_new   = $plugin_data_new[ plugin_basename( $plugin_file ) ];
 				$status['status']  = true;
-				$status['message'] = sprintf( __( '%s installed.', 'uptime' ), $plugin_data_new['Name'] );
+				$status['message'] = sprintf( __( 'Plugin %s installed.', 'uptime' ), $api->name );
 				$is_installed      = true;
 			}
 
