@@ -98,7 +98,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 	 * @throws Exception
 	 */
 	public function on_updated( $user, $old_user_data ) {
-		$this->log_user( Activity_Monitor_Base::ITEM_REGISTERED, $user, [ 'old' => $old_user_data->to_array() ] );
+		$this->log_user( Activity_Monitor_Base::ITEM_UPDATED, $user, [ 'old' => $old_user_data->to_array() ] );
 	}
 
 	public function on_deleted( $id, $reassign, $user ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-02-12T12:38:01+06:00\n"
+"POT-Creation-Date: 2023-02-14T21:31:49+06:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: uptime\n"
@@ -34,173 +34,185 @@ msgstr ""
 msgid "https://pixelaar.com/"
 msgstr ""
 
-#: includes/Api/Controllers/Controller_Base.php:56
+#: includes/Api/Controllers/Controller_Base.php:55
 msgid "Invalid API Keys, Update Plugin Settings."
 msgstr ""
 
-#: includes/Api/Controllers/Controller_Base.php:82
+#: includes/Api/Controllers/Controller_Base.php:81
 msgid "Invalid Signature"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Core_Update.php:160
+#: includes/Api/Controllers/V1/Core_Update.php:164
 msgid "WordPress is at the latest minor release."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Core_Update.php:227
+#: includes/Api/Controllers/V1/Core_Update.php:231
 msgid "WordPress updated successfully."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Core_Update.php:233
+#: includes/Api/Controllers/V1/Core_Update.php:237
 msgid "WordPress is up to date."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Core_Update.php:556
+#: includes/Api/Controllers/V1/Core_Update.php:550
 msgid "Unsupported argument type passed"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:224
-msgid "%s installed."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:230
-msgid "%s already exists."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:273
-#: includes/Api/Controllers/V1/Plugins.php:348
-#: includes/Api/Controllers/V1/Plugins.php:425
-#: includes/Api/Controllers/V1/Plugins.php:502
-#: includes/Api/Controllers/V1/Plugins.php:594
-msgid "Plugin (%s) does not exists."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:288
-msgid "“%s” already active"
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:295
-msgid "Error activating “%1$s”. Error: %2$s"
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:298
-msgid "“%s” activated"
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:359
-msgid "“%s” already inactive."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:368
-msgid "Unable to deactivated “%s”."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:372
-msgid "“%s” deactivated."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:440
-msgid "Failed to uninstallation “%s”. This Plugin is currently Active."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:444
-msgid "“%s” uninstalled successfully."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:450
-msgid "“%s” can't be uninstalled."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:518
-#: includes/Api/Controllers/V1/Plugins.php:638
-msgid "Unable to delete plugin. Filesystem is readonly."
-msgid_plural "Unable to delete plugins. Filesystem is readonly."
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/Api/Controllers/V1/Plugins.php:526
-msgid "Failed to delete “%1$s”. Error: %2$s"
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:531
-msgid "“%s” was deleted successfully."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:610
-#: includes/Api/Controllers/V1/Plugins.php:613
-msgid "Failed to update “%1$s”. Error: %2$s"
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:625
-msgid "“%s” is at the latest version."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:629
-msgid "Unknown"
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:631
-msgid "“%1$s” Updated from version %2$s to %3$s."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:719
-msgid "Self (%s) destruction is prohibited"
-msgstr ""
-
-#: includes/Api/Controllers/V1/Plugins.php:752
-msgid "No plugin specified."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Themes.php:104
-#: includes/Api/Controllers/V1/Themes.php:214
-#: includes/Api/Controllers/V1/Themes.php:268
-#: includes/Api/Controllers/V1/Themes.php:371
-msgid "No theme specified."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Themes.php:163
-#: includes/Api/Controllers/V1/Themes.php:305
-#: includes/Api/Controllers/V1/Themes.php:423
-msgid "Unable to connect to the filesystem. Please confirm your credentials."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Themes.php:170
-msgid "%s  installed."
-msgstr ""
-
-#: includes/Api/Controllers/V1/Themes.php:176
+#: includes/Api/Controllers/V1/Plugins.php:190
 msgid "%s already installed."
 msgstr ""
 
+#: includes/Api/Controllers/V1/Plugins.php:209
+#: includes/Api/Controllers/V1/Plugins.php:499
+#: includes/Api/Controllers/V1/Plugins.php:581
+#: includes/Api/Controllers/V1/Themes.php:164
+#: includes/Api/Controllers/V1/Themes.php:386
+#: includes/helpers.php:536
+msgid "Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php."
+msgstr ""
+
+#. translators: 1. Theme/plugin name, 2. Error details
+#: includes/Api/Controllers/V1/Plugins.php:213
+#: includes/Api/Controllers/V1/Themes.php:170
+msgid "%1$s installation failed. Error: %2$s"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:222
+#: includes/Api/Controllers/V1/Themes.php:181
+msgid "%s successfully installed."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:265
+#: includes/Api/Controllers/V1/Plugins.php:336
+#: includes/Api/Controllers/V1/Plugins.php:408
+#: includes/Api/Controllers/V1/Plugins.php:487
+#: includes/Api/Controllers/V1/Plugins.php:566
+msgid "Plugin %s does not exists or already deleted."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:276
+msgid "“%s” already active"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:286
+msgid "Error activating “%1$s”. Error: %2$s"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:289
+msgid "“%s” activated"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:347
+msgid "“%s” already inactive."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:356
+msgid "Unable to deactivated “%s”."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:360
+msgid "“%s” deactivated."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:419
+msgid "Failed to uninstallation “%s”. This Plugin is currently Active."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:428
+msgid "Plugin “%s” can not be uninstalled."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:437
+msgid "Plugin “%s” uninstalled successfully."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:444
+msgid "Plugin “%s” does not have uninstall.php included."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:505
+msgid "Failed to delete “%1$s”. Error: %2$s"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:510
+#: includes/Api/Controllers/V1/Themes.php:326
+msgid "%s successfully deleted."
+msgstr ""
+
+#. translators: 1. Theme/plugin name, 2. Error details
+#: includes/Api/Controllers/V1/Plugins.php:587
+#: includes/Api/Controllers/V1/Themes.php:393
+msgid "Failed to update %1$s. Error: %2$s"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:593
+msgid "“%s” is at the latest version."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:599
+msgid "Unknown"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:601
+msgid "“%1$s” Updated from version %2$s to %3$s."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:661
+msgid "Self (%s) destruction is prohibited"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Plugins.php:675
+msgid "No plugin specified."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Themes.php:127
+#: includes/Api/Controllers/V1/Themes.php:213
+#: includes/Api/Controllers/V1/Themes.php:268
+#: includes/Api/Controllers/V1/Themes.php:353
+msgid "No theme specified."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Themes.php:143
+msgid "Theme %s already installed."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Themes.php:219
+msgid "Requested theme already been activated."
+msgstr ""
+
 #: includes/Api/Controllers/V1/Themes.php:227
-msgid "Theme already active."
+msgid "Requested theme is not installed."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:231
-msgid "Theme activated."
+#: includes/Api/Controllers/V1/Themes.php:241
+msgid "%s successfully activated."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:236
-msgid "Theme does'nt exists."
+#: includes/Api/Controllers/V1/Themes.php:246
+msgid "Unable to activate requested theme (%s)."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:314
-msgid "%s is active theme. You cannot delete an active theme."
+#: includes/Api/Controllers/V1/Themes.php:282
+msgid "Theme %s does not exists or already deleted."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:324
-msgid "Theme could not be deleted."
+#: includes/Api/Controllers/V1/Themes.php:304
+msgid "%s is the active theme. You cannot delete an active theme."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:329
-msgid "%s deleted."
+#: includes/Api/Controllers/V1/Themes.php:312
+msgid "%s is the parent theme of active theme. You cannot delete parent theme of active theme."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:335
-#: includes/Api/Controllers/V1/Themes.php:435
-msgid "%s does'nt exists."
+#: includes/Api/Controllers/V1/Themes.php:323
+msgid "Unable to delete requested theme (%s)."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:430
+#: includes/Api/Controllers/V1/Themes.php:373
+msgid "Theme %s does not exists."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Themes.php:404
 msgid "%s  updated."
 msgstr ""
 
@@ -419,11 +431,11 @@ msgstr ""
 msgid "Cloning is forbidden."
 msgstr ""
 
-#: includes/UptimeMonster_Client.php:142
+#: includes/UptimeMonster_Client.php:141
 msgid "Missing API Keys."
 msgstr ""
 
-#: includes/UptimeMonster_Client.php:219
+#: includes/UptimeMonster_Client.php:218
 msgid "Something went wrong"
 msgstr ""
 
