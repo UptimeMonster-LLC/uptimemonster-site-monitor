@@ -176,7 +176,6 @@ final class UptimeMonster_Site_Monitor {
 	 *      - WP_LANG_DIR/plugins/woocommerce-LOCALE.mo
 	 */
 	public function load_plugin_textdomain() {
-
 		if ( ! function_exists('determine_locale') ) {
 			require_once ABSPATH . 'wp-includes/l10n.php';
 		}

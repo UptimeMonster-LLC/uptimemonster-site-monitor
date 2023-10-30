@@ -344,92 +344,92 @@ function get_site_health_tests() {
 	return [
 		'direct' => [
 			'wordpress_version'         => [
-				'label' => __( 'WordPress Version' ),
+				'label' => __( 'WordPress Version', 'uptimemonster-site-monitor' ),
 				'test'  => 'wordpress_version',
 			],
 			'plugin_version'            => [
-				'label' => __( 'Plugin Versions' ),
+				'label' => __( 'Plugin Versions', 'uptimemonster-site-monitor' ),
 				'test'  => 'plugin_version',
 			],
 			'theme_version'             => [
-				'label' => __( 'Theme Versions' ),
+				'label' => __( 'Theme Versions', 'uptimemonster-site-monitor' ),
 				'test'  => 'theme_version',
 			],
 			'php_version'               => [
-				'label' => __( 'PHP Version' ),
+				'label' => __( 'PHP Version', 'uptimemonster-site-monitor' ),
 				'test'  => 'php_version',
 			],
 			'php_extensions'            => [
-				'label' => __( 'PHP Extensions' ),
+				'label' => __( 'PHP Extensions', 'uptimemonster-site-monitor' ),
 				'test'  => 'php_extensions',
 			],
 			'php_default_timezone'      => [
-				'label' => __( 'PHP Default Timezone' ),
+				'label' => __( 'PHP Default Timezone', 'uptimemonster-site-monitor' ),
 				'test'  => 'php_default_timezone',
 			],
 			'php_sessions'              => [
-				'label' => __( 'PHP Sessions' ),
+				'label' => __( 'PHP Sessions', 'uptimemonster-site-monitor' ),
 				'test'  => 'php_sessions',
 			],
 			'sql_server'                => [
-				'label' => __( 'Database Server version' ),
+				'label' => __( 'Database Server version', 'uptimemonster-site-monitor' ),
 				'test'  => 'sql_server',
 			],
 			'utf8mb4_support'           => [
-				'label' => __( 'MySQL utf8mb4 support' ),
+				'label' => __( 'MySQL utf8mb4 support', 'uptimemonster-site-monitor' ),
 				'test'  => 'utf8mb4_support',
 			],
 			'ssl_support'               => [
-				'label' => __( 'Secure communication' ),
+				'label' => __( 'Secure communication', 'uptimemonster-site-monitor' ),
 				'test'  => 'ssl_support',
 			],
 			'scheduled_events'          => [
-				'label' => __( 'Scheduled events' ),
+				'label' => __( 'Scheduled events', 'uptimemonster-site-monitor' ),
 				'test'  => 'scheduled_events',
 			],
 			'http_requests'             => [
-				'label' => __( 'HTTP Requests' ),
+				'label' => __( 'HTTP Requests', 'uptimemonster-site-monitor' ),
 				'test'  => 'http_requests',
 			],
 			'rest_availability'         => [
-				'label'     => __( 'REST API availability' ),
+				'label'     => __( 'REST API availability', 'uptimemonster-site-monitor' ),
 				'test'      => 'rest_availability',
 				'skip_cron' => true,
 			],
 			'debug_enabled'             => [
-				'label' => __( 'Debugging enabled' ),
+				'label' => __( 'Debugging enabled', 'uptimemonster-site-monitor' ),
 				'test'  => 'is_in_debug_mode',
 			],
 			'file_uploads'              => [
-				'label' => __( 'File uploads' ),
+				'label' => __( 'File uploads', 'uptimemonster-site-monitor' ),
 				'test'  => 'file_uploads',
 			],
 			'plugin_theme_auto_updates' => [
-				'label' => __( 'Plugin and theme auto-updates' ),
+				'label' => __( 'Plugin and theme auto-updates', 'uptimemonster-site-monitor' ),
 				'test'  => 'plugin_theme_auto_updates',
 			],
 		],
 		'async'  => [
 			'dotorg_communication' => [
-				'label'             => __( 'Communication with WordPress.org' ),
+				'label'             => __( 'Communication with WordPress.org', 'uptimemonster-site-monitor' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/dotorg-communication' ),
 				'has_rest'          => true,
 				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_dotorg_communication' ],
 			],
 			'background_updates'   => [
-				'label'             => __( 'Background updates' ),
+				'label'             => __( 'Background updates', 'uptimemonster-site-monitor' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/background-updates' ),
 				'has_rest'          => true,
 				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_background_updates' ],
 			],
 			'loopback_requests'    => [
-				'label'             => __( 'Loopback request' ),
+				'label'             => __( 'Loopback request', 'uptimemonster-site-monitor' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/loopback-requests' ),
 				'has_rest'          => true,
 				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_loopback_requests' ],
 			],
 			'https_status'         => [
-				'label'             => __( 'HTTPS status' ),
+				'label'             => __( 'HTTPS status', 'uptimemonster-site-monitor' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/https-status' ),
 				'has_rest'          => true,
 				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_https_status' ],
@@ -460,8 +460,8 @@ function umsm_parse_boolval( $maybe_bool ): bool {
 
 function umsm_prepare_plugin_data( $plugin ): array {
 	$data = [
-		'author'      => $plugin['Author'] ?: ( $plugin['AuthorName'] ?? 'unavailable' ),
-		'version'     => $plugin['Version'] ?: 'unavailable',
+		'author'      => $plugin['Author'] ? $plugin['Author'] : ( $plugin['AuthorName'] ?? 'unavailable' ),
+		'version'     => $plugin['Version'] ? $plugin['Version'] : 'unavailable',
 		'plugin_uri'  => $plugin['PluginURI'],
 		'author_uri'  => $plugin['AuthorURI'],
 		'network'     => $plugin['Network'],
@@ -492,7 +492,6 @@ function umsm_prepare_plugin_data( $plugin ): array {
  * @return string 'major', 'minor', 'patch'
  */
 function umsm_get_named_sem_ver( $new_version, $original_version ) {
-
 	if ( ! \Composer\Semver\Comparator::greaterThan( $new_version, $original_version ) ) {
 		return '';
 	}

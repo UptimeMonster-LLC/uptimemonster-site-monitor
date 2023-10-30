@@ -59,7 +59,7 @@ if ( ! file_exists( UMSM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
 				<?php
 				printf(
 				/* translators: 1. Download link for production build, 2. composer install command, 3. Plugin installation path for running composer install. */
-					esc_html__( 'It seems that you have downloaded the development version of this plugin from github or other sources. Please download it from %1$s or run %2$s command within %3$s directory.', 'uptime' ),
+					esc_html__( 'It seems that you have downloaded the development version of this plugin from github or other sources. Please download it from %1$s or run %2$s command within %3$s directory.', 'uptimemonster-site-monitor' ),
 					'<a href="https://absoluteplugins.com/wordpress-plugins/uptimemonster-site-monitor/" target="_blank" rel="noopener">UptimeMonster.com</a>',
 					'<code>composer install</code>',
 					'<code>' . esc_html( $install_dir ) . '</code>'

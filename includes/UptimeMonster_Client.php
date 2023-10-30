@@ -185,7 +185,7 @@ class UptimeMonster_Client {
 		}
 
 		/**
-		 * action after request being sent.
+		 * Action after request being sent.
 		 *
 		 * @param array|WP_Error $response raw response returned from wp_remote_request.
 		 * @param array $args request args.

@@ -83,7 +83,6 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 * @throws Exception
 	 */
 	protected function log_activity( $action, $object_id, $subtype, $name, $data = null ) {
-
 		if ( false !== strpos( $subtype, '_transient_' ) || false !== strpos( $subtype, 'action_scheduler_lock_async' ) ) {
 			return;
 		}
