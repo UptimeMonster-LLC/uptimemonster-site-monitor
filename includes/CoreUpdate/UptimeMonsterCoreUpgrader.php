@@ -68,7 +68,7 @@ class UptimeMonsterCoreUpgrader extends DefaultCoreUpgrader {
 	 */
 	public static function error_handler( $errno, $errstr, $errfile, $errline, $errcontext = null ) {
 		// If ignoring E_USER_WARNING | E_USER_NOTICE, default.
-		if ( ! ( error_reporting() & $errno ) ) {
+		if ( ! ( error_reporting() & $errno ) ) { // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_error_reporting
 			return false;
 		}
 

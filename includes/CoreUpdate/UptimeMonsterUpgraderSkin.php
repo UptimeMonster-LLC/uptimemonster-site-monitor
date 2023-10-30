@@ -22,11 +22,6 @@ class UptimeMonsterUpgraderSkin extends WP_Upgrader_Skin {
 
 	public $api;
 
-	public function header() {}
-	public function footer() {}
-	public function bulk_header() {}
-	public function bulk_footer() {}
-
 	/**
 	 * Show error message.
 	 *
@@ -67,11 +62,6 @@ class UptimeMonsterUpgraderSkin extends WP_Upgrader_Skin {
 	 * @param array $args Array of additional arguments to process.
 	 */
 	public function process_feedback( $string, $args ) {
-
-		if ( 'parent_theme_prepare_install' === $string ) {
-			//WP_CLI::get_http_cache_manager()->whitelist_package( $this->api->download_link, 'theme', $this->api->slug, $this->api->version );
-		}
-
 		if ( isset( $this->upgrader->strings[ $string ] ) ) {
 			$string = $this->upgrader->strings[ $string ];
 		}
@@ -86,7 +76,5 @@ class UptimeMonsterUpgraderSkin extends WP_Upgrader_Skin {
 
 		$string = str_replace( '&#8230;', '...', wp_strip_all_tags( $string ) );
 		$string = html_entity_decode( $string, ENT_QUOTES, get_bloginfo( 'charset' ) );
-
-		//WP_CLI::log( $string );
 	}
 }

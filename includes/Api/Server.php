@@ -51,8 +51,6 @@ final class Server {
 	 * Register REST API routes.
 	 */
 	public function register_rest_routes() {
-
-
 		$routes = [
 			Health_Check::class,
 			Plugins::class,
@@ -69,15 +67,15 @@ final class Server {
 	/**
 	 * Prevent cloning.
 	 */
-	final public function __clone() {
-		_doing_it_wrong( __FUNCTION__, __( 'serializing instances of this class is forbidden.', 'uptimemonster-site-monitor' ), '1.0.0' );
+	public function __clone() {
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'serializing instances of this class is forbidden.', 'uptimemonster-site-monitor' ), '1.0.0' );
 	}
 
 	/**
 	 * Prevent unserializing.
 	 */
-	final public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'uptimemonster-site-monitor' ), '1.0.0' );
+	public function __wakeup() {
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Unserializing instances of this class is forbidden.', 'uptimemonster-site-monitor' ), '1.0.0' );
 	}
 }
 

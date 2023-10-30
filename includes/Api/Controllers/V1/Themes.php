@@ -301,6 +301,7 @@ class Themes extends Controller_Base {
 			if ( get_stylesheet() === $slug ) {
 				$response[ $slug ] = [
 					'status'  => false,
+					/* translators: Theme Name */
 					'message' => sprintf( __( '%s is the active theme. You cannot delete an active theme.', 'uptimemonster-site-monitor' ), (string) $theme ),
 				];
 				continue;
@@ -309,6 +310,7 @@ class Themes extends Controller_Base {
 			if ( get_template() === $slug ) {
 				$response[ $slug ] = [
 					'status'  => false,
+					/* translators: parent Theme Name */
 					'message' => sprintf( __( '%s is the parent theme of active theme. You cannot delete parent theme of active theme.', 'uptimemonster-site-monitor' ), (string) $theme ),
 				];
 				continue;
@@ -320,9 +322,11 @@ class Themes extends Controller_Base {
 			if ( is_wp_error( $result ) ) {
 				$status['message'] = $result->get_error_message();
 			} elseif ( false === $result ) {
+				/* translators: Theme Name */
 				$status['message'] = sprintf( __( 'Unable to delete requested theme (%s).', 'uptimemonster-site-monitor' ), (string) $theme );
 			} else {
 				$status['status']  = true;
+				/* translators: Theme Name */
 				$status['message'] = sprintf( __( '%s successfully deleted.', 'uptimemonster-site-monitor' ), (string) $theme );
 				$changed           = true;
 			}
@@ -330,7 +334,10 @@ class Themes extends Controller_Base {
 			$response[ $slug ] = $status;
 		}
 
-		$response = [ 'status' => true, 'data' => $response ];
+		$response = [
+			'status' => true,
+			'data'   => $response
+		];
 
 		if ( $changed ) {
 			$this->add_extra_data( $response );
@@ -370,6 +377,7 @@ class Themes extends Controller_Base {
 			if ( ! $theme->exists() ) {
 				$response[ $slug ] = [
 					'status'  => false,
+					/* translators: Theme Name */
 					'message' => sprintf( __( 'Theme %s does not exists.', 'uptimemonster-site-monitor' ), $slug ),
 				];
 				continue;
@@ -400,6 +408,7 @@ class Themes extends Controller_Base {
 				// Theme is already at the latest version.
 				$status['message'] = $upgrader->strings['up_to_date'];
 			} else {
+				/* translators: Theme Name */
 				$status['status']  = true;
 				$status['message'] = sprintf( __( '%s  updated.', 'uptimemonster-site-monitor' ), (string) $theme );
 				$changed           = true;
@@ -408,7 +417,10 @@ class Themes extends Controller_Base {
 			$response[ $slug ] = $status;
 		}
 
-		$response = [ 'status' => true, 'data' => $response ];
+		$response = [
+			'status' => true,
+			'data'   => $response
+		];
 
 		if ( $changed ) {
 			$this->add_extra_data( $response );

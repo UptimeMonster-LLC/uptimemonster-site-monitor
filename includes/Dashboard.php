@@ -154,7 +154,6 @@ class Dashboard {
 		}
 
 		if ( isset( $_POST['rwp-settings-save'], $_POST['roxwp'] ) && is_array( $_POST['roxwp'] ) && ! empty( $_POST['roxwp'] ) ) {
-
 			check_admin_referer( 'uptimemonster-site-monitor-settings' );
 
 			$api_key    = isset( $_POST['roxwp']['api_key'] ) ? sanitize_text_field( $_POST['roxwp']['api_key'] ) : '';
@@ -167,7 +166,6 @@ class Dashboard {
 				$response = $client->ping();
 
 				if ( ! is_wp_error( $response ) ) {
-
 					$new_keys = [
 						'api_key'    => $api_key,
 						'api_secret' => $api_secret,
@@ -337,7 +335,7 @@ class Dashboard {
 					</tbody>
 				</table>
 				<?php
-				if( ! $this->is_connected() ) {
+				if ( ! $this->is_connected() ) {
 					submit_button( __( 'Save Changes', 'uptimemonster-site-monitor' ), 'primary', 'rwp-settings-save' );
 				}
 				?>
