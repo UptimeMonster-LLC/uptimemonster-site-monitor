@@ -11,7 +11,7 @@
  *
  * RequiresPHP: 5.6
  * RequiresWP: 5.5.0
- * Tested Upto: 6.1
+ * Tested Upto: 6.3
  *
  * @package UptimeMonster\SiteMonitor
  */
