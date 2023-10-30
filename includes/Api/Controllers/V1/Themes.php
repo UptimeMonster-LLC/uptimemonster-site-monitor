@@ -140,13 +140,19 @@ class Themes extends Controller_Base {
 				$changed           = true;
 				$response[ $slug ] = [
 					'status'  => false,
+					/* translators: Theme Name */
 					'message' => sprintf( __( 'Theme %s already installed.', 'uptimemonster-site-monitor' ), (string) $theme ),
 				];
 
 				continue;
 			}
 
-			$api = themes_api( 'theme_information', [ 'slug' => $slug, 'fields' => [ 'sections' => false ] ] );
+			$api = themes_api( 'theme_information', [
+				'slug'   => $slug,
+				'fields' => [
+					'sections' => false,
+				],
+			]);
 
 			if ( is_wp_error( $api ) ) {
 				$response[ $slug ] = [
@@ -176,8 +182,10 @@ class Themes extends Controller_Base {
 			} elseif ( $skin->get_errors()->has_errors() ) {
 				$status['message'] = sprintf( $failed, $api->name, $skin->get_error_messages() );
 			} else {
-				$theme             = wp_get_theme( $slug );
-				$status['status']  = true;
+				$theme            = wp_get_theme( $slug );
+				$status['status'] = true;
+
+				/* translators: Theme Name */
 				$status['message'] = sprintf( __( '%s successfully installed.', 'uptimemonster-site-monitor' ), (string) $theme );
 				$changed           = true;
 			}
@@ -238,11 +246,13 @@ class Themes extends Controller_Base {
 			if ( get_stylesheet() === $slug ) {
 				$response = [
 					'status'  => true,
+					/* translators: Theme Name */
 					'message' => sprintf( __( '%s successfully activated.', 'uptimemonster-site-monitor' ), (string) $theme ),
 				];
 			} else {
 				$response = [
 					'status'  => false,
+					/* translators: Theme Name */
 					'message' => sprintf( __( 'Unable to activate requested theme (%s).', 'uptimemonster-site-monitor' ), (string) $theme ),
 				];
 			}
@@ -259,7 +269,6 @@ class Themes extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function delete_themes( WP_REST_Request $request ) {
-
 		set_time_limit( 0 );
 
 		$data = json_decode( $request->get_body() );
@@ -279,6 +288,7 @@ class Themes extends Controller_Base {
 				$changed           = true;
 				$response[ $slug ] = [
 					'status'  => false,
+					/* translators: Theme Name */
 					'message' => sprintf( __( 'Theme %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $slug ),
 				];
 
@@ -293,10 +303,6 @@ class Themes extends Controller_Base {
 				// File system is not writable, we can't delete anything, no need to loop.
 				return $need_credentials;
 			}
-
-			/*$currentTheme = wp_get_theme();
-			$currentTheme->get_stylesheet();
-			$currentTheme->get_template();*/
 
 			if ( get_stylesheet() === $slug ) {
 				$response[ $slug ] = [
@@ -325,7 +331,8 @@ class Themes extends Controller_Base {
 				/* translators: Theme Name */
 				$status['message'] = sprintf( __( 'Unable to delete requested theme (%s).', 'uptimemonster-site-monitor' ), (string) $theme );
 			} else {
-				$status['status']  = true;
+				$status['status'] = true;
+
 				/* translators: Theme Name */
 				$status['message'] = sprintf( __( '%s successfully deleted.', 'uptimemonster-site-monitor' ), (string) $theme );
 				$changed           = true;
@@ -336,7 +343,7 @@ class Themes extends Controller_Base {
 
 		$response = [
 			'status' => true,
-			'data'   => $response
+			'data'   => $response,
 		];
 
 		if ( $changed ) {
@@ -408,8 +415,9 @@ class Themes extends Controller_Base {
 				// Theme is already at the latest version.
 				$status['message'] = $upgrader->strings['up_to_date'];
 			} else {
+				$status['status'] = true;
+
 				/* translators: Theme Name */
-				$status['status']  = true;
 				$status['message'] = sprintf( __( '%s  updated.', 'uptimemonster-site-monitor' ), (string) $theme );
 				$changed           = true;
 			}
@@ -419,7 +427,7 @@ class Themes extends Controller_Base {
 
 		$response = [
 			'status' => true,
-			'data'   => $response
+			'data'   => $response,
 		];
 
 		if ( $changed ) {
