@@ -50,15 +50,15 @@ class Dashboard {
 	}
 
 	public function plugin_action_links( $links ) {
-		$links[] = sprintf( '<a href="%s">%s</a>', $this->get_page_url(), esc_html__( 'Settings', 'uptime' ) );
+		$links[] = sprintf( '<a href="%s">%s</a>', $this->get_page_url(), esc_html__( 'Settings', 'uptimemonster-site-monitor' ) );
 
 		return $links;
 	}
 
 	public function register_menu() {
 		add_options_page(
-			__( 'UptimeMonster API Settings', 'uptime' ),
-			__( 'UptimeMonster Settings', 'uptime' ),
+			__( 'UptimeMonster API Settings', 'uptimemonster-site-monitor' ),
+			__( 'UptimeMonster Settings', 'uptimemonster-site-monitor' ),
 			'manage_options',
 			'roxwp-settings',
 			[ $this, 'settings_page' ]
@@ -87,11 +87,11 @@ class Dashboard {
 	public function handle_post() {
 		if ( 'yes' === get_option( 'umsm_need_setup' ) ) {
 			if ( empty( $this->installed_on() ) ) {
-				$this->add_settings_status( __( 'Thank you for installing UptimeMonster Site Monitor.', 'uptime' ) );
-				$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'uptime' ) );
+				$this->add_settings_status( __( 'Thank you for installing UptimeMonster Site Monitor.', 'uptimemonster-site-monitor' ) );
+				$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'uptimemonster-site-monitor' ) );
 			}
 
-			$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'uptime' ) );
+			$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'uptimemonster-site-monitor' ) );
 
 			update_option( 'umsm_need_setup', 'no' );
 
@@ -103,7 +103,7 @@ class Dashboard {
 			if ( wp_verify_nonce( $_GET['_wpnonce'], self::DROP_IN_ACTION ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				UptimeMonster_Site_Monitor::maybe_install_drop_in();
 
-				$this->add_settings_status( __( 'Error Logger Drop-In Updated.', 'uptime' ) );
+				$this->add_settings_status( __( 'Error Logger Drop-In Updated.', 'uptimemonster-site-monitor' ) );
 
 				wp_safe_redirect( $this->get_page_url() );
 				die();
@@ -145,7 +145,7 @@ class Dashboard {
 
 			$this->is_connected( false );
 			delete_option( 'umsm_site_monitor_api_keys' );
-			$this->add_settings_status( __( 'UptimeMonster API Disconnected.', 'uptime' ), 'warning' );
+			$this->add_settings_status( __( 'UptimeMonster API Disconnected.', 'uptimemonster-site-monitor' ), 'warning' );
 
 			do_action( 'umsm_site_monitor_api_deactivated' );
 
@@ -177,18 +177,18 @@ class Dashboard {
 
 					update_option( 'umsm_site_monitor_api_keys', $new_keys );
 
-					$this->add_settings_status( __( 'Api connected.', 'uptime' ) );
+					$this->add_settings_status( __( 'Api connected.', 'uptimemonster-site-monitor' ) );
 
 					do_action( 'umsm_site_monitor_api_updated' );
 				} else {
 					$this->add_settings_status( sprintf(
 						/* translators: 1. Error Details. */
-						__( 'Error connecting UptimeMonster API with following error: %s.', 'uptime' ),
+						__( 'Error connecting UptimeMonster API with following error: %s.', 'uptimemonster-site-monitor' ),
 						$response->get_error_message()
 					), 'error' );
 				}
 			} else {
-				$this->add_settings_status( __( 'Both api key & secret required.', 'uptime' ), 'error' );
+				$this->add_settings_status( __( 'Both api key & secret required.', 'uptimemonster-site-monitor' ), 'error' );
 			}
 
 			wp_safe_redirect( $this->get_page_url() );
@@ -237,32 +237,32 @@ class Dashboard {
 					<?php if ( $this->is_connected() ) { ?>
 					<tr>
 						<th scope="row">
-							<label for="roxwp-api-status"><?php esc_html_e( 'Status', 'uptime' ); ?></label>
+							<label for="roxwp-api-status"><?php esc_html_e( 'Status', 'uptimemonster-site-monitor' ); ?></label>
 						</th>
 						<td>
 							<div style="display:flex;align-items:center;gap:10px;">
-								<?php esc_html_e( 'Connected', 'uptime' ); ?>
-								<button class="button button-secondary button-warning" type="submit" name="rwp-disconnect-api" value="1"><?php esc_html_e( 'Disconnect', 'uptime' ); ?></button>
+								<?php esc_html_e( 'Connected', 'uptimemonster-site-monitor' ); ?>
+								<button class="button button-secondary button-warning" type="submit" name="rwp-disconnect-api" value="1"><?php esc_html_e( 'Disconnect', 'uptimemonster-site-monitor' ); ?></button>
 							</div>
 						</td>
 					</tr>
 					<?php } else { ?>
 					<tr>
-						<th scope="row"><label for="roxwp-api-key"><?php esc_html_e( 'Api Key', 'uptime' ); ?></label></th>
+						<th scope="row"><label for="roxwp-api-key"><?php esc_html_e( 'Api Key', 'uptimemonster-site-monitor' ); ?></label></th>
 						<td><input name="roxwp[api_key]" type="text" id="roxwp-api-key" value="" class="regular-text" autocomplete="off"></td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="roxwp-api-secret"><?php esc_html_e( 'Api Secret', 'uptime' ); ?></label></th>
+						<th scope="row"><label for="roxwp-api-secret"><?php esc_html_e( 'Api Secret', 'uptimemonster-site-monitor' ); ?></label></th>
 						<td><input name="roxwp[api_secret]" type="password" id="roxwp-api-secret" value="" class="regular-text" autocomplete="off"></td>
 					</tr>
 					<?php } ?>
 					<tr>
-						<th scope="row"><label><?php esc_html_e( 'Error Logging Drop-in', 'uptime' ); ?></label></th>
+						<th scope="row"><label><?php esc_html_e( 'Error Logging Drop-in', 'uptimemonster-site-monitor' ); ?></label></th>
 						<td>
 							<table>
 								<tbody>
 								<tr>
-									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Status:', 'uptime' ); ?></strong></th>
+									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Status:', 'uptimemonster-site-monitor' ); ?></strong></th>
 									<td style="padding:0;">
 										<?php
 										$install_url = wp_nonce_url( add_query_arg( [ 'action' => self::DROP_IN_ACTION ], $this->get_page_url() ), self::DROP_IN_ACTION );
@@ -270,14 +270,14 @@ class Dashboard {
 											if ( UptimeMonster_Site_Monitor::drop_in_need_update() ) {
 												printf(
 												/* translators: 1. New Version Number, 2. Update URL */
-													__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'uptime' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 													esc_html( UptimeMonster_Site_Monitor::drop_in_version( false ) ),
 													esc_url( $install_url )
 												);
 											} else {
 												printf(
 												/* translators: 1. Error handler drop-in version. */
-													esc_html__( 'Installed (Version %s)', 'uptime' ),
+													esc_html__( 'Installed (Version %s)', 'uptimemonster-site-monitor' ),
 													esc_html( UptimeMonster_Site_Monitor::drop_in_version() )
 												);
 											}
@@ -287,13 +287,13 @@ class Dashboard {
 											if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
 												printf(
 												/* translators: 1. Installation URL */
-													__( 'Click <a href="%s">here</a> to install the drop-in.', 'uptime' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													__( 'Click <a href="%s">here</a> to install the drop-in.', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 													esc_url( $install_url )
 												);
 											} else {
 												printf(
 												/* translators: 1. Source file path. 2. Destination file path. */
-													__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'uptime' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 													esc_html( UptimeMonster_Site_Monitor::get_drop_in_dist_file() ),
 													esc_html( UptimeMonster_Site_Monitor::get_drop_in_file() )
 												);
@@ -305,26 +305,26 @@ class Dashboard {
 									</td>
 								</tr>
 								<tr>
-									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'WP Content Directory', 'uptime' ); ?></strong></th>
+									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'WP Content Directory', 'uptimemonster-site-monitor' ); ?></strong></th>
 									<td style="padding:0;">
 										<?php
 										if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
-											esc_html_e( 'Writable', 'uptime' );
+											esc_html_e( 'Writable', 'uptimemonster-site-monitor' );
 										} else {
-											esc_html_e( 'Not Writable', 'uptime' );
+											esc_html_e( 'Not Writable', 'uptimemonster-site-monitor' );
 										}
 										?>
 									</td>
 								</tr>
 								<?php if ( UptimeMonster_Site_Monitor::is_drop_in_installed() ) { ?>
 									<tr>
-										<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Drop-In', 'uptime' ); ?></strong></th>
+										<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Drop-In', 'uptimemonster-site-monitor' ); ?></strong></th>
 										<td style="padding:0;">
 											<?php
 											if ( UptimeMonster_Site_Monitor::is_drop_in_writable() ) {
-												esc_html_e( 'Writable', 'uptime' );
+												esc_html_e( 'Writable', 'uptimemonster-site-monitor' );
 											} else {
-												esc_html_e( 'Not Writable', 'uptime' );
+												esc_html_e( 'Not Writable', 'uptimemonster-site-monitor' );
 											}
 											?>
 										</td>
@@ -338,7 +338,7 @@ class Dashboard {
 				</table>
 				<?php
 				if( ! $this->is_connected() ) {
-					submit_button( __( 'Save Changes', 'uptime' ), 'primary', 'rwp-settings-save' );
+					submit_button( __( 'Save Changes', 'uptimemonster-site-monitor' ), 'primary', 'rwp-settings-save' );
 				}
 				?>
 			</form>

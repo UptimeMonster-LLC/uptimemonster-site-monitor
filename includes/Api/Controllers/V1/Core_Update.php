@@ -161,7 +161,7 @@ class Core_Update extends Controller_Base {
 				if ( empty( $update ) ) {
 					return [
 						'need_db_update' => false,
-						'message'        => __( 'WordPress is at the latest minor release.', 'uptime' ),
+						'message'        => __( 'WordPress is at the latest minor release.', 'uptimemonster-site-monitor' ),
 					];
 				}
 			} else {
@@ -228,13 +228,13 @@ class Core_Update extends Controller_Base {
 
 				return [
 					'need_db_update' => true,
-					'message'        => is_wp_error( $cleanup ) ? $cleanup : __( 'WordPress updated successfully.', 'uptime' ),
+					'message'        => is_wp_error( $cleanup ) ? $cleanup : __( 'WordPress updated successfully.', 'uptimemonster-site-monitor' ),
 				];
 			}
 		} else {
 			return [
 				'need_db_update' => false,
-				'message'        => __( 'WordPress is up to date.', 'uptime' ),
+				'message'        => __( 'WordPress is up to date.', 'uptimemonster-site-monitor' ),
 			];
 		}
 	}
@@ -259,9 +259,9 @@ class Core_Update extends Controller_Base {
 
 			wp_upgrade();
 
-			return __( "WordPress database upgraded successfully from db version {$wp_current_db_version} to {$wp_db_version}.", 'uptime' );
+			return __( "WordPress database upgraded successfully from db version {$wp_current_db_version} to {$wp_db_version}.", 'uptimemonster-site-monitor' );
 		} else {
-			return __( "WordPress database already at latest db version {$wp_db_version}.", 'uptime' );
+			return __( "WordPress database already at latest db version {$wp_db_version}.", 'uptimemonster-site-monitor' );
 		}
 	}
 
@@ -547,7 +547,7 @@ class Core_Update extends Controller_Base {
 
 		throw new \InvalidArgumentException(
 			sprintf(
-				__( "Unsupported argument type passed", 'uptime' ),
+				__( "Unsupported argument type passed", 'uptimemonster-site-monitor' ),
 				gettype( $errors )
 			)
 		);

@@ -49,7 +49,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 			Activity_Monitor_Base::ITEM_ACTIVATED,
 			0,
 			'monitor',
-			__( 'Site Monitor Activated', 'uptime' ),
+			__( 'Site Monitor Activated', 'uptimemonster-site-monitor' ),
 			[ 'include_installed' => true ]
 		);
 		umsm_restore_locale();
@@ -65,7 +65,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 			Activity_Monitor_Base::ITEM_DEACTIVATED,
 			0,
 			'monitor',
-			__( 'Site Monitor Deactivated', 'uptime' )
+			__( 'Site Monitor Deactivated', 'uptimemonster-site-monitor' )
 		);
 		umsm_restore_locale();
 	}
@@ -78,9 +78,9 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 		umsm_switch_to_english();
 
 		if ( $installed ) {
-			$name = $old ? __( '“Error Logger” Drop-In Updated', 'uptime' ) : __( '“Error Logger” Drop-In Installed', 'uptime' );
+			$name = $old ? __( '“Error Logger” Drop-In Updated', 'uptimemonster-site-monitor' ) : __( '“Error Logger” Drop-In Installed', 'uptimemonster-site-monitor' );
 		} else {
-			$name = __( 'Failed To Install “Error Logger” Drop-In.', 'uptime' );
+			$name = __( 'Failed To Install “Error Logger” Drop-In.', 'uptimemonster-site-monitor' );
 		}
 
 		umsm_restore_locale();

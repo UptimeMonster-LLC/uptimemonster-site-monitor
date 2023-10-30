@@ -5,7 +5,7 @@
  * Description: WordPress Site Activity Monitor For UptimeMonster
  * Author: Pixelaar
  * Author URI: https://pixelaar.com/
- * Text Domain: uptime
+ * Text Domain: uptimemonster-site-monitor
  * Domain Path: /languages
  * Version: 1.0.0
  *
@@ -58,7 +58,7 @@ if ( ! file_exists( UMSM_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
 			<p>
 				<?php
 				printf(
-				/* translators: 1. Download link for production build, 2. composer install command, 3. Plugin installation path for running composer install.. */
+				/* translators: 1. Download link for production build, 2. composer install command, 3. Plugin installation path for running composer install. */
 					esc_html__( 'It seems that you have downloaded the development version of this plugin from github or other sources. Please download it from %1$s or run %2$s command within %3$s directory.', 'uptime' ),
 					'<a href="https://absoluteplugins.com/wordpress-plugins/uptimemonster-site-monitor/" target="_blank" rel="noopener">UptimeMonster.com</a>',
 					'<code>composer install</code>',

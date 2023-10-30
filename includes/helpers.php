@@ -533,7 +533,7 @@ function umsm_need_filesystem_credentials( $redirect ) {
 
 	// Check if credentials aren't provided or wrong credentials.
 	if ( false === $credentials || ! \WP_Filesystem( $credentials ) ) {
-		return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptime' ) );
+		return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
 	}
 
 	return false;

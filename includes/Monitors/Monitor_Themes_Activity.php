@@ -76,7 +76,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 		umsm_switch_to_english();
 		/* translators: %1$s New Theme Name, %2$s: Old Theme Name */
-		$name = sprintf( __( 'Switched to %1$s theme from %2$s', 'uptime' ),
+		$name = sprintf( __( 'Switched to %1$s theme from %2$s', 'uptimemonster-site-monitor' ),
 			$new_theme->get( 'Name' ), // @phpstan-ignore-line
 			$old_theme->get( 'Name' ) // @phpstan-ignore-line
 		);
@@ -299,7 +299,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 				if ( $this->maybe_log_theme( Activity_Monitor_Base::ITEM_UPDATED, $theme, $file ) && file_exists( $_file ) ) {
 					umsm_switch_to_english();
 					/* translators: %1$s. Theme Name, %2$s. File path. */
-					$name = __( 'Modified file (%2$s) of “%1$s” theme', 'uptime' );
+					$name = __( 'Modified file (%2$s) of “%1$s” theme', 'uptimemonster-site-monitor' );
 					umsm_restore_locale();
 
 					try {

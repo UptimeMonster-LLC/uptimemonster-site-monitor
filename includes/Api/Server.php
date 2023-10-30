@@ -70,14 +70,14 @@ final class Server {
 	 * Prevent cloning.
 	 */
 	final public function __clone() {
-		_doing_it_wrong( __FUNCTION__, __( 'serializing instances of this class is forbidden.', 'uptime' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, __( 'serializing instances of this class is forbidden.', 'uptimemonster-site-monitor' ), '1.0.0' );
 	}
 
 	/**
 	 * Prevent unserializing.
 	 */
 	final public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'uptime' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'uptimemonster-site-monitor' ), '1.0.0' );
 	}
 }
 

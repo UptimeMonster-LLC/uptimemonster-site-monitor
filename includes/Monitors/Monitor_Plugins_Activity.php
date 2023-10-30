@@ -184,7 +184,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 				if ( $this->maybe_log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $plugin, $file ) && file_exists( $_file ) ) {
 					umsm_switch_to_english();
 					/* translators: 1. Plugin Name, 2. File path. */
-					$name = $plugin === $file ? __( 'Modified main file (%2$s) of “%1$s” plugin', 'uptime' ) : __( 'Modified file (%2$s) of “%1$s” plugin', 'uptime' );
+					$name = $plugin === $file ? __( 'Modified main file (%2$s) of “%1$s” plugin', 'uptimemonster-site-monitor' ) : __( 'Modified file (%2$s) of “%1$s” plugin', 'uptimemonster-site-monitor' );
 					umsm_restore_locale();
 
 					$extra = [

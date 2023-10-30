@@ -182,12 +182,12 @@ final class UptimeMonster_Site_Monitor {
 		}
 
 		$locale = determine_locale();
-		$locale = apply_filters( 'plugin_locale', $locale, 'uptime' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$locale = apply_filters( 'plugin_locale', $locale, 'uptimemonster-site-monitor' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
-		unload_textdomain( 'uptime' );
+		unload_textdomain( 'uptimemonster-site-monitor' );
 
-		load_textdomain( 'uptime', WP_LANG_DIR . '/uptimemonster-site-monitor/uptimemonster-site-monitor-' . $locale . '.mo' ); // @phpstan-ignore-line
-		load_plugin_textdomain( 'uptime', false, plugin_basename( dirname( UMSM_PLUGIN_FILE ) ) . '/languages' );
+		load_textdomain( 'uptimemonster-site-monitor', WP_LANG_DIR . '/uptimemonster-site-monitor/uptimemonster-site-monitor-' . $locale . '.mo' ); // @phpstan-ignore-line
+		load_plugin_textdomain( 'uptimemonster-site-monitor', false, plugin_basename( dirname( UMSM_PLUGIN_FILE ) ) . '/languages' );
 	}
 }
 

@@ -124,7 +124,7 @@ class Themes extends Controller_Base {
 		$data = json_decode( $request->get_body() );
 
 		if ( empty( $data->slugs ) ) {
-			return new WP_Error( 'no-theme-specified', __( 'No theme specified.', 'uptime' ) );
+			return new WP_Error( 'no-theme-specified', __( 'No theme specified.', 'uptimemonster-site-monitor' ) );
 		}
 
 		$skin     = new WP_Ajax_Upgrader_Skin();
@@ -140,7 +140,7 @@ class Themes extends Controller_Base {
 				$changed           = true;
 				$response[ $slug ] = [
 					'status'  => false,
-					'message' => sprintf( __( 'Theme %s already installed.', 'uptime' ), (string) $theme ),
+					'message' => sprintf( __( 'Theme %s already installed.', 'uptimemonster-site-monitor' ), (string) $theme ),
 				];
 
 				continue;
@@ -161,13 +161,13 @@ class Themes extends Controller_Base {
 
 			if ( false === $result ) {
 				// File system is not writable, we can't update anything, no need to loop.
-				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptime' ) );
+				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
 			}
 
 			$status = [ 'status' => false ];
 
 			/* translators: 1. Theme/plugin name, 2. Error details */
-			$failed = __( '%1$s installation failed. Error: %2$s', 'uptime' );
+			$failed = __( '%1$s installation failed. Error: %2$s', 'uptimemonster-site-monitor' );
 
 			if ( is_wp_error( $result ) ) {
 				$status['message'] = sprintf( $failed, $api->name, $result->get_error_message() );
@@ -178,7 +178,7 @@ class Themes extends Controller_Base {
 			} else {
 				$theme             = wp_get_theme( $slug );
 				$status['status']  = true;
-				$status['message'] = sprintf( __( '%s successfully installed.', 'uptime' ), (string) $theme );
+				$status['message'] = sprintf( __( '%s successfully installed.', 'uptimemonster-site-monitor' ), (string) $theme );
 				$changed           = true;
 			}
 
@@ -210,13 +210,13 @@ class Themes extends Controller_Base {
 		$slug = sanitize_key( wp_unslash( $slug ) );
 
 		if ( ! $slug ) {
-			return new WP_Error( 'no-theme-specified', __( 'No theme specified.', 'uptime' ) );
+			return new WP_Error( 'no-theme-specified', __( 'No theme specified.', 'uptimemonster-site-monitor' ) );
 		}
 
 		if ( get_stylesheet() === $slug ) {
 			$response = [
 				'status'  => false,
-				'message' => __( 'Requested theme already been activated.', 'uptime' ),
+				'message' => __( 'Requested theme already been activated.', 'uptimemonster-site-monitor' ),
 			];
 		} else {
 			$theme = wp_get_theme( $slug );
@@ -224,7 +224,7 @@ class Themes extends Controller_Base {
 			if ( ! $theme->exists() ) {
 				$response = [
 					'status'  => false,
-					'message' => __( 'Requested theme is not installed.', 'uptime' ),
+					'message' => __( 'Requested theme is not installed.', 'uptimemonster-site-monitor' ),
 				];
 			}
 
@@ -238,12 +238,12 @@ class Themes extends Controller_Base {
 			if ( get_stylesheet() === $slug ) {
 				$response = [
 					'status'  => true,
-					'message' => sprintf( __( '%s successfully activated.', 'uptime' ), (string) $theme ),
+					'message' => sprintf( __( '%s successfully activated.', 'uptimemonster-site-monitor' ), (string) $theme ),
 				];
 			} else {
 				$response = [
 					'status'  => false,
-					'message' => sprintf( __( 'Unable to activate requested theme (%s).', 'uptime' ), (string) $theme ),
+					'message' => sprintf( __( 'Unable to activate requested theme (%s).', 'uptimemonster-site-monitor' ), (string) $theme ),
 				];
 			}
 		}
@@ -265,7 +265,7 @@ class Themes extends Controller_Base {
 		$data = json_decode( $request->get_body() );
 
 		if ( empty( $data->slugs ) ) {
-			return new WP_Error( 'no-theme-specified', __( 'No theme specified.', 'uptime' ) );
+			return new WP_Error( 'no-theme-specified', __( 'No theme specified.', 'uptimemonster-site-monitor' ) );
 		}
 
 		$response = [];
@@ -279,7 +279,7 @@ class Themes extends Controller_Base {
 				$changed           = true;
 				$response[ $slug ] = [
 					'status'  => false,
-					'message' => sprintf( __( 'Theme %s does not exists or already deleted.', 'uptime' ), $slug ),
+					'message' => sprintf( __( 'Theme %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $slug ),
 				];
 
 				continue;
@@ -301,7 +301,7 @@ class Themes extends Controller_Base {
 			if ( get_stylesheet() === $slug ) {
 				$response[ $slug ] = [
 					'status'  => false,
-					'message' => sprintf( __( '%s is the active theme. You cannot delete an active theme.', 'uptime' ), (string) $theme ),
+					'message' => sprintf( __( '%s is the active theme. You cannot delete an active theme.', 'uptimemonster-site-monitor' ), (string) $theme ),
 				];
 				continue;
 			}
@@ -309,7 +309,7 @@ class Themes extends Controller_Base {
 			if ( get_template() === $slug ) {
 				$response[ $slug ] = [
 					'status'  => false,
-					'message' => sprintf( __( '%s is the parent theme of active theme. You cannot delete parent theme of active theme.', 'uptime' ), (string) $theme ),
+					'message' => sprintf( __( '%s is the parent theme of active theme. You cannot delete parent theme of active theme.', 'uptimemonster-site-monitor' ), (string) $theme ),
 				];
 				continue;
 			}
@@ -320,10 +320,10 @@ class Themes extends Controller_Base {
 			if ( is_wp_error( $result ) ) {
 				$status['message'] = $result->get_error_message();
 			} elseif ( false === $result ) {
-				$status['message'] = sprintf( __( 'Unable to delete requested theme (%s).', 'uptime' ), (string) $theme );
+				$status['message'] = sprintf( __( 'Unable to delete requested theme (%s).', 'uptimemonster-site-monitor' ), (string) $theme );
 			} else {
 				$status['status']  = true;
-				$status['message'] = sprintf( __( '%s successfully deleted.', 'uptime' ), (string) $theme );
+				$status['message'] = sprintf( __( '%s successfully deleted.', 'uptimemonster-site-monitor' ), (string) $theme );
 				$changed           = true;
 			}
 
@@ -350,7 +350,7 @@ class Themes extends Controller_Base {
 		$data = json_decode( $request->get_body() );
 
 		if ( empty( $data->slugs ) ) {
-			return new WP_Error( 'no-theme-specified', __( 'No theme specified.', 'uptime' ) );
+			return new WP_Error( 'no-theme-specified', __( 'No theme specified.', 'uptimemonster-site-monitor' ) );
 		}
 
 		$response = [];
@@ -370,7 +370,7 @@ class Themes extends Controller_Base {
 			if ( ! $theme->exists() ) {
 				$response[ $slug ] = [
 					'status'  => false,
-					'message' => sprintf( __( 'Theme %s does not exists.', 'uptime' ), $slug ),
+					'message' => sprintf( __( 'Theme %s does not exists.', 'uptimemonster-site-monitor' ), $slug ),
 				];
 				continue;
 			}
@@ -383,14 +383,14 @@ class Themes extends Controller_Base {
 
 			if ( false === $results || false === $result ) {
 				// File system is not writable, we can't update anything, no need to loop.
-				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptime' ) );
+				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
 			}
 
 
 			$status = [ 'status' => false ];
 
 			/* translators: 1. Theme/plugin name, 2. Error details */
-			$failed = __( 'Failed to update %1$s. Error: %2$s', 'uptime' );
+			$failed = __( 'Failed to update %1$s. Error: %2$s', 'uptimemonster-site-monitor' );
 
 			if ( is_wp_error( $skin->result ) ) {
 				$status['message'] = sprintf( $failed, (string) $theme, $skin->result->get_error_message() );
@@ -401,7 +401,7 @@ class Themes extends Controller_Base {
 				$status['message'] = $upgrader->strings['up_to_date'];
 			} else {
 				$status['status']  = true;
-				$status['message'] = sprintf( __( '%s  updated.', 'uptime' ), (string) $theme );
+				$status['message'] = sprintf( __( '%s  updated.', 'uptimemonster-site-monitor' ), (string) $theme );
 				$changed           = true;
 			}
 

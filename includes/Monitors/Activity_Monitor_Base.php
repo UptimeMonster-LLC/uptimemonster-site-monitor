@@ -97,7 +97,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			throw new InvalidArgumentException(
 				sprintf(
 				/* translators: 1. PHP Argument Type. */
-					esc_html__( '$subtype expected to be a string, got %s.', 'uptime' ),
+					esc_html__( '$subtype expected to be a string, got %s.', 'uptimemonster-site-monitor' ),
 					gettype( $subtype )
 				)
 			);
@@ -107,7 +107,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			throw new InvalidArgumentException(
 				sprintf(
 				/* translators: 1. PHP Argument Type. */
-					esc_html__( '$name expected to be a string, got %s.', 'uptime' ),
+					esc_html__( '$name expected to be a string, got %s.', 'uptimemonster-site-monitor' ),
 					gettype( $name )
 				)
 			);
@@ -119,7 +119,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			throw new InvalidArgumentException(
 				sprintf(
 				/* translators: 1. PHP Argument Type. */
-					esc_html__( '$id expected to be an integer, got %s.', 'uptime' ),
+					esc_html__( '$id expected to be an integer, got %s.', 'uptimemonster-site-monitor' ),
 					gettype( $object_id )
 				)
 			);
@@ -153,7 +153,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			if ( ! is_array( $data ) ) {
 				throw new InvalidArgumentException( sprintf(
 				/* translators: 1. PHP Argument Type. */
-					esc_html__( '$data expected to be an array or object, got %s.', 'uptime' ),
+					esc_html__( '$data expected to be an array or object, got %s.', 'uptimemonster-site-monitor' ),
 					gettype( $data )
 				) );
 			}
@@ -188,7 +188,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 		throw new Exception(
 			sprintf(
 			/* translators: 1. Method Name. */
-				esc_html__( '%s must be overridden by the subClass', 'uptime' ),
+				esc_html__( '%s must be overridden by the subClass', 'uptimemonster-site-monitor' ),
 				__METHOD__
 			)
 		);
