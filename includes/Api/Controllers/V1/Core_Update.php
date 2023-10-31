@@ -35,24 +35,16 @@ class Core_Update extends Controller_Base {
 	 */
 	public $rest_base = '/core';
 
-	/*public function __construct() {
-		// Health data
-		$this->update_check_model = new UptimeMonster_Update_Check();
-
-		// Debug data.
-		$this->debug_model = new UptimeMonster_Debug_Data();
-	}*/
-
 	/**
 	 * Register routes.
+	 *
 	 * @return void
 	 */
 	public function register_routes() {
 		// Register core update route.
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/update',
-			[
+			$this->rest_base . '/update', [
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'core_update' ],
@@ -60,54 +52,45 @@ class Core_Update extends Controller_Base {
 					'args'                => [
 						'minor'   => [
 							'default'           => false,
-							'description'       => __( 'Only perform updates for minor releases (e.g. update from WP 4.3 to 4.3.3 instead of 4.4.2.', 'roxpw-site-mon' ),
+							'description'       => __( 'Only perform updates for minor releases (e.g. update from WP 4.3 to 4.3.3 instead of 4.4.2.', 'uptimemonster-site-monitor' ),
 							'type'              => 'boolean',
 							'sanitize_callback' => 'sanitize_key',
 							'validate_callback' => 'rest_validate_request_arg',
 						],
 						'version' => [
 							'default'           => '',
-							'description'       => __( 'Update to a specific version, instead of to the latest version. Alternatively accepts \'nightly\'.', 'roxpw-site-mon' ),
+							'description'       => __( 'Update to a specific version, instead of to the latest version. Alternatively accepts \'nightly\'.', 'uptimemonster-site-monitor' ),
 							'type'              => 'string',
 							'sanitize_callback' => 'sanitize_key',
 							'validate_callback' => 'rest_validate_request_arg',
 						],
 						'force'   => [
 							'default'           => false,
-							'description'       => __( 'Update even when installed WP version is greater than the requested version.', 'roxpw-site-mon' ),
+							'description'       => __( 'Update even when installed WP version is greater than the requested version.', 'uptimemonster-site-monitor' ),
 							'type'              => 'boolean',
 							'sanitize_callback' => 'sanitize_key',
 							'validate_callback' => 'rest_validate_request_arg',
 						],
 						'locale'  => [
 							'default'           => '',
-							'description'       => __( 'Select which language you want to download.', 'roxpw-site-mon' ),
+							'description'       => __( 'Select which language you want to download.', 'uptimemonster-site-monitor' ),
 							'type'              => 'string',
 							'sanitize_callback' => 'sanitize_key',
 							'validate_callback' => 'rest_validate_request_arg',
 						],
-						/*'network' => [
-							'default'           => false,
-							'description'       => __( 'Update databases for all sites on a network.', 'roxpw-site-mon' ),
-							'type'              => 'boolean',
-							'sanitize_callback' => 'sanitize_key',
-							'validate_callback' => 'rest_validate_request_arg',
-						],*/
 					],
 				],
 			]
 		);
 	}
 
-	public function core_update( $request ) {
-
+	public function core_update( $request ) { // phpcs:ignore Generic.NamingConventions.ConstructorName.OldStyle
 		remove_action( 'init', 'smilies_init', 5 );
 
 		set_time_limit( 0 );
 
 
 		$update = $this->update( $request );
-		//return rest_ensure_response( $update );
 
 		if ( $update['need_db_update'] ) {
 			$update_db = $this->update_db();
@@ -121,7 +104,10 @@ class Core_Update extends Controller_Base {
 			return $update;
 		}
 
-		$response = [ 'status' => true, 'message' => $update['message'] ];
+		$response = [
+			'status'  => true,
+			'message' => $update['message'],
+		];
 
 		$this->add_extra_data( $response );
 
@@ -170,7 +156,6 @@ class Core_Update extends Controller_Base {
 				}
 			}
 		} elseif ( umsm_wp_version_compare( $request['version'], '<' ) || 'nightly' === $request['version'] || $force ) {
-
 			$new_package = $this->get_download_url( $version, $locale );
 
 			$update = (object) [
@@ -186,22 +171,13 @@ class Core_Update extends Controller_Base {
 				'version'  => $version,
 				'locale'   => $locale,
 			];
-
 		}
 
 		if ( ! empty( $update ) && ( $update->version !== $wp_version || $force ) ) {
-
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-			/*if ( $update->version ) {
-				//WP_CLI::log( "Updating to version {$update->version} ({$update->locale})..." );
-			} else {
-				//WP_CLI::log( 'Starting update...' );
-			}*/
-
-			$from_version = $wp_version;
-
-			$GLOBALS['wpcli_core_update_obj'] = $update;
+			$from_version                     = $wp_version;
+			$GLOBALS['wpcli_core_update_obj'] = $update; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 			$upgrader                         = new UptimeMonsterCoreUpgrader( new UptimeMonsterUpgraderSkin() );
 			$result                           = $upgrader->upgrade( $update );
 			unset( $GLOBALS['wpcli_core_update_obj'] );
@@ -217,7 +193,6 @@ class Core_Update extends Controller_Base {
 					'message'        => $message,
 				];
 			} else {
-
 				$to_version = '';
 				if ( file_exists( ABSPATH . 'wp-includes/version.php' ) ) {
 					$wp_details = self::get_wp_details();
@@ -259,9 +234,9 @@ class Core_Update extends Controller_Base {
 
 			wp_upgrade();
 
-			return __( "WordPress database upgraded successfully from db version {$wp_current_db_version} to {$wp_db_version}.", 'uptimemonster-site-monitor' );
+			return printf( 'WordPress database upgraded successfully from db version %s to %s.', esc_html( $wp_current_db_version ), esc_html( $wp_db_version ) );
 		} else {
-			return __( "WordPress database already at latest db version {$wp_db_version}.", 'uptimemonster-site-monitor' );
+			return printf( 'WordPress database already at latest db version %s', esc_html( $wp_db_version ) );
 		}
 	}
 
@@ -277,21 +252,23 @@ class Core_Update extends Controller_Base {
 			return new WP_Error( 'cleanup-error-wp-version', 'Failed to find WordPress version. Please cleanup files manually.' );
 		}
 
-		$old_checksums = self::get_core_checksums( $version_from, $locale ?: 'en_US' );
+		$old_checksums = self::get_core_checksums( $version_from, $locale ? $locale : 'en_US' );
 		if ( ! is_array( $old_checksums ) ) {
-			return new WP_Error( 'cleanup-error-old-checksum', "WordPress core update failed. Please cleanup files manually." );
+			return new WP_Error( 'cleanup-error-old-checksum', 'WordPress core update failed. Please cleanup files manually.' );
 		}
 
-		$new_checksums = self::get_core_checksums( $version_to, $locale ?: 'en_US' );
+		$new_checksums = self::get_core_checksums( $version_to, $locale ? $locale : 'en_US' );
 		if ( ! is_array( $new_checksums ) ) {
-			return new WP_Error( 'cleanup-error-old-checksum', "WordPress core update failed. Please cleanup files manually." );
+			return new WP_Error( 'cleanup-error-old-checksum', 'WordPress core update failed. Please cleanup files manually.' );
 		}
 
+		// phpcs:disable
 		// Compare the files from the old version and the new version in a case-insensitive manner,
 		// to prevent files being incorrectly deleted on systems with case-insensitive filesystems
 		// when core changes the case of filenames.
 		// The main logic for this was taken from the Joomla project and adapted for WP.
 		// See: https://github.com/joomla/joomla-cms/blob/bb5368c7ef9c20270e6e9fcc4b364cd0849082a5/administrator/components/com_admin/script.php#L8158
+		// phpcs:enable
 
 		$old_file_paths = array_keys( $old_checksums );
 		$new_file_paths = array_keys( $new_checksums );
@@ -325,11 +302,8 @@ class Core_Update extends Controller_Base {
 
 			// On Windows or Unix with only the incorrectly cased file.
 			if ( $new_basename !== $expected_basename ) {
-
-				//WP_CLI::debug( "Renaming file '{$old_filepath_to_check}' => '{$new_filepath}'", 'core' );
-
-				rename( ABSPATH . $old_filepath_to_check, ABSPATH . $old_filepath_to_check . '.tmp' );
-				rename( ABSPATH . $old_filepath_to_check . '.tmp', ABSPATH . $new_filepath );
+				rename( ABSPATH . $old_filepath_to_check, ABSPATH . $old_filepath_to_check . '.tmp' ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_rename
+				rename( ABSPATH . $old_filepath_to_check . '.tmp', ABSPATH . $new_filepath ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_rename
 
 				continue;
 			}
@@ -340,10 +314,8 @@ class Core_Update extends Controller_Base {
 				if ( fileinode( $old_realpath ) === fileinode( $new_realpath ) ) {
 					// Check deeper because even realpath or glob might not return the actual case.
 					if ( ! in_array( $expected_basename, scandir( dirname( $new_realpath ) ), true ) ) {
-						//WP_CLI::debug( "Renaming file '{$old_filepath_to_check}' => '{$new_filepath}'", 'core' );
-
-						rename( ABSPATH . $old_filepath_to_check, ABSPATH . $old_filepath_to_check . '.tmp' );
-						rename( ABSPATH . $old_filepath_to_check . '.tmp', ABSPATH . $new_filepath );
+						rename( ABSPATH . $old_filepath_to_check, ABSPATH . $old_filepath_to_check . '.tmp' ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_rename
+						rename( ABSPATH . $old_filepath_to_check . '.tmp', ABSPATH . $new_filepath ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_rename
 					}
 				} else {
 					// On Unix with both files: Delete the incorrectly cased file.
@@ -363,7 +335,7 @@ class Core_Update extends Controller_Base {
 				}
 
 				if ( file_exists( ABSPATH . $file ) ) {
-					unlink( ABSPATH . $file );
+					unlink( ABSPATH . $file ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_unlink
 					$count ++;
 				}
 			}
@@ -386,8 +358,8 @@ class Core_Update extends Controller_Base {
 			'locale'  => $locale,
 		], 'https://api.wordpress.org/core/checksums/1.0/' );
 
-		$raw_response = wp_remote_get( $url, [
-			'timeout'   => 30,
+		$raw_response = wp_remote_get( $url, [ // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
+			'timeout'   => 30, // phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
 			'blocking'  => true,
 			'sslverify' => true,
 			'headers'   => [
@@ -430,7 +402,6 @@ class Core_Update extends Controller_Base {
 	 * @return string|WP_Error
 	 */
 	private function get_download_url( $version, $locale = 'en_US', $file_type = 'zip' ) {
-
 		if ( ! $version ) {
 			return 'https://wordpress.org/latest.zip';
 		}
@@ -463,10 +434,10 @@ class Core_Update extends Controller_Base {
 		$versions_path = ABSPATH . 'wp-includes/version.php';
 
 		if ( ! is_readable( $versions_path ) ) {
-			return new WP_Error( 'version-not-readable', "This does not seem to be a WordPress installation. Pass --path=`path/to/wordpress` or run `wp core download`." );
+			return new WP_Error( 'version-not-readable', 'This does not seem to be a WordPress installation. Pass --path=`path/to/wordpress` or run `wp core download`.' );
 		}
 
-		$version_content = file_get_contents( $versions_path, null, null, 6, 2048 );
+		$version_content = file_get_contents( $versions_path, null, null, 6, 2048 ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 
 		$vars   = [ 'wp_version', 'wp_db_version', 'tinymce_version', 'wp_local_package' ];
 		$result = [];
@@ -512,7 +483,6 @@ class Core_Update extends Controller_Base {
 	 *
 	 * @return string
 	 * @throws \InvalidArgumentException
-	 *
 	 */
 	public static function error_to_string( $errors ) {
 		if ( is_string( $errors ) ) {
@@ -522,7 +492,7 @@ class Core_Update extends Controller_Base {
 		// Only json_encode() the data when it needs it
 		$render_data = function ( $data ) {
 			if ( is_array( $data ) || is_object( $data ) ) {
-				return json_encode( $data );
+				return wp_json_encode( $data );
 			}
 
 			return '"' . $data . '"';
@@ -547,7 +517,7 @@ class Core_Update extends Controller_Base {
 
 		throw new \InvalidArgumentException(
 			sprintf(
-				__( "Unsupported argument type passed", 'uptimemonster-site-monitor' ),
+				__( 'Unsupported argument type passed', 'uptimemonster-site-monitor' ),
 				gettype( $errors )
 			)
 		);

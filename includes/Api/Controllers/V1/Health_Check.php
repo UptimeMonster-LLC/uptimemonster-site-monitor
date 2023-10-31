@@ -72,17 +72,16 @@ class Health_Check extends Controller_Base {
 	 *
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
-	public function get_ping( $request ) {
+	public function get_ping( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
 		return rest_ensure_response( 'ok' );
 	}
-
 
 	/**
 	 * @param WP_REST_Request $request Full details about the request.
 	 *
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
-	public function send_site_health_info( $request ) {
+	public function send_site_health_info( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
 		$response = [];
 
 		$this->add_extra_data( $response );
