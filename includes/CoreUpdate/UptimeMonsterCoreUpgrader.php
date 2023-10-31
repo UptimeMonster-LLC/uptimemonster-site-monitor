@@ -54,7 +54,7 @@ class UptimeMonsterCoreUpgrader extends DefaultCoreUpgrader {
 	 * @global WP_Filesystem_Base $wp_filesystem Subclass
 	 */
 	public function upgrade( $current, $args = [] ) {
-		set_error_handler( [ __CLASS__, 'error_handler' ], E_USER_WARNING | E_USER_NOTICE );
+		set_error_handler( [ __CLASS__, 'error_handler' ], E_USER_WARNING | E_USER_NOTICE );  // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler
 
 		$result = parent::upgrade( $current, $args );
 
@@ -66,7 +66,7 @@ class UptimeMonsterCoreUpgrader extends DefaultCoreUpgrader {
 	/**
 	 * Error handler to ignore failures on accessing SSL "https://api.wordpress.org/core/checksums/1.0/" in `get_core_checksums()` which seem to occur intermittently.
 	 */
-	public static function error_handler( $errno, $errstr, $errfile, $errline, $errcontext = null ) {
+	public static function error_handler( $errno, $errstr, $errfile, $errline, $errcontext = null ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
 		// If ignoring E_USER_WARNING | E_USER_NOTICE, default.
 		if ( ! ( error_reporting() & $errno ) ) { // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_error_reporting
 			return false;

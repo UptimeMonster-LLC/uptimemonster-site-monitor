@@ -37,11 +37,6 @@ abstract class Controller_Base extends WP_REST_Controller {
 	protected $rest_base = '';
 
 	/**
-	 * Constructor.
-	 */
-	public function __construct() {}
-
-	/**
 	 * Get route access if request is valid.
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
@@ -65,16 +60,16 @@ abstract class Controller_Base extends WP_REST_Controller {
 			$data = '';
 		} else {
 			if ( ! is_string( $data ) ) {
-				$data = json_encode( $data );
+				$data = wp_json_encode( $data );
 			}
 		}
 
-		$isValid = hash_equals(
+		$is_valid = hash_equals(
 			$signature,
 			hash_hmac( 'sha256', $api_keys['api_key'] . $method . $data . $timestamp, $api_keys['api_secret'] )
 		);
 
-		if ( $isValid && $request_api_key === $api_keys['api_key'] ) {
+		if ( $is_valid && $request_api_key === $api_keys['api_key'] ) {
 			return true;
 		}
 

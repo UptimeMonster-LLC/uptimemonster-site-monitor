@@ -348,7 +348,7 @@ class UptimeMonster_Update_Check {
 	 *
 	 * @return bool Whether the server is running Apache with the mod_rewrite module loaded.
 	 */
-	function got_mod_rewrite() {
+	public function got_mod_rewrite() {
 		$got_rewrite = apache_mod_loaded( 'mod_rewrite', true );
 
 		/**
@@ -361,7 +361,7 @@ class UptimeMonster_Update_Check {
 		 *
 		 * @see got_url_rewrite()
 		 */
-		return apply_filters( 'got_rewrite', $got_rewrite );
+		return apply_filters( 'uptimemonster_got_rewrite', $got_rewrite );
 	}
 
 	/**
@@ -408,7 +408,7 @@ class UptimeMonster_Update_Check {
 
 		// The PHP version is older than the recommended version, but still receiving active support.
 		if ( $response['is_supported'] ) {
-			$result['label']  = sprintf(
+			$result['label'] = sprintf(
 			/* translators: %s: The server PHP version. */
 				__( 'Your site is running an older version of PHP (%s)', 'uptimemonster-site-monitor' ),
 				PHP_VERSION
@@ -420,7 +420,7 @@ class UptimeMonster_Update_Check {
 
 		// The PHP version is only receiving security fixes.
 		if ( $response['is_secure'] ) {
-			$result['label']  = sprintf(
+			$result['label'] = sprintf(
 			/* translators: %s: The server PHP version. */
 				__( 'Your site is running an older version of PHP (%s), which should be updated', 'uptimemonster-site-monitor' ),
 				PHP_VERSION
@@ -431,7 +431,7 @@ class UptimeMonster_Update_Check {
 		}
 
 		// Anything no longer secure must be updated.
-		$result['label']          = sprintf(
+		$result['label'] = sprintf(
 		/* translators: %s: The server PHP version. */
 			__( 'Your site is running an outdated version of PHP (%s), which requires an update', 'uptimemonster-site-monitor' ),
 			PHP_VERSION
@@ -447,7 +447,7 @@ class UptimeMonster_Update_Check {
 	 *
 	 * @return array|bool|mixed|object|\WP_Error
 	 */
-	function wp_check_php_version() {
+	public function wp_check_php_version() {
 		$version = phpversion();
 		$key     = md5( $version );
 
@@ -460,7 +460,7 @@ class UptimeMonster_Update_Check {
 
 			$url = add_query_arg( 'php_version', $version, $url );
 
-			$response = wp_remote_get( $url );
+			$response = wp_remote_get( $url ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 
 			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 				return false;
@@ -495,7 +495,6 @@ class UptimeMonster_Update_Check {
 			 * @param string $version PHP version checked.
 			 *
 			 * @since 5.1.1
-			 *
 			 */
 			$response['is_acceptable'] = (bool) apply_filters( 'uptimemonster_wp_is_php_version_acceptable', true, $version );
 		}
