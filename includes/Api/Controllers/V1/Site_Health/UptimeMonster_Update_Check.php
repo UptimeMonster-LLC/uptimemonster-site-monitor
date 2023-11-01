@@ -29,8 +29,8 @@ class UptimeMonster_Update_Check {
 		$site_health = \WP_Site_Health::get_instance();
 		$tests       = \WP_Site_Health::get_tests();
 
-		$results = [];
-		$include_test  = [
+		$results      = [];
+		$include_test = [
 			'get_test_wordpress_version',
 			'get_test_plugin_version',
 			'get_test_plugin_theme_auto_updates',
@@ -78,7 +78,7 @@ class UptimeMonster_Update_Check {
 			if ( is_string( $test['test'] ) ) {
 				// Check if this test has a REST API endpoint.
 				if ( isset( $test['has_rest'] ) && $test['has_rest'] ) {
-					$result_fetch = wp_remote_get(
+					$result_fetch = wp_remote_get( // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 						$test['test'],
 						[
 							'body' => [
@@ -130,7 +130,6 @@ class UptimeMonster_Update_Check {
 	public function get_test_plugin_theme_auto_updates() {
 		$result = [
 			'label'       => __( 'Plugin and theme auto-updates appear to be configured correctly', 'uptimemonster-site-monitor' ),
-			//'status'      => 'good',
 			'badge'       => [
 				'label' => __( 'Security', 'uptimemonster-site-monitor' ),
 				'color' => 'blue',
@@ -244,7 +243,7 @@ class UptimeMonster_Update_Check {
 	 *
 	 * @return bool True if auto-updates are enabled for `$type`, false otherwise.
 	 */
-	function wp_is_auto_update_enabled_for_type( $type ) {
+	public function wp_is_auto_update_enabled_for_type( $type ) {
 		if ( ! class_exists( 'WP_Automatic_Updater' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-automatic-updater.php';
 		}
@@ -260,9 +259,8 @@ class UptimeMonster_Update_Check {
 				 * @param bool $enabled True if plugins auto-update is enabled, false otherwise.
 				 *
 				 * @since 5.5.0
-				 *
 				 */
-				return apply_filters( 'plugins_auto_update_enabled', $enabled );
+				return apply_filters( 'plugins_auto_update_enabled', $enabled ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			case 'theme':
 				/**
 				 * Filters whether themes auto-update is enabled.
@@ -270,9 +268,8 @@ class UptimeMonster_Update_Check {
 				 * @param bool $enabled True if themes auto-update is enabled, false otherwise.
 				 *
 				 * @since 5.5.0
-				 *
 				 */
-				return apply_filters( 'themes_auto_update_enabled', $enabled );
+				return apply_filters( 'themes_auto_update_enabled', $enabled ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		}
 
 		return false;
@@ -288,9 +285,9 @@ class UptimeMonster_Update_Check {
 	 *
 	 * @return bool True if auto-updates are forced for `$item`, false otherwise.
 	 */
-	function wp_is_auto_update_forced_for_item( $type, $update, $item ) {
+	public function wp_is_auto_update_forced_for_item( $type, $update, $item ) {
 		/** This filter is documented in wp-admin/includes/class-wp-automatic-updater.php */
-		return apply_filters( "auto_update_{$type}", $update, $item );
+		return apply_filters( "auto_update_{$type}", $update, $item ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}
 
 	/**
@@ -301,7 +298,7 @@ class UptimeMonster_Update_Check {
 	 * @return bool Whether the server supports URL rewriting.
 	 * @global bool $is_nginx
 	 */
-	function got_url_rewrite() {
+	public function got_url_rewrite() {
 		$got_url_rewrite = ( $this->got_mod_rewrite() || $GLOBALS['is_nginx'] || $this->iis7_supports_permalinks() );
 
 		/**
@@ -309,7 +306,7 @@ class UptimeMonster_Update_Check {
 		 *
 		 * @param bool $got_url_rewrite Whether URL rewriting is available.
 		 */
-		return apply_filters( 'got_url_rewrite', $got_url_rewrite );
+		return apply_filters( 'got_url_rewrite', $got_url_rewrite ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}
 
 	/**
@@ -318,7 +315,7 @@ class UptimeMonster_Update_Check {
 	 * @return bool Whether IIS7 supports permalinks.
 	 * @global bool $is_iis7
 	 */
-	function iis7_supports_permalinks() {
+	public function iis7_supports_permalinks() {
 		global $is_iis7;
 
 		$supports_permalinks = false;
@@ -340,7 +337,7 @@ class UptimeMonster_Update_Check {
 		 *
 		 * @param bool $supports_permalinks Whether IIS7 supports permalinks. Default false.
 		 */
-		return apply_filters( 'iis7_supports_permalinks', $supports_permalinks );
+		return apply_filters( 'iis7_supports_permalinks', $supports_permalinks ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}
 
 	/**

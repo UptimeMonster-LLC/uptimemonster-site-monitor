@@ -69,11 +69,11 @@ class UptimeMonster_Debug_Data {
 		$info = [];
 
 		$info['wp-core'] = [
-			'label'  => __( 'WordPress', 'uptimemonster-site-monitor' ),
+			'label'          => __( 'WordPress', 'uptimemonster-site-monitor' ),
 			'version'        => $core_version,
 			'latest_version' => $core_update_needed,
 			'update'         => version_compare( $core_version, $core_update_needed, '<' ),
-			'fields' => [
+			'fields'         => [
 				'site_language'          => [
 					'label' => __( 'Site Language', 'uptimemonster-site-monitor' ),
 					'value' => get_locale(),
@@ -123,7 +123,7 @@ class UptimeMonster_Debug_Data {
 				],
 				'default_comment_status' => [
 					'label' => __( 'Default comment status', 'uptimemonster-site-monitor' ),
-					'value' => 'open' === $default_comment_status ? _x( 'Open', 'comment status' ) : _x( 'Closed', 'comment status' ),
+					'value' => 'open' === $default_comment_status ? _x( 'Open', 'comment status', 'uptimemonster-site-monitor' ) : _x( 'Closed', 'comment status', 'uptimemonster-site-monitor' ),
 					'debug' => $default_comment_status,
 				],
 				'environment_type'       => [
@@ -182,7 +182,7 @@ class UptimeMonster_Debug_Data {
 		);
 
 		$info['wp-server'] = array(
-			'label'       => __( 'Server' ),
+			'label'       => __( 'Server', 'uptimemonster-site-monitor' ),
 			'description' => __( 'The options shown below relate to your server setup. If changes are required, you may need your web host&#8217;s assistance.', 'uptimemonster-site-monitor' ),
 			'fields'      => array(),
 		);
@@ -349,12 +349,12 @@ class UptimeMonster_Debug_Data {
 					'debug' => ( $is_writable_wp_content_dir ? 'writable' : 'not writable' ),
 				),
 				'uploads'    => array(
-					'label' => __( 'The uploads directory' ),
+					'label' => __( 'The uploads directory', 'uptimemonster-site-monitor' ),
 					'value' => ( $is_writable_upload_dir ? __( 'Writable', 'uptimemonster-site-monitor' ) : __( 'Not writable', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( $is_writable_upload_dir ? 'writable' : 'not writable' ),
 				),
 				'plugins'    => array(
-					'label' => __( 'The plugins directory' ),
+					'label' => __( 'The plugins directory', 'uptimemonster-site-monitor' ),
 					'value' => ( $is_writable_wp_plugin_dir ? __( 'Writable', 'uptimemonster-site-monitor' ) : __( 'Not writable', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( $is_writable_wp_plugin_dir ? 'writable' : 'not writable' ),
 				),
@@ -401,7 +401,7 @@ class UptimeMonster_Debug_Data {
 		}
 
 		// WordPress features requiring processing.
-		$wp_dotorg = wp_remote_get( 'https://wordpress.org', array( 'timeout' => 10 ) ); // phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
+		$wp_dotorg = wp_remote_get( 'https://wordpress.org', array( 'timeout' => 10 ) ); // phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout, WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 
 		if ( ! is_wp_error( $wp_dotorg ) ) {
 			$info['wp-core']['fields']['dotorg_communication'] = array(

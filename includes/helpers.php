@@ -79,7 +79,7 @@ function umsm_get_current_actor() {
 		$actor     = [
 			'type'  => 'rest-api',
 			'extra' => [
-				'method'    => $_SERVER['REQUEST_METHOD'] ?? 'N/A',
+				'method'    => $_SERVER['REQUEST_METHOD'] ?? 'N/A', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				'namespace' => $namespace,
 				'route'     => $route,
 			],
@@ -94,13 +94,12 @@ function umsm_get_current_actor() {
 		} else {
 			$actor['name'] = $namespace;
 		}
-
 	} else {
 		if ( ! function_exists( 'is_user_logged_in' ) ) {
 			require_once ABSPATH . 'wp-includes/pluggable.php';
 		}
 		if ( is_user_logged_in() ) {
-			$user = wp_get_current_user();
+			$user  = wp_get_current_user();
 			$actor = [
 				'type'  => 'user',
 				'id'    => $user->ID,
@@ -340,7 +339,7 @@ function umsm_get_theme_data_headers( $theme ) {
 	return $data;
 }
 
-function get_site_health_tests() {
+function get_site_health_tests() { //phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 	return [
 		'direct' => [
 			'wordpress_version'         => [
@@ -471,6 +470,7 @@ function umsm_prepare_plugin_data( $plugin ): array {
 		'auto_update' => 'disabled',
 	];
 
+	// phpcs:disable
 	unset(
 		$plugin['Author'], $plugin['AuthorName'],
 		$plugin['Version'], $plugin['PluginURI'],
@@ -478,6 +478,7 @@ function umsm_prepare_plugin_data( $plugin ): array {
 		$plugin['Description'], $plugin['Name'],
 		$plugin['Title'], $plugin['Woo'],
 	);
+	// phpcs:enable
 
 	return array_merge( $data, $plugin );
 }
