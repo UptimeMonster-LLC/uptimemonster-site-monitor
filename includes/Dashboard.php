@@ -251,12 +251,18 @@ class Dashboard {
 						<td><input type="password" id="umon-api-secret" value="<?php echo esc_attr( $api_secret ); ?>" class="regular-text" autocomplete="none" readonly></td>
 					</tr>
 					<tr>
-						<th scope="row">&nbsp;</th>
+						<th scope="row"></th>
 						<td>
 							<div style="display:flex;align-items:center;gap:10px;">
 								<?php esc_html_e( 'Connected', 'uptimemonster-site-monitor' ); ?>
 								<button class="button button-secondary button-warning" type="submit" name="uptimemonster-disconnect-api" value="1"><?php esc_html_e( 'Disconnect', 'uptimemonster-site-monitor' ); ?></button>
 							</div>
+							<p><?php printf(
+								/* translators: %1$s: Manage Subscription link, %2$s: Dashboard link */
+									esc_html__( 'Manage your UptimeMonster %1$s or goto %2$s', 'uptimemonster-site-monitor' ),
+									'<a href="https://uptimemonster.com/my-account/" target="_blank" rel="noopener">' . __( 'Subscription', 'uptimemonster-site-monitor' ) . '</a>',
+									'<a href="https://uptimemonster.com/my-account/" target="_blank" rel="noopener">' . __( 'Dashboard', 'uptimemonster-site-monitor' ) . '</a>'
+								); ?></p>
 						</td>
 					</tr>
 					<?php } else { ?>
@@ -267,6 +273,16 @@ class Dashboard {
 					<tr>
 						<th scope="row"><label for="umon-api-secret"><?php esc_html_e( 'Api Secret', 'uptimemonster-site-monitor' ); ?></label></th>
 						<td><input name="umon[api_secret]" type="password" id="umon-api-secret" value="" class="regular-text" autocomplete="none"></td>
+					</tr>
+					<tr>
+						<th></th>
+						<td>
+							<p><?php printf(
+								/* translators: %s: Signup link */
+									esc_html__( 'Signup now on %s for free and start monitoring your site.', 'uptimemonster-site-monitor' ),
+									'<a href="https://uptimemonster.com/pricing/" target="_blank" rel="noopener">' . __( 'UptimeMonster', 'uptimemonster-site-monitor' ) . '</a>',
+								); ?></p>
+						</td>
 					</tr>
 					<?php } ?>
 					<tr>
