@@ -44,7 +44,7 @@ abstract class Controller_Base extends WP_REST_Controller {
 	 * @return WP_Error|boolean
 	 */
 	public function get_route_access( $request ) {
-		$api_keys = get_option( 'umsm_site_monitor_api_keys', [] );
+		$api_keys = get_option( 'uptimemonster_api_keys', [] );
 
 		if ( empty( $api_keys['api_key'] ) || empty( $api_keys['api_secret'] ) ) {
 			return new WP_Error( 'invalid_api_keys', __( 'Invalid API Keys, Update Plugin Settings.', 'uptimemonster-site-monitor' ) );

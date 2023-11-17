@@ -9,6 +9,7 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use Exception;
 use WP_User;
 
@@ -34,7 +35,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 	}
 
 	protected function maybe_log_activity( $action, $object_id ) {
-		$user = umsm_get_user( $object_id );
+		$user = uptimemonster_get_user( $object_id );
 
 		/**
 		 * Should report activity?
@@ -45,7 +46,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 		 * @param string $value
 		 * @param string $new_value
 		 */
-		return (bool) apply_filters( 'umsm_should_log_users_activity', false !== $user, $user, $action );
+		return (bool) apply_filters( 'uptimemonster_should_log_users_activity', false !== $user, $user, $action );
 	}
 
 	/**
@@ -57,7 +58,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 	 * @throws Exception
 	 */
 	protected function log_user( $action, $user, $extra = [] ) {
-		$user = umsm_get_user( $user );
+		$user = uptimemonster_get_user( $user );
 
 		if ( ! $this->maybe_log_activity( $action, $user ) ) {
 			return;
@@ -68,10 +69,10 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 				$action,
 				$user->ID,
 				'user',
-				umsm_get_user_display_name( $user ),
+				uptimemonster_get_user_display_name( $user ),
 				array_merge( [
 					'username' => $user->user_login,
-					'role'     => umsm_get_user_role( $user ),
+					'role'     => uptimemonster_get_user_role( $user ),
 					'email'    => $user->user_email,
 				], $extra )
 			);
@@ -102,7 +103,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 	}
 
 	public function on_deleted( $id, $reassign, $user ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
-		$reassign = umsm_get_user( $reassign );
+		$reassign = uptimemonster_get_user( $reassign );
 		if ( $reassign ) {
 			$this->log_user(
 				Activity_Monitor_Base::ITEM_DELETED,
@@ -111,7 +112,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 					'old'           => $user->to_array(),
 					'reassigned_to' => [
 						'id'       => $reassign->ID,
-						'name'     => umsm_get_user_display_name( $reassign ),
+						'name'     => uptimemonster_get_user_display_name( $reassign ),
 						'email'    => $reassign->user_email,
 						'username' => $reassign->user_login,
 					],

@@ -212,7 +212,7 @@ class Plugins extends Controller_Base {
 				$status['message'] = sprintf( $failed, $api->name, $skin->get_error_messages() );
 			} else {
 				$status['status'] = true;
-				// translators: Plugin name
+				/* translators: Theme/Plugin name */
 				$status['message'] = sprintf( __( '%s successfully installed.', 'uptimemonster-site-monitor' ), $api->name );
 				$is_installed      = true;
 			}
@@ -525,7 +525,7 @@ class Plugins extends Controller_Base {
 			} else {
 				$status  = [
 					'status'  => true,
-					// translators: Plugin name
+					/* translators: Theme/Plugin name */
 					'message' => sprintf( __( '%s successfully deleted.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
 				];
 				$changed = true;
@@ -672,15 +672,15 @@ class Plugins extends Controller_Base {
 		$plugins_data = $this->get_plugins();
 		$plugins      = array_filter( $plugins ); // clean up.
 
-		if ( in_array( UMSM_PLUGIN_BASENAME, $plugins, true ) ) {
+		if ( in_array( UPTIMEMONSTER_PLUGIN_BASENAME, $plugins, true ) ) {
 			$plugins = array_flip( $plugins );
 
-			unset( $plugins[ UMSM_PLUGIN_BASENAME ] );
+			unset( $plugins[ UPTIMEMONSTER_PLUGIN_BASENAME ] );
 
-			$response[ UMSM_PLUGIN_BASENAME ] = [
+			$response[ UPTIMEMONSTER_PLUGIN_BASENAME ] = [
 				'status'  => false,
 				// translators: Plugin name
-				'message' => sprintf( __( 'Self (%s) destruction is prohibited', 'uptimemonster-site-monitor' ), $plugins_data[ UMSM_PLUGIN_BASENAME ]['Name'] ?? UMSM_PLUGIN_BASENAME ),
+				'message' => sprintf( __( 'Self (%s) destruction is prohibited', 'uptimemonster-site-monitor' ), $plugins_data[ UPTIMEMONSTER_PLUGIN_BASENAME ]['Name'] ?? UPTIMEMONSTER_PLUGIN_BASENAME ),
 			];
 
 			$plugins = array_flip( $plugins );

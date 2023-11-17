@@ -9,7 +9,7 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
-use WP_User;
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -30,7 +30,7 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 	}
 
 	protected function maybe_log_activity( $action, $object_id ) {
-		$user = umsm_get_user( $object_id );
+		$user = uptimemonster_get_user( $object_id );
 
 		/**
 		 * Should report activity?
@@ -41,11 +41,11 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 		 * @param string $value
 		 * @param string $new_value
 		 */
-		return (bool) apply_filters( 'umsm_should_log_session_activity', false !== $user, $user, $action );
+		return (bool) apply_filters( 'uptimemonster_should_log_session_activity', false !== $user, $user, $action );
 	}
 
 	protected function log_user( $action, $user, $extra = [] ) {
-		$user = umsm_get_user( $user );
+		$user = uptimemonster_get_user( $user );
 
 		if ( ! $user || ! $this->maybe_log_activity( $action, $user ) ) {
 			return;
@@ -55,10 +55,10 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 			$action,
 			$user->ID, // @phpstan-ignore-line
 			'session',
-			umsm_get_user_display_name( $user ),
+			uptimemonster_get_user_display_name( $user ),
 			array_merge( [
 				'username' => $user->user_login,
-				'role'     => umsm_get_user_role( $user ),
+				'role'     => uptimemonster_get_user_role( $user ),
 				'email'    => $user->user_email,
 			], $extra )
 		);

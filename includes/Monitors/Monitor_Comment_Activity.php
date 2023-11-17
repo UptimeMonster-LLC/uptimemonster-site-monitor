@@ -9,6 +9,7 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use WP_Comment;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -38,7 +39,7 @@ class Monitor_Comment_Activity extends Monitor_Posts_Activity {
 		 * @param int|object $object
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'umsm_should_log_comment_activity', true, get_comment( $object_id ), $action );
+		return (bool) apply_filters( 'uptimemonster_should_log_comment_activity', true, get_comment( $object_id ), $action );
 	}
 
 	protected function detect_action( $comment ) {

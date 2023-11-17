@@ -7,7 +7,7 @@
  * @since SiteMonitor 1.0.0
  */
 
-namespace UptimeMonster\SiteMonitor\Monitors;
+namespace UptimeMonster\SiteMonitor\Traits;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );

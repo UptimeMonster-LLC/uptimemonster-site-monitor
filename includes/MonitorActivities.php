@@ -7,7 +7,7 @@
 
 namespace UptimeMonster\SiteMonitor;
 
-use UptimeMonster\SiteMonitor\Monitors\Singleton;
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use UptimeMonster\SiteMonitor\Monitors\Activity_Monitor_Base;
 use UptimeMonster\SiteMonitor\Monitors\Monitor_Self_Activation_Activity;
 use UptimeMonster\SiteMonitor\Monitors\Monitor_Attachment_Activity;

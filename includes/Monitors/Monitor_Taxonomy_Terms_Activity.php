@@ -9,6 +9,7 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use Exception;
 use WP_Error;
 use WP_Term;
@@ -42,7 +43,7 @@ class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {
 		 * @param WP_Term|WP_Error $term
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'umsm_should_log_wp_export_activity', $status, $term, $action );
+		return (bool) apply_filters( 'uptimemonster_should_log_wp_export_activity', $status, $term, $action );
 	}
 
 	protected function detect_action() {

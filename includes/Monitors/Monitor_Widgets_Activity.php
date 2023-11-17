@@ -9,6 +9,7 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use Exception;
 use WP_Widget;
 
@@ -48,7 +49,7 @@ class Monitor_Widgets_Activity extends Activity_Monitor_Base {
 		 * @param string $option
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'umsm_should_log_widgets_activity', true, $sidebar, $widget );
+		return (bool) apply_filters( 'uptimemonster_should_log_widgets_activity', true, $sidebar, $widget );
 	}
 
 	/**

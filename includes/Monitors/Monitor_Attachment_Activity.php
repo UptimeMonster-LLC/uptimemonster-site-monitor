@@ -9,6 +9,8 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use UptimeMonster\SiteMonitor\Traits\Singleton;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
@@ -30,7 +32,7 @@ class Monitor_Attachment_Activity extends Monitor_Posts_Activity {
 		 * @param bool $status
 		 * @param int|object $object_id
 		 */
-		return (bool) apply_filters( 'umsm_should_log_attachment_activity', true, $action, $object_id );
+		return (bool) apply_filters( 'uptimemonster_should_log_attachment_activity', true, $action, $object_id );
 	}
 
 	protected function log_data( $action, $attachment_id ) {

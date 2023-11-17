@@ -9,6 +9,7 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use Exception;
 use WP_Post;
 
@@ -58,7 +59,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		 * @param WP_Post $post
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'umsm_should_log_post_activity', $status, $post, $action );
+		return (bool) apply_filters( 'uptimemonster_should_log_post_activity', $status, $post, $action );
 	}
 
 	/**
@@ -153,7 +154,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		 *
 		 * @param array $post_types
 		 */
-		return (array) apply_filters( 'umsm_exclude_pos_type', [] );
+		return (array) apply_filters( 'uptimemonster_exclude_pos_type', [] );
 	}
 
 	/**

@@ -121,8 +121,8 @@ class Core_Update extends Controller_Base {
 		// Specific version is given
 		$version = $request['version'] ?? '';
 		$locale  = $request['locale'] ? $request['locale'] : get_locale();
-		$force   = umsm_parse_boolval( $request['force'] ?? false );
-		$minor   = umsm_parse_boolval( $request['minor'] ?? false );
+		$force   = uptimemonster_parse_boolval( $request['force'] ?? false );
+		$minor   = uptimemonster_parse_boolval( $request['minor'] ?? false );
 
 		if ( 'trunk' === $request['version'] ) {
 			$request['version'] = 'nightly';
@@ -137,7 +137,7 @@ class Core_Update extends Controller_Base {
 
 			if ( $minor ) {
 				foreach ( $from_api->updates as $offer ) {
-					$sem_ver = umsm_get_named_sem_ver( $offer->version, $wp_version );
+					$sem_ver = uptimemonster_get_named_sem_ver( $offer->version, $wp_version );
 					if ( ! $sem_ver || 'patch' !== $sem_ver ) {
 						continue;
 					}
@@ -155,7 +155,7 @@ class Core_Update extends Controller_Base {
 					list( $update ) = $from_api->updates;
 				}
 			}
-		} elseif ( umsm_wp_version_compare( $request['version'], '<' ) || 'nightly' === $request['version'] || $force ) {
+		} elseif ( uptimemonster_wp_version_compare( $request['version'], '<' ) || 'nightly' === $request['version'] || $force ) {
 			$new_package = $this->get_download_url( $version, $locale );
 
 			$update = (object) [

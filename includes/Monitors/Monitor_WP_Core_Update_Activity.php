@@ -9,8 +9,8 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use Exception;
-use WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -38,7 +38,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		 * @param null $object
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'umsm_should_log_wp_core_update_activity', true, null, $action );
+		return (bool) apply_filters( 'uptimemonster_should_log_wp_core_update_activity', true, null, $action );
 	}
 
 	/**
@@ -48,10 +48,10 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		global $pagenow;
 
 		if ( 'wp_maybe_auto_update' === current_filter() ) {
-			umsm_switch_to_english();
+			uptimemonster_switch_to_english();
 			/* translators: 1. WordPress Version. */
 			$name = __( 'WordPress Auto Upgrading From %s', 'uptimemonster-site-monitor' );
-			umsm_restore_locale();
+			uptimemonster_restore_locale();
 
 			$version = get_bloginfo( 'version' );
 
@@ -73,10 +73,10 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		if ( 'do-core-upgrade' === $action || 'do-core-reinstall' === $action ) {
 			if ( isset( $_POST['upgrade'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 				$action = 'do-core-upgrade' === $action ? Activity_Monitor_Base::ITEM_UPGRADING : Activity_Monitor_Base::ITEM_REINSTALLING;
-				umsm_switch_to_english();
+				uptimemonster_switch_to_english();
 				/* translators: 1. WordPress Version. */
 				$name = 'do-core-upgrade' == $action ? __( 'WordPress Upgrading From %s', 'uptimemonster-site-monitor' ) : __( 'WordPress Reinstalling %s', 'uptimemonster-site-monitor' );
-				umsm_restore_locale();
+				uptimemonster_restore_locale();
 
 				$version = get_bloginfo( 'version' );
 
@@ -94,10 +94,10 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 	public function log_on_successful_update( $version ) {
 		global $pagenow;
 
-		umsm_switch_to_english();
+		uptimemonster_switch_to_english();
 		/* translators: 1. WordPress Updated Version. */
 		$name = 'update-core.php' !== $pagenow ? __( 'WordPress Auto Updated to %s', 'uptimemonster-site-monitor' ) : __( 'WordPress Updated to %s', 'uptimemonster-site-monitor' );
-		umsm_restore_locale();
+		uptimemonster_restore_locale();
 
 		$this->log_activity(
 			Activity_Monitor_Base::ITEM_UPDATED,

@@ -9,8 +9,7 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
-use Exception;
-use Plugin_Upgrader;
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -18,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
+/**
+ * @deprecated error handler logs & reports deprecated function/method calls.
+ */
 class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 
 	use Singleton;
@@ -42,7 +44,7 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 		 * @param bool $status
 		 * @param string $which
 		 */
-		return (bool) apply_filters( 'umsm_should_log_deprecated_activity', true, $which );
+		return (bool) apply_filters( 'uptimemonster_should_log_deprecated_activity', true, $which );
 	}
 
 	protected function log_deprecated_function( $function, $replacement, $version ) {

@@ -5,6 +5,8 @@
  * @package UptimeMonster\SiteMonitor
  */
 
+use Composer\Semver\Comparator;
+use Composer\Semver\Semver;
 use UptimeMonster\SiteMonitor\UptimeMonster_Site_Monitor;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,9 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Must restore language after uses.
  *
- * @see umsm_restore_locale()
+ * @see uptimemonster_restore_locale()
  */
-function umsm_switch_to_english() {
+function uptimemonster_switch_to_english() {
 	if ( function_exists( 'switch_to_locale' ) ) {
 		switch_to_locale( 'en_US' );
 
@@ -34,7 +36,7 @@ function umsm_switch_to_english() {
 /**
  * Switch Plugin language to original.
  */
-function umsm_restore_locale() {
+function uptimemonster_restore_locale() {
 	if ( function_exists( 'restore_previous_locale' ) ) {
 		restore_previous_locale();
 
@@ -48,7 +50,7 @@ function umsm_restore_locale() {
  *
  * @return string
  */
-function umsm_get_current_time() {
+function uptimemonster_get_current_time() {
 	return (string) current_time( 'mysql', 1 );
 }
 
@@ -57,7 +59,7 @@ function umsm_get_current_time() {
  *
  * @return array|string[]
  */
-function umsm_get_current_actor() {
+function uptimemonster_get_current_actor() {
 	if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
 		$actor = [
 			'type' => 'cron',
@@ -79,7 +81,7 @@ function umsm_get_current_actor() {
 		$actor     = [
 			'type'  => 'rest-api',
 			'extra' => [
-				'method'    => $_SERVER['REQUEST_METHOD'] ?? 'N/A', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				'method'    => isset( $_SERVER['REQUEST_METHOD'] )? $_SERVER['REQUEST_METHOD'] : 'N/A', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				'namespace' => $namespace,
 				'route'     => $route,
 			],
@@ -88,9 +90,9 @@ function umsm_get_current_actor() {
 		if ( is_user_logged_in() ) {
 			$user           = wp_get_current_user();
 			$actor['id']    = $user->ID;
-			$actor['name']  = umsm_get_user_display_name( $user );
+			$actor['name']  = uptimemonster_get_user_display_name( $user );
 			$actor['email'] = $user->user_email;
-			$actor['role']  = umsm_get_user_role( $user );
+			$actor['role']  = uptimemonster_get_user_role( $user );
 		} else {
 			$actor['name'] = $namespace;
 		}
@@ -103,19 +105,19 @@ function umsm_get_current_actor() {
 			$actor = [
 				'type'  => 'user',
 				'id'    => $user->ID,
-				'name'  => umsm_get_user_display_name( $user ),
+				'name'  => uptimemonster_get_user_display_name( $user ),
 				'email' => $user->user_email,
-				'role'  => umsm_get_user_role( $user ),
+				'role'  => uptimemonster_get_user_role( $user ),
 			];
 		} else {
 			$actor = [
 				'type' => 'visitor',
-				'name' => 'Unknown Visitor',
+				'name' => __( 'Unknown Visitor', 'uptimemonster-site-monitor' ),
 			];
 		}
 	}
 
-	$actor['ip'] = umsm_get_ip_address();
+	$actor['ip'] = uptimemonster_get_ip_address();
 
 	return $actor;
 }
@@ -128,7 +130,7 @@ function umsm_get_current_actor() {
  *
  * @return false|WP_User
  */
-function umsm_get_user( $identity, $field = null ) {
+function uptimemonster_get_user( $identity, $field = null ) {
 	if ( $identity instanceof WP_User ) {
 		return $identity;
 	}
@@ -152,7 +154,7 @@ function umsm_get_user( $identity, $field = null ) {
  *
  * @return string
  */
-function umsm_get_user_display_name( $user ) {
+function uptimemonster_get_user_display_name( $user ) {
 	$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) ); // @phpstan-ignore-line
 
 	if ( empty( $name ) ) {
@@ -171,7 +173,7 @@ function umsm_get_user_display_name( $user ) {
  *
  * @return string
  */
-function umsm_get_user_role( $user ) {
+function uptimemonster_get_user_role( $user ) {
 	return strtolower( (string) key( $user->caps ) );
 }
 
@@ -180,7 +182,7 @@ function umsm_get_user_role( $user ) {
  *
  * @return string
  */
-function umsm_get_ip_address() {
+function uptimemonster_get_ip_address() {
 	$ip     = '';
 	$lookup = [
 		'HTTP_X_REAL_IP',
@@ -216,7 +218,7 @@ function umsm_get_ip_address() {
  *
  * @return array|false
  */
-function umsm_get_plugin_data( $plugin_file ) {
+function uptimemonster_get_plugin_data( $plugin_file ) {
 	if ( ! is_readable( $plugin_file ) ) {
 		return false;
 	}
@@ -233,12 +235,12 @@ function umsm_get_plugin_data( $plugin_file ) {
 	return $plugin_data;
 }
 
-function umsm_get_all_plugins() {
+function uptimemonster_get_all_plugins() {
 	if ( ! function_exists( 'get_plugins' ) ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
 
-	umsm_switch_to_english();
+	uptimemonster_switch_to_english();
 
 	$plugins    = get_plugins();
 	$mu_plugins = get_mu_plugins();
@@ -270,7 +272,7 @@ function umsm_get_all_plugins() {
 
 	$data = array_merge( $plugins, $mu_plugins, $dropins );
 
-	umsm_restore_locale();
+	uptimemonster_restore_locale();
 
 	if ( isset( $data['fatal-error-handler.php'] ) || isset( $data['uptimemonster-site-monitor/uptimemonster-site-monitor.php'] ) ) {
 		$data['fatal-error-handler.php']['isRoxMon'] = true;
@@ -284,7 +286,7 @@ function umsm_get_all_plugins() {
  *
  * @return array|array[]
  */
-function umsm_get_all_themes() {
+function uptimemonster_get_all_themes() {
 	if ( ! function_exists( 'wp_get_themes' ) ) {
 		require_once ABSPATH . 'wp-includes/theme.php';
 	}
@@ -297,7 +299,7 @@ function umsm_get_all_themes() {
 
 	return array_map(
 		function ( $theme ) {
-			return umsm_get_theme_data_headers( $theme );
+			return uptimemonster_get_theme_data_headers( $theme );
 		},
 		$themes
 	);
@@ -308,7 +310,7 @@ function umsm_get_all_themes() {
  *
  * @return array
  */
-function umsm_get_theme_data_headers( $theme ) {
+function uptimemonster_get_theme_data_headers( $theme ) {
 	$headers = [
 		'Name',
 		'Parent Theme',
@@ -437,13 +439,13 @@ function get_site_health_tests() { //phpcs:ignore WordPress.NamingConventions.Pr
 	];
 }
 
-function umsm_wp_version_compare( $since, $operator ) {
+function uptimemonster_wp_version_compare( $since, $operator ) {
 	$wp_version = str_replace( '-src', '', $GLOBALS['wp_version'] );
 	$since      = str_replace( '-src', '', $since );
 	return version_compare( $wp_version, $since, $operator );
 }
 
-function umsm_parse_boolval( $maybe_bool ): bool {
+function uptimemonster_parse_boolval( $maybe_bool ) {
 	if ( is_bool( $maybe_bool ) ) {
 		return $maybe_bool;
 	}
@@ -457,14 +459,14 @@ function umsm_parse_boolval( $maybe_bool ): bool {
 	return 'true' === $maybe_bool || 'yes' === $maybe_bool || 'on' === $maybe_bool;
 }
 
-function umsm_prepare_plugin_data( $plugin ): array {
+function uptimemonster_prepare_plugin_data( $plugin ) {
 	$data = [
-		'author'      => $plugin['Author'] ? $plugin['Author'] : ( $plugin['AuthorName'] ?? 'unavailable' ),
-		'version'     => $plugin['Version'] ? $plugin['Version'] : 'unavailable',
-		'plugin_uri'  => $plugin['PluginURI'],
-		'author_uri'  => $plugin['AuthorURI'],
-		'network'     => $plugin['Network'],
-		'description' => $plugin['Description'],
+		'author'      => ! empty( $plugin['Author'] ) ? $plugin['Author'] : ( ! empty( $plugin['AuthorName'] ) ? $plugin['AuthorName'] :  'unavailable' ),
+		'version'     => ! empty( $plugin['Version'] ) ? $plugin['Version'] : 'unavailable',
+		'plugin_uri'  => ! empty( $plugin['PluginURI'] ) ? $plugin['PluginURI'] : '',
+		'author_uri'  => ! empty( $plugin['AuthorURI'] ) ? $plugin['AuthorURI'] : '',
+		'network'     => ! empty( $plugin['Network'] ) ? $plugin['Network'] : '',
+		'description' => ! empty( $plugin['Description'] ) ? $plugin['Description'] : '',
 		'new_version' => null,
 		'need_update' => false,
 		'auto_update' => 'disabled',
@@ -492,8 +494,8 @@ function umsm_prepare_plugin_data( $plugin ): array {
  * @param string $original_version
  * @return string 'major', 'minor', 'patch'
  */
-function umsm_get_named_sem_ver( $new_version, $original_version ) {
-	if ( ! \Composer\Semver\Comparator::greaterThan( $new_version, $original_version ) ) {
+function uptimemonster_get_named_sem_ver( $new_version, $original_version ) {
+	if ( ! Comparator::greaterThan( $new_version, $original_version ) ) {
 		return '';
 	}
 
@@ -507,18 +509,18 @@ function umsm_get_named_sem_ver( $new_version, $original_version ) {
 		$patch = $bits[2];
 	}
 
-	if ( isset( $minor ) && \Composer\Semver\Semver::satisfies( $new_version, "{$major}.{$minor}.x" ) ) {
+	if ( isset( $minor ) && Semver::satisfies( $new_version, "{$major}.{$minor}.x" ) ) {
 		return 'patch';
 	}
 
-	if ( \Composer\Semver\Semver::satisfies( $new_version, "{$major}.x.x" ) ) {
+	if ( Semver::satisfies( $new_version, "{$major}.x.x" ) ) {
 		return 'minor';
 	}
 
 	return 'major';
 }
 
-function umsm_need_filesystem_credentials( $redirect ) {
+function uptimemonster_need_filesystem_credentials( $redirect ) {
 	if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
 		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
 	}

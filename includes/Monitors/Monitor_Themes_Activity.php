@@ -9,11 +9,11 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use Exception;
 use Theme_Upgrader;
 use WP_Customize_Manager;
 use WP_Theme;
-use function Sodium\add;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -66,7 +66,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 		 * @param string $action
 		 * @param string $file file path if one is being modified.
 		 */
-		return (bool) apply_filters( 'umsm_should_log_plugins_activity', true, $theme, $action, $file );
+		return (bool) apply_filters( 'uptimemonster_should_log_plugins_activity', true, $theme, $action, $file );
 	}
 
 	public function on_theme_change( $new_name, WP_Theme $new_theme, WP_Theme $old_theme ) {
@@ -74,13 +74,13 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		umsm_switch_to_english();
+		uptimemonster_switch_to_english();
 		/* translators: %1$s New Theme Name, %2$s: Old Theme Name */
 		$name = sprintf( __( 'Switched to %1$s theme from %2$s', 'uptimemonster-site-monitor' ),
 			$new_theme->get( 'Name' ), // @phpstan-ignore-line
 			$old_theme->get( 'Name' ) // @phpstan-ignore-line
 		);
-		umsm_restore_locale();
+		uptimemonster_restore_locale();
 
 		$this->log_activity(
 			Activity_Monitor_Base::ITEM_ACTIVATED,
@@ -111,7 +111,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 		$data = $this->get_theme_data( $stylesheet );
 
-		set_transient( 'umsm_theme_data_' . $hash, $data, 5 * MINUTE_IN_SECONDS );
+		set_transient( 'uptimemonster_theme_data_' . $hash, $data, 5 * MINUTE_IN_SECONDS );
 	}
 
 	public function on_theme_deleted( $stylesheet, $deleted ) {
@@ -121,13 +121,13 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 		$hash = md5( $stylesheet );
 
-		$data = get_transient( 'umsm_theme_data_' . $hash );
+		$data = get_transient( 'uptimemonster_theme_data_' . $hash );
 
 		if ( $data ) {
 			$this->theme[ $hash ] = $data;
 		}
 
-		delete_transient( 'umsm_theme_data_' . $hash );
+		delete_transient( 'uptimemonster_theme_data_' . $hash );
 
 		$data = $this->get_theme_data( $stylesheet );
 		$data = empty( $data ) ? [] : $data;
@@ -267,7 +267,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		$data = umsm_get_theme_data_headers( $customize_manager->theme() );
+		$data = uptimemonster_get_theme_data_headers( $customize_manager->theme() );
 
 		$data['customizer'] = true;
 
@@ -297,10 +297,10 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 				$_file = WP_PLUGIN_DIR . $theme; // @phpstan-ignore-line
 
 				if ( $this->maybe_log_theme( Activity_Monitor_Base::ITEM_UPDATED, $theme, $file ) && file_exists( $_file ) ) {
-					umsm_switch_to_english();
+					uptimemonster_switch_to_english();
 					/* translators: %1$s. Theme Name, %2$s. File path. */
 					$name = __( 'Modified file (%2$s) of “%1$s” theme', 'uptimemonster-site-monitor' );
-					umsm_restore_locale();
+					uptimemonster_restore_locale();
 
 					try {
 						$this->log_activity(
@@ -342,7 +342,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 				require_once ABSPATH . 'wp-includes/theme.php';
 			}
 
-			$this->theme[ $hash ] = umsm_get_theme_data_headers( wp_get_theme( $theme ) );
+			$this->theme[ $hash ] = uptimemonster_get_theme_data_headers( wp_get_theme( $theme ) );
 		}
 
 		if ( $header ) {

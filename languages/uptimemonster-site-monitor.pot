@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Pixelaar
+# Copyright (C) 2023 UptimeMonster
 # This file is distributed under the same license as the UptimeMonster Site Monitor plugin.
 msgid ""
 msgstr ""
@@ -9,16 +9,17 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-02-14T21:31:49+06:00\n"
+"POT-Creation-Date: 2023-11-17T17:07:33+06:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.7.1\n"
-"X-Domain: uptime\n"
+"X-Generator: WP-CLI 2.8.1\n"
+"X-Domain: uptimemonster-site-monitor\n"
 
 #. Plugin Name of the plugin
 msgid "UptimeMonster Site Monitor"
 msgstr ""
 
 #. Plugin URI of the plugin
+#. Author URI of the plugin
 msgid "https://uptimemonster.com/"
 msgstr ""
 
@@ -27,201 +28,1101 @@ msgid "WordPress Site Activity Monitor For UptimeMonster"
 msgstr ""
 
 #. Author of the plugin
-msgid "Pixelaar"
+msgid "UptimeMonster"
 msgstr ""
 
-#. Author URI of the plugin
-msgid "https://pixelaar.com/"
-msgstr ""
-
-#: includes/Api/Controllers/Controller_Base.php:55
+#: includes/Api/Controllers/Controller_Base.php:50
 msgid "Invalid API Keys, Update Plugin Settings."
 msgstr ""
 
-#: includes/Api/Controllers/Controller_Base.php:81
+#: includes/Api/Controllers/Controller_Base.php:76
 msgid "Invalid Signature"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Core_Update.php:164
+#: includes/Api/Controllers/V1/Core_Update.php:55
+msgid "Only perform updates for minor releases (e.g. update from WP 4.3 to 4.3.3 instead of 4.4.2."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Core_Update.php:62
+msgid "Update to a specific version, instead of to the latest version. Alternatively accepts 'nightly'."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Core_Update.php:69
+msgid "Update even when installed WP version is greater than the requested version."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Core_Update.php:76
+msgid "Select which language you want to download."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Core_Update.php:150
 msgid "WordPress is at the latest minor release."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Core_Update.php:231
+#: includes/Api/Controllers/V1/Core_Update.php:206
 msgid "WordPress updated successfully."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Core_Update.php:237
+#: includes/Api/Controllers/V1/Core_Update.php:212
 msgid "WordPress is up to date."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Core_Update.php:550
+#: includes/Api/Controllers/V1/Core_Update.php:520
 msgid "Unsupported argument type passed"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:190
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:178
 msgid "%s already installed."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:209
-#: includes/Api/Controllers/V1/Plugins.php:499
-#: includes/Api/Controllers/V1/Plugins.php:581
-#: includes/Api/Controllers/V1/Themes.php:164
-#: includes/Api/Controllers/V1/Themes.php:386
-#: includes/helpers.php:536
+#: includes/Api/Controllers/V1/Plugins.php:202
+#: includes/Api/Controllers/V1/Plugins.php:516
+#: includes/Api/Controllers/V1/Plugins.php:604
+#: includes/Api/Controllers/V1/Themes.php:170
+#: includes/Api/Controllers/V1/Themes.php:401
+#: includes/helpers.php:538
 msgid "Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php."
 msgstr ""
 
 #. translators: 1. Theme/plugin name, 2. Error details
-#: includes/Api/Controllers/V1/Plugins.php:213
-#: includes/Api/Controllers/V1/Themes.php:170
+#: includes/Api/Controllers/V1/Plugins.php:206
+#: includes/Api/Controllers/V1/Themes.php:176
 msgid "%1$s installation failed. Error: %2$s"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:222
-#: includes/Api/Controllers/V1/Themes.php:181
+#. translators: Theme/Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:216
+#: includes/Api/Controllers/V1/Themes.php:189
 msgid "%s successfully installed."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:265
-#: includes/Api/Controllers/V1/Plugins.php:336
-#: includes/Api/Controllers/V1/Plugins.php:408
-#: includes/Api/Controllers/V1/Plugins.php:487
-#: includes/Api/Controllers/V1/Plugins.php:566
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:263
+#: includes/Api/Controllers/V1/Plugins.php:338
+#: includes/Api/Controllers/V1/Plugins.php:417
+#: includes/Api/Controllers/V1/Plugins.php:504
+#: includes/Api/Controllers/V1/Plugins.php:589
 msgid "Plugin %s does not exists or already deleted."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:276
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:275
 msgid "“%s” already active"
 msgstr ""
 
+#. translators: Plugin name
 #: includes/Api/Controllers/V1/Plugins.php:286
 msgid "Error activating “%1$s”. Error: %2$s"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:289
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:290
 msgid "“%s” activated"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:347
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:350
 msgid "“%s” already inactive."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:356
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:360
 msgid "Unable to deactivated “%s”."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:360
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:365
 msgid "“%s” deactivated."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:419
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:429
 msgid "Failed to uninstallation “%s”. This Plugin is currently Active."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:428
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:439
 msgid "Plugin “%s” can not be uninstalled."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:437
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:449
 msgid "Plugin “%s” uninstalled successfully."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:444
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:457
 msgid "Plugin “%s” does not have uninstall.php included."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:505
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:523
 msgid "Failed to delete “%1$s”. Error: %2$s"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:510
-#: includes/Api/Controllers/V1/Themes.php:326
+#. translators: Theme/Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:529
+#: includes/Api/Controllers/V1/Themes.php:337
 msgid "%s successfully deleted."
 msgstr ""
 
 #. translators: 1. Theme/plugin name, 2. Error details
-#: includes/Api/Controllers/V1/Plugins.php:587
-#: includes/Api/Controllers/V1/Themes.php:393
+#: includes/Api/Controllers/V1/Plugins.php:610
+#: includes/Api/Controllers/V1/Themes.php:408
 msgid "Failed to update %1$s. Error: %2$s"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:593
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:617
 msgid "“%s” is at the latest version."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:599
+#: includes/Api/Controllers/V1/Plugins.php:623
 msgid "Unknown"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:601
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:626
 msgid "“%1$s” Updated from version %2$s to %3$s."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:661
+#. translators: Plugin name
+#: includes/Api/Controllers/V1/Plugins.php:683
 msgid "Self (%s) destruction is prohibited"
 msgstr ""
 
-#: includes/Api/Controllers/V1/Plugins.php:675
+#: includes/Api/Controllers/V1/Plugins.php:697
 msgid "No plugin specified."
 msgstr ""
 
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:72
+msgid "WordPress"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:78
+msgid "Site Language"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:82
+msgid "User Language"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:86
+msgid "Timezone"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:90
+msgid "Home URL"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:95
+msgid "Site URL"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:100
+msgid "Permalink structure"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:101
+msgid "No permalink structure set"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:105
+msgid "Is this site using HTTPS?"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:106
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:111
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:116
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:121
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:797
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:805
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:813
+msgid "Yes"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:106
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:111
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:116
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:121
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:797
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:805
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:813
+msgid "No"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:110
+msgid "Is this a multisite?"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:115
+msgid "Can anyone register on this site?"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:120
+msgid "Is this site discouraging search engines?"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:125
+msgid "Default comment status"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:126
+msgctxt "comment status"
+msgid "Open"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:126
+msgctxt "comment status"
+msgid "Closed"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:130
+msgid "Environment type"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:139
+msgid "Directories and Sizes"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:145
+msgid "Drop-ins"
+msgstr ""
+
+#. translators: %s: wp-content directory name.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:149
+msgid "Drop-ins are single files, found in the %s directory, that replace or enhance WordPress features in ways that are not possible for traditional plugins."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:162
+msgid "Must Use Plugins"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:168
+msgid "Active Plugins"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:174
+msgid "Inactive Plugins"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:180
+msgid "Media Handling"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:185
+msgid "Server"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:186
+msgid "The options shown below relate to your server setup. If changes are required, you may need your web host&#8217;s assistance."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:191
+msgid "Database"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:196
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:206
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:215
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:224
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:275
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:280
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:290
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:295
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:553
+msgid "Disabled"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:201
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:206
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:215
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:224
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:275
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:280
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:290
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:295
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:553
+msgid "Enabled"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:209
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:218
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:227
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:235
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:249
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:254
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:320
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:325
+msgid "Undefined"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:239
+msgid "WordPress Constants"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:240
+msgid "These settings alter where and how parts of WordPress are loaded."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:338
+msgid "Filesystem Permissions"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:339
+msgid "Shows whether WordPress is able to write to the directories it needs access to."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:342
+msgid "The main WordPress directory"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:343
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:348
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:353
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:358
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:363
+#: includes/Dashboard.php:325
+#: includes/Dashboard.php:338
+msgid "Writable"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:343
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:348
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:353
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:358
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:363
+msgid "Not writable"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:347
+msgid "The wp-content directory"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:352
+msgid "The uploads directory"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:357
+msgid "The plugins directory"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:362
+msgid "The themes directory"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:386
+msgid "Site count"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:391
+msgid "Network count"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:398
+msgid "User count"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:408
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:414
+#: includes/helpers.php:415
+msgid "Communication with WordPress.org"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:409
+msgid "WordPress.org is reachable"
+msgstr ""
+
+#. translators: 1: The IP address WordPress.org resolves to. 2: The error returned by the lookup.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:417
+msgid "Unable to reach WordPress.org at %1$s: %2$s"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:427
+msgid "Loading&hellip;"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:431
+msgid "WordPress directory location"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:435
+msgid "WordPress directory size"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:440
+msgid "Uploads directory location"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:444
+msgid "Uploads directory size"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:449
+msgid "Themes directory location"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:453
+msgid "Themes directory size"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:458
+msgid "Plugins directory location"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:462
+msgid "Plugins directory size"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:467
+msgid "Database size"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:472
+msgid "Total installation size"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:486
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:513
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:530
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1460
+msgid "Not available"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:503
+msgid "Active editor"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:517
+msgid "ImageMagick version number"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:522
+msgid "ImageMagick version string"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:529
+msgid "Imagick version"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:535
+msgid "File upload settings"
+msgstr ""
+
+#. translators: %s: ini_get()
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:538
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:733
+msgid "Unable to determine some settings, as the %s function has been disabled."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:552
+#: includes/helpers.php:405
+msgid "File uploads"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:557
+msgid "Max size of post data allowed"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:561
+msgid "Max size of an uploaded file"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:565
+msgid "Max effective file size"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:569
+msgid "Max number of files allowed"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:595
+msgid "Imagick Resource Limits"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:607
+msgid "ImageMagick supported file formats"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:608
+msgid "Unable to determine"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:621
+msgid "GD version"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:648
+msgid "GD supported file formats"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:664
+msgid "Unable to determine if Ghostscript is installed"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:669
+msgid "Ghostscript version"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:689
+msgid "(Supports 64bit values)"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:689
+msgid "(Does not support 64bit values)"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:696
+msgid "Unable to determine PHP version"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:707
+msgid "Server architecture"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:708
+msgid "Unable to determine server architecture"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:712
+msgid "Web server"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:713
+msgid "Unable to determine what web server software is used"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:717
+msgid "PHP version"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:722
+msgid "PHP SAPI"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:723
+msgid "Unable to determine PHP SAPI"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:730
+msgid "Server settings"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:740
+msgid "PHP max input variables"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:744
+msgid "PHP time limit"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:750
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:759
+msgid "PHP memory limit"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:754
+msgid "PHP memory limit (only for admin screens)"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:765
+msgid "Max input time"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:769
+msgid "Upload max filesize"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:773
+msgid "PHP post max size"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:782
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:787
+msgid "cURL version"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:796
+msgid "Is SUHOSIN installed?"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:804
+msgid "Is the Imagick library available?"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:812
+msgid "Are pretty permalinks supported?"
+msgstr ""
+
+#. translators: %s: .htaccess
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:827
+msgid "Custom rules have been added to your %s file."
+msgstr ""
+
+#. translators: %s: .htaccess
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:830
+msgid "Your %s file contains only core WordPress features."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:834
+msgid ".htaccess rules"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:867
+msgid "Extension"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:872
+msgid "Server version"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:877
+msgid "Client version"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:882
+msgid "Database username"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:888
+msgid "Database host"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:894
+msgid "Database name"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:900
+msgid "Table prefix"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:906
+msgid "Database charset"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:912
+msgid "Database collation"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:918
+msgid "Max allowed packet size"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:923
+msgid "Max connections number"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1040
+msgid "None"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1221
+msgid "The must use plugins directory"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1425
+msgid "The size cannot be calculated. The directory is not accessible. Usually caused by invalid permissions."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1432
+msgid "The directory size calculation has timed out. Usually caused by a very large number of sub-directories and files."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1476
+msgid "Total size is not available. Some errors were encountered when determining the size of your installation."
+msgstr ""
+
+#. translators: %s: Support forums URL.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1510
+msgid "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href=\"%s\">support forums</a>."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1511
+msgid "https://wordpress.org/support/forums/"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1512
+msgid "(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)"
+msgstr ""
+
+#. translators: %s: Number of plugins.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1578
+msgid "%s plugin successfully updated."
+msgstr ""
+
+#. translators: %s: Number of themes.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1583
+msgid "%s theme successfully updated."
+msgstr ""
+
+#. translators: %s: Number of plugins.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1590
+msgid "%s plugins successfully updated."
+msgstr ""
+
+#. translators: %s: Number of themes.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1595
+msgid "%s themes successfully updated."
+msgstr ""
+
+#. translators: %s: Number of failed updates.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1605
+msgid "%s update failed."
+msgstr ""
+
+#. translators: %s: Number of failed updates.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1610
+msgid "%s updates failed."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1613
+msgid "Show more details"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1640
+msgid "Automatic update not scheduled. There may be a problem with WP-Cron."
+msgstr ""
+
+#. translators: %s: Duration that WP-Cron has been overdue.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1650
+msgid "Automatic update overdue by %s. There may be a problem with WP-Cron."
+msgstr ""
+
+#. translators: %s: Time until the next update.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:1656
+msgid "Automatic update scheduled in %s."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:112
+msgid "A test is unavailable"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:132
+msgid "Plugin and theme auto-updates appear to be configured correctly"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:134
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:437
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:575
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:615
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:919
+msgid "Security"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:139
+msgid "Plugin and theme auto-updates ensure that the latest versions are always installed."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:150
+msgid "Your site may have problems auto-updating plugins and themes"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:211
+msgid "Auto-updates for plugins and/or themes appear to be disabled, but settings are still set to be displayed. This could cause auto-updates to not work as expected."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:218
+msgid "Auto-updates for plugins and themes appear to be disabled. This will prevent your site from receiving new versions automatically when available."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:223
+msgid "Auto-updates for plugins appear to be disabled. This will prevent your site from receiving new versions automatically when available."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:228
+msgid "Auto-updates for themes appear to be disabled. This will prevent your site from receiving new versions automatically when available."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:234
+msgid "There appear to be no issues with plugin and theme auto-updates."
+msgstr ""
+
+#. translators: %s: The current PHP version.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:375
+msgid "Your site is running the current version of PHP (%s)"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:380
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:514
+msgid "Performance"
+msgstr ""
+
+#. translators: %s: The minimum recommended PHP version.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:387
+msgid "PHP is the programming language used to build and maintain WordPress. Newer versions of PHP are created with increased performance in mind, so you may see a positive effect on your site&#8217;s performance. The minimum recommended version of PHP is %s."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:394
+msgid "Learn more about updating PHP"
+msgstr ""
+
+#. translators: Accessibility text.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:396
+msgid "(opens in a new tab)"
+msgstr ""
+
+#. translators: %s: The server PHP version.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:410
+msgid "Your site is running an older version of PHP (%s)"
+msgstr ""
+
+#. translators: %s: The server PHP version.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:422
+msgid "Your site is running an older version of PHP (%s), which should be updated"
+msgstr ""
+
+#. translators: %s: The server PHP version.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:433
+msgid "Your site is running an outdated version of PHP (%s), which requires an update"
+msgstr ""
+
+#. translators: %s: Your current version of WordPress.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:530
+msgid "WordPress version %s"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:536
+msgid "Unable to check if any new versions of WordPress are available."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:542
+msgid "Check for updates manually"
+msgstr ""
+
+#. translators: %s: The latest version of WordPress available.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:555
+msgid "WordPress update available (%s)"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:562
+msgid "Install the latest version of WordPress"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:570
+msgid "A new version of WordPress is available."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:578
+msgid "A new minor update is available for your site. Because minor updates often address security, it&#8217;s important to install them."
+msgstr ""
+
+#. translators: %s: The current version of WordPress installed on this site.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:585
+msgid "Your version of WordPress (%s) is up to date"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:591
+msgid "You are currently running the latest version of WordPress available, keep it up!"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:612
+msgid "Your themes are all up to date"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:620
+msgid "Themes add your site&#8217;s look and feel. It&#8217;s important to keep them up to date, to stay consistent with your brand and keep your site secure."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:625
+msgid "Manage your themes"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:693
+msgid "You have themes waiting to be updated"
+msgstr ""
+
+#. translators: %d: The number of outdated themes.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:699
+msgid "Your site has %d theme waiting to be updated."
+msgid_plural "Your site has %d themes waiting to be updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:712
+msgid "Your site has 1 installed theme, and it is up to date."
+msgstr ""
+
+#. translators: %d: The number of themes.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:719
+msgid "Your site has %d installed theme, and it is up to date."
+msgid_plural "Your site has %d installed themes, and they are all up to date."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:737
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:783
+msgid "You should remove inactive themes"
+msgstr ""
+
+#. translators: %d: The number of inactive themes.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:744
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:763
+msgid "Your site has %d inactive theme."
+msgid_plural "Your site has %d inactive themes."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: The currently active theme. 2: The active theme's parent theme.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:753
+msgid "To enhance your site&#8217;s security, you should consider removing any themes you are not using. You should keep your active theme, %1$s, and %2$s, its parent theme."
+msgstr ""
+
+#. translators: 1: The default theme for WordPress. 2: The currently active theme. 3: The active theme's parent theme.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:772
+msgid "To enhance your site&#8217;s security, you should consider removing any themes you are not using. You should keep %1$s, the default WordPress theme, %2$s, your active theme, and %3$s, its parent theme."
+msgstr ""
+
+#. translators: 1: The amount of inactive themes. 2: The currently active theme.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:790
+msgid "Your site has %1$d inactive theme, other than %2$s, your active theme."
+msgid_plural "Your site has %1$d inactive themes, other than %2$s, your active theme."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:798
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:814
+msgid "You should consider removing any unused themes to enhance your site&#8217;s security."
+msgstr ""
+
+#. translators: 1: The amount of inactive themes. 2: The default theme for WordPress. 3: The currently active theme.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:805
+msgid "Your site has %1$d inactive theme, other than %2$s, the default WordPress theme, and %3$s, your active theme."
+msgid_plural "Your site has %1$d inactive themes, other than %2$s, the default WordPress theme, and %3$s, your active theme."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:824
+msgid "Have a default theme available"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:828
+msgid "Your site does not have any default theme. Default themes are used by WordPress automatically if anything is wrong with your chosen theme."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:916
+msgid "Your plugins are all up to date"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:924
+msgid "Plugins extend your site&#8217;s functionality with things like contact forms, ecommerce and much more. That means they have deep access to your site, so it&#8217;s vital to keep them up to date."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:929
+msgid "Manage your plugins"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:966
+msgid "You have plugins waiting to be updated"
+msgstr ""
+
+#. translators: %d: The number of outdated plugins.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:972
+msgid "Your site has %d plugin waiting to be updated."
+msgid_plural "Your site has %d plugins waiting to be updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:984
+msgid "Update your plugins"
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:990
+msgid "Your site has 1 active plugin, and it is up to date."
+msgstr ""
+
+#. translators: %d: The number of active plugins.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:997
+msgid "Your site has %d active plugin, and it is up to date."
+msgid_plural "Your site has %d active plugins, and they are all up to date."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:1014
+msgid "You should remove inactive plugins"
+msgstr ""
+
+#. translators: %d: The number of inactive plugins.
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:1020
+msgid "Your site has %d inactive plugin."
+msgid_plural "Your site has %d inactive plugins."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:1027
+msgid "Inactive plugins are tempting targets for attackers. If you are not going to use a plugin, you should consider removing it."
+msgstr ""
+
+#: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Update_Check.php:1033
+msgid "Manage inactive plugins"
+msgstr ""
+
 #: includes/Api/Controllers/V1/Themes.php:127
-#: includes/Api/Controllers/V1/Themes.php:213
-#: includes/Api/Controllers/V1/Themes.php:268
-#: includes/Api/Controllers/V1/Themes.php:353
+#: includes/Api/Controllers/V1/Themes.php:221
+#: includes/Api/Controllers/V1/Themes.php:277
+#: includes/Api/Controllers/V1/Themes.php:367
 msgid "No theme specified."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:143
+#. translators: Theme Name
+#: includes/Api/Controllers/V1/Themes.php:144
 msgid "Theme %s already installed."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:219
+#: includes/Api/Controllers/V1/Themes.php:227
 msgid "Requested theme already been activated."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:227
+#: includes/Api/Controllers/V1/Themes.php:235
 msgid "Requested theme is not installed."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:241
+#. translators: Theme Name
+#: includes/Api/Controllers/V1/Themes.php:250
 msgid "%s successfully activated."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:246
+#. translators: Theme Name
+#: includes/Api/Controllers/V1/Themes.php:256
 msgid "Unable to activate requested theme (%s)."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:282
+#. translators: Theme Name
+#: includes/Api/Controllers/V1/Themes.php:292
 msgid "Theme %s does not exists or already deleted."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:304
+#. translators: Theme Name
+#: includes/Api/Controllers/V1/Themes.php:311
 msgid "%s is the active theme. You cannot delete an active theme."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:312
+#. translators: parent Theme Name
+#: includes/Api/Controllers/V1/Themes.php:320
 msgid "%s is the parent theme of active theme. You cannot delete parent theme of active theme."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:323
+#. translators: Theme Name
+#: includes/Api/Controllers/V1/Themes.php:332
 msgid "Unable to delete requested theme (%s)."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:373
+#. translators: Theme Name
+#: includes/Api/Controllers/V1/Themes.php:388
 msgid "Theme %s does not exists."
 msgstr ""
 
-#: includes/Api/Controllers/V1/Themes.php:404
+#. translators: Theme Name
+#: includes/Api/Controllers/V1/Themes.php:421
 msgid "%s  updated."
 msgstr ""
 
-#: includes/Api/Server.php:73
+#: includes/Api/Server.php:71
 msgid "serializing instances of this class is forbidden."
 msgstr ""
 
-#: includes/Api/Server.php:80
-#: includes/Monitors/Singleton.php:61
+#: includes/Api/Server.php:78
+#: includes/Traits/Singleton.php:61
 msgid "Unserializing instances of this class is forbidden."
 msgstr ""
 
@@ -246,7 +1147,7 @@ msgstr ""
 msgid "Please update the api keys to activate it properly."
 msgstr ""
 
-#: includes/Dashboard.php:106
+#: includes/Dashboard.php:107
 msgid "Error Logger Drop-In Updated."
 msgstr ""
 
@@ -254,111 +1155,180 @@ msgstr ""
 msgid "UptimeMonster API Disconnected."
 msgstr ""
 
-#: includes/Dashboard.php:180
+#: includes/Dashboard.php:178
 msgid "Api connected."
 msgstr ""
 
 #. translators: 1. Error Details.
-#: includes/Dashboard.php:186
+#: includes/Dashboard.php:184
 msgid "Error connecting UptimeMonster API with following error: %s."
 msgstr ""
 
-#: includes/Dashboard.php:191
+#: includes/Dashboard.php:189
 msgid "Both api key & secret required."
 msgstr ""
 
-#: includes/Dashboard.php:240
-msgid "Status"
-msgstr ""
-
-#: includes/Dashboard.php:244
-msgid "Connected"
-msgstr ""
-
-#: includes/Dashboard.php:245
-msgid "Disconnect"
-msgstr ""
-
-#: includes/Dashboard.php:251
+#: includes/Dashboard.php:246
+#: includes/Dashboard.php:264
 msgid "Api Key"
 msgstr ""
 
-#: includes/Dashboard.php:255
+#: includes/Dashboard.php:250
+#: includes/Dashboard.php:268
 msgid "Api Secret"
 msgstr ""
 
-#: includes/Dashboard.php:260
-msgid "Error Logging Drop-in"
+#: includes/Dashboard.php:257
+msgid "Connected"
 msgstr ""
 
-#: includes/Dashboard.php:265
+#: includes/Dashboard.php:258
+msgid "Disconnect"
+msgstr ""
+
+#: includes/Dashboard.php:273
+msgid "Error Logging"
+msgstr ""
+
+#: includes/Dashboard.php:278
 msgid "Status:"
 msgstr ""
 
 #. translators: 1. New Version Number, 2. Update URL
-#: includes/Dashboard.php:273
+#: includes/Dashboard.php:286
 msgid "A newer version (Version %1$s) of the drop-in available. Click <a href=\"%2$s\">here</a> to update."
 msgstr ""
 
 #. translators: 1. Error handler drop-in version.
-#: includes/Dashboard.php:280
+#: includes/Dashboard.php:293
 msgid "Installed (Version %s)"
 msgstr ""
 
 #. translators: 1. Installation URL
-#: includes/Dashboard.php:290
+#: includes/Dashboard.php:303
 msgid "Click <a href=\"%s\">here</a> to install the drop-in."
 msgstr ""
 
 #. translators: 1. Source file path. 2. Destination file path.
-#: includes/Dashboard.php:296
+#: includes/Dashboard.php:309
 msgid "Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring"
 msgstr ""
 
-#: includes/Dashboard.php:308
+#: includes/Dashboard.php:321
 msgid "WP Content Directory"
 msgstr ""
 
-#: includes/Dashboard.php:312
-#: includes/Dashboard.php:325
-msgid "Writable"
-msgstr ""
-
-#: includes/Dashboard.php:314
 #: includes/Dashboard.php:327
+#: includes/Dashboard.php:340
 msgid "Not Writable"
 msgstr ""
 
-#: includes/Dashboard.php:321
+#: includes/Dashboard.php:334
 msgid "Drop-In"
 msgstr ""
 
-#: includes/Dashboard.php:341
+#: includes/Dashboard.php:354
 msgid "Save Changes"
 msgstr ""
 
+#: includes/helpers.php:115
+msgid "Unknown Visitor"
+msgstr ""
+
+#: includes/helpers.php:348
+msgid "WordPress Version"
+msgstr ""
+
+#: includes/helpers.php:352
+msgid "Plugin Versions"
+msgstr ""
+
+#: includes/helpers.php:356
+msgid "Theme Versions"
+msgstr ""
+
+#: includes/helpers.php:360
+msgid "PHP Version"
+msgstr ""
+
+#: includes/helpers.php:364
+msgid "PHP Extensions"
+msgstr ""
+
+#: includes/helpers.php:368
+msgid "PHP Default Timezone"
+msgstr ""
+
+#: includes/helpers.php:372
+msgid "PHP Sessions"
+msgstr ""
+
+#: includes/helpers.php:376
+msgid "Database Server version"
+msgstr ""
+
+#: includes/helpers.php:380
+msgid "MySQL utf8mb4 support"
+msgstr ""
+
+#: includes/helpers.php:384
+msgid "Secure communication"
+msgstr ""
+
+#: includes/helpers.php:388
+msgid "Scheduled events"
+msgstr ""
+
+#: includes/helpers.php:392
+msgid "HTTP Requests"
+msgstr ""
+
+#: includes/helpers.php:396
+msgid "REST API availability"
+msgstr ""
+
+#: includes/helpers.php:401
+msgid "Debugging enabled"
+msgstr ""
+
+#: includes/helpers.php:409
+msgid "Plugin and theme auto-updates"
+msgstr ""
+
+#: includes/helpers.php:421
+msgid "Background updates"
+msgstr ""
+
+#: includes/helpers.php:427
+msgid "Loopback request"
+msgstr ""
+
+#: includes/helpers.php:433
+msgid "HTTPS status"
+msgstr ""
+
 #. translators: 1. PHP Argument Type.
-#: includes/Monitors/Activity_Monitor_Base.php:100
+#: includes/Monitors/Activity_Monitor_Base.php:98
 msgid "$subtype expected to be a string, got %s."
 msgstr ""
 
 #. translators: 1. PHP Argument Type.
-#: includes/Monitors/Activity_Monitor_Base.php:110
+#: includes/Monitors/Activity_Monitor_Base.php:108
 msgid "$name expected to be a string, got %s."
 msgstr ""
 
 #. translators: 1. PHP Argument Type.
-#: includes/Monitors/Activity_Monitor_Base.php:122
+#: includes/Monitors/Activity_Monitor_Base.php:120
 msgid "$id expected to be an integer, got %s."
 msgstr ""
 
 #. translators: 1. PHP Argument Type.
-#: includes/Monitors/Activity_Monitor_Base.php:156
+#: includes/Monitors/Activity_Monitor_Base.php:155
 msgid "$data expected to be an array or object, got %s."
 msgstr ""
 
 #. translators: 1. Method Name.
-#: includes/Monitors/Activity_Monitor_Base.php:191
+#: includes/Monitors/Activity_Monitor_Base.php:190
 msgid "%s must be overridden by the subClass"
 msgstr ""
 
@@ -372,23 +1342,23 @@ msgstr ""
 msgid "Modified file (%2$s) of “%1$s” plugin"
 msgstr ""
 
-#: includes/Monitors/Monitor_Self_Activation_Activity.php:52
+#: includes/Monitors/Monitor_Self_Activation_Activity.php:51
 msgid "Site Monitor Activated"
 msgstr ""
 
-#: includes/Monitors/Monitor_Self_Activation_Activity.php:68
+#: includes/Monitors/Monitor_Self_Activation_Activity.php:67
 msgid "Site Monitor Deactivated"
 msgstr ""
 
-#: includes/Monitors/Monitor_Self_Activation_Activity.php:81
+#: includes/Monitors/Monitor_Self_Activation_Activity.php:80
 msgid "“Error Logger” Drop-In Updated"
 msgstr ""
 
-#: includes/Monitors/Monitor_Self_Activation_Activity.php:81
+#: includes/Monitors/Monitor_Self_Activation_Activity.php:80
 msgid "“Error Logger” Drop-In Installed"
 msgstr ""
 
-#: includes/Monitors/Monitor_Self_Activation_Activity.php:83
+#: includes/Monitors/Monitor_Self_Activation_Activity.php:82
 msgid "Failed To Install “Error Logger” Drop-In."
 msgstr ""
 
@@ -427,7 +1397,7 @@ msgstr ""
 msgid "WordPress Updated to %s"
 msgstr ""
 
-#: includes/Monitors/Singleton.php:54
+#: includes/Traits/Singleton.php:54
 msgid "Cloning is forbidden."
 msgstr ""
 
@@ -439,7 +1409,7 @@ msgstr ""
 msgid "Something went wrong"
 msgstr ""
 
-#. translators: 1. Download link for production build, 2. composer install command, 3. Plugin installation path for running composer install..
+#. translators: 1. Download link for production build, 2. composer install command, 3. Plugin installation path for running composer install.
 #: uptimemonster-site-monitor.php:62
 msgid "It seems that you have downloaded the development version of this plugin from github or other sources. Please download it from %1$s or run %2$s command within %3$s directory."
 msgstr ""

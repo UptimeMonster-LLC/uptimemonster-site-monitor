@@ -20,38 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-$current_errors = [];
-
-/**
- * Get all errors and push to $GLOBALS['ERRORS'].
- *
- * @param $type
- * @param $message
- * @param $file
- * @param $line
- *
- * @return false
- */
-function umsm_error_catcher( $type, $message, $file, $line ) {
-	global $current_errors;
-
-	if ( E_USER_DEPRECATED !== $type && ! wp_is_maintenance_mode() ) {
-		$error                   = [
-			'type'    => $type,
-			'message' => $message,
-			'file'    => $file,
-			'line'    => $line
-		];
-		$hash                    = md5( maybe_serialize( $error ) );
-		$error['hash']           = $hash;
-		$current_errors[ $hash ] = $error;
-	}
-
-	return false;
-}
-
-set_error_handler( 'umsm_error_catcher', E_ALL );
-
 /**
  * Drop-in fatal-error-handler class for UptimeMonster Site Monitor
  */
@@ -66,6 +34,10 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 	 * @since 5.2.0
 	 */
 	public function handle() {
+		if ( ! defined( 'UPTIMEMONSTER_PLUGIN_VERSION' ) ) {
+			parent::handle();
+			return;
+		}
 
 		if ( defined( 'WP_SANDBOX_SCRAPING' ) && WP_SANDBOX_SCRAPING ) {
 			return;
@@ -76,44 +48,18 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 			return;
 		}
 
-		//   errors.
-		$this->send_log( [
-			'errors' => isset( $GLOBALS['current_errors'] ) ? $GLOBALS['current_errors'] : [],
-		] );
-
-	}
-
-	/**
-	 * @param $data
-	 *
-	 * @return void
-	 */
-	protected function send_log( $data ) {
-
-		if ( ! function_exists( 'umsm_get_current_actor' ) ) {
-			require_once WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/includes/helpers.php';
-		}
-
-		if ( ! class_exists( '\UptimeMonster\SiteMonitor\UptimeMonster_Client', false ) ) {
-			require_once WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/includes/UptimeMonster_Client.php';
-		}
-
-		$client = UptimeMonster\SiteMonitor\UptimeMonster_Client::get_instance();
-		$client->send_log( [
-			'action'    => 'error_log',
-			'activity'  => 'WP_Error_Handler',
-			'subtype'   => 'error',
-			'object_id' => null,
-			'name'      => null,
-			'timestamp' => umsm_get_current_time(),
-			'actor'     => umsm_get_current_actor(),
-			'extra'     => $data,
-		] );
-
 		try {
+			// Bail if no error found.
+			$error = $this->detect_error();
 
-			// Default WP Error handler.
-			$error = $this->_detect_error( [] );
+			if ( ! $error ) {
+				return;
+			}
+
+			$this->send_log( $error );
+
+			// Default WP Error Bail
+			$error = $this->_detect_error( $error );
 
 			if ( ! $error ) {
 				return;
@@ -136,6 +82,55 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 		} catch ( Exception $e ) {
 			// Catch exceptions and remain silent.
 		}
+	}
+
+	/**
+	 * @param $error
+	 *
+	 * @return void
+	 */
+	protected function send_log( $error ) {
+		if ( ! file_exists( WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/includes/helpers.php' ) ) {
+			return;
+		}
+
+		if ( ! function_exists( 'uptimemonster_get_current_actor' ) ) {
+			require_once WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/includes/helpers.php';
+		}
+
+		if ( ! class_exists( '\UptimeMonster\SiteMonitor\UptimeMonster_Client', false ) ) {
+			require_once WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/includes/UptimeMonster_Client.php';
+		}
+
+		$client = UptimeMonster\SiteMonitor\UptimeMonster_Client::get_instance();
+		$client->send_log( [
+			'action'    => 'error_log',
+			'activity'  => 'WP_Error_Handler',
+			'subtype'   => 'error',
+			'object_id' => null,
+			'name'      => null,
+			'timestamp' => uptimemonster_get_current_time(),
+			'actor'     => uptimemonster_get_current_actor(),
+			'error'     => $error,
+			'extra'     => [
+				'wp_version' => get_bloginfo( 'version' ),
+				'locale'     => get_locale(),
+				'timezone'   => wp_timezone()->getName(),
+			],
+		] );
+	}
+
+	protected function detect_error() {
+		$error = error_get_last();
+
+		// No error, just skip the error handling code.
+		if ( null === $error ) {
+			return null;
+		}
+
+		// we will detect all error.
+
+		return $error;
 	}
 
 	protected function _detect_error( $error ) {

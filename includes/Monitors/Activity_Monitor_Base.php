@@ -12,7 +12,6 @@ namespace UptimeMonster\SiteMonitor\Monitors;
 use UptimeMonster\SiteMonitor\UptimeMonster_Client;
 use Exception;
 use InvalidArgumentException;
-use WP_User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -136,11 +135,12 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			'subtype'   => $subtype,
 			'object_id' => $_object_id,
 			'name'      => $this->strip_activity_name( $name ),
-			'timestamp' => umsm_get_current_time(),
-			'actor'     => umsm_get_current_actor(),
+			'timestamp' => uptimemonster_get_current_time(),
+			'actor'     => uptimemonster_get_current_actor(),
 			'extra'     => [
 				'wp_version' => get_bloginfo( 'version' ),
 				'locale'     => get_locale(),
+				'timezone'   => wp_timezone()->getName(),
 			],
 		];
 
@@ -160,8 +160,8 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 			if ( isset( $data['include_installed'] ) ) {
 				unset( $data['include_installed'] );
 				$data['installed'] = [
-					'plugins' => umsm_get_all_plugins(),
-					'themes'  => umsm_get_all_themes(),
+					'plugins' => uptimemonster_get_all_plugins(),
+					'themes'  => uptimemonster_get_all_themes(),
 				];
 			}
 
@@ -170,7 +170,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 
 		UptimeMonster_Client::get_instance()->send_log( $log );
 
-		do_action( 'umsm_log_sent', $log );
+		do_action( 'uptimemonster_log_sent', $log );
 	}
 
 	/**

@@ -185,7 +185,7 @@ class Themes extends Controller_Base {
 				$theme            = wp_get_theme( $slug );
 				$status['status'] = true;
 
-				/* translators: Theme Name */
+				/* translators: Theme/Plugin name */
 				$status['message'] = sprintf( __( '%s successfully installed.', 'uptimemonster-site-monitor' ), (string) $theme );
 				$changed           = true;
 			}
@@ -298,7 +298,7 @@ class Themes extends Controller_Base {
 			// Check filesystem credentials. `delete_theme()` will bail otherwise.
 			$url = wp_nonce_url( 'themes.php?action=delete&stylesheet=' . urlencode( $slug ), 'delete-theme_' . $slug );
 
-			$need_credentials = umsm_need_filesystem_credentials( $url );
+			$need_credentials = uptimemonster_need_filesystem_credentials( $url );
 			if ( $need_credentials ) {
 				// File system is not writable, we can't delete anything, no need to loop.
 				return $need_credentials;
@@ -333,7 +333,7 @@ class Themes extends Controller_Base {
 			} else {
 				$status['status'] = true;
 
-				/* translators: Theme Name */
+				/* translators: Theme/Plugin name */
 				$status['message'] = sprintf( __( '%s successfully deleted.', 'uptimemonster-site-monitor' ), (string) $theme );
 				$changed           = true;
 			}

@@ -494,7 +494,7 @@ class UptimeMonster_Debug_Data {
 			$info['wp-dropins']['fields'][] = [
 				'label' => $dropin['Name'],
 				'slug'  => $dropin_key,
-				'value' => array_merge( umsm_prepare_plugin_data( $dropin ), $common_data ),
+				'value' => array_merge( uptimemonster_prepare_plugin_data( $dropin ), $common_data ),
 			];
 		}
 
@@ -931,7 +931,7 @@ class UptimeMonster_Debug_Data {
 			$info['wp-mu-plugins']['fields'][] = [
 				'label' => $plugin['Name'],
 				'slug'  => $plugin_path,
-				'value' => array_merge( umsm_prepare_plugin_data( $plugin ), $common_data ),
+				'value' => array_merge( uptimemonster_prepare_plugin_data( $plugin ), $common_data ),
 			];
 		}
 
@@ -951,7 +951,7 @@ class UptimeMonster_Debug_Data {
 
 		foreach ( $plugins as $plugin_path => $plugin ) {
 			$plugin_part = ( is_plugin_active( $plugin_path ) ) ? 'wp-plugins-active' : 'wp-plugins-inactive';
-			$plugin_data = umsm_prepare_plugin_data( $plugin );
+			$plugin_data = uptimemonster_prepare_plugin_data( $plugin );
 
 			if ( array_key_exists( $plugin_path, $plugin_updates ) ) {
 				/* translators: %s: Latest plugin version number. */

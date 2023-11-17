@@ -9,6 +9,8 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use UptimeMonster\SiteMonitor\Traits\Singleton;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
@@ -32,7 +34,7 @@ class Monitor_WP_Export_Content_Activity extends Activity_Monitor_Base {
 		 * @param null $object
 		 * @param string $action
 		 */
-		return (bool) apply_filters( 'umsm_should_log_wp_export_activity', true, null, $action );
+		return (bool) apply_filters( 'uptimemonster_should_log_wp_export_activity', true, null, $action );
 	}
 
 	public function log_on_export( $args ) {

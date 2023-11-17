@@ -7,7 +7,7 @@
 
 namespace UptimeMonster\SiteMonitor;
 
-use UptimeMonster\SiteMonitor\Monitors\Singleton;
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -43,7 +43,7 @@ class UptimeMonster_Client {
 	 * @return $this
 	 */
 	public function reload_api_keys() {
-		$api_keys = get_option( 'umsm_site_monitor_api_keys', [] );
+		$api_keys = get_option( 'uptimemonster_api_keys', [] );
 
 		if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
 			$this->api_key    = $api_keys['api_key'];
@@ -144,7 +144,7 @@ class UptimeMonster_Client {
 		list( $algo, $timestamp, $signature ) = $this->signature( $data, $method );
 
 		$defaults = [
-			'sslverify' => apply_filters( 'umsm_client_ssl_verify', true ), // https_local_ssl_verify local
+			'sslverify' => apply_filters( 'uptimemonster_client_ssl_verify', true ), // https_local_ssl_verify local
 			'headers'   => [],
 			'method'    => strtoupper( $method ),
 			'body'      => [],
@@ -173,7 +173,7 @@ class UptimeMonster_Client {
 		$route       = ltrim( $route, '\\/' );
 		$request_url = $this->get_host() . 'api/' . $this->version . '/' . $route;
 
-		$args = apply_filters( 'umsm_site_monitor_client_args', $args, $route );
+		$args = apply_filters( 'uptimemonster_site_monitor_client_args', $args, $route );
 
 		if ( false !== strpos( $this->get_host(), '.test/' ) ) {
 			$response = wp_remote_request( $request_url, $args );
@@ -191,7 +191,7 @@ class UptimeMonster_Client {
 		 * @param array $args request args.
 		 * @param string $request_url
 		 */
-		do_action( 'umsm_site_monitor_client_response', $response, $args, $request_url );
+		do_action( 'uptimemonster_site_monitor_client_response', $response, $args, $request_url );
 
 		if ( is_wp_error( $response ) ) {
 			return $response;

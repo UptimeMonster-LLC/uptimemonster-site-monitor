@@ -8,7 +8,7 @@
 
 namespace UptimeMonster\SiteMonitor;
 
-use UptimeMonster\SiteMonitor\Monitors\Singleton;
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use UptimeMonster\SiteMonitor\Api\Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-/** @define "UMSM_PLUGIN_PATH" "./" */
+/** @define "UPTIMEMONSTER_PLUGIN_PATH" "./" */
 
 /**
  * Site Monitor.
@@ -40,11 +40,11 @@ final class UptimeMonster_Site_Monitor {
 		// Check if autoloader exists, include it or show error with admin notice ui.
 
 		// DropIns
-		self::$error_handler_dist = UMSM_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl'; // @phpstan-ignore-line
+		self::$error_handler_dist = UPTIMEMONSTER_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl'; // @phpstan-ignore-line
 		self::$error_handler      = WP_CONTENT_DIR . '/fatal-error-handler.php'; // @phpstan-ignore-line
 
-		register_activation_hook( UMSM_PLUGIN_FILE, array( __CLASS__, 'install' ) );
-		register_deactivation_hook( UMSM_PLUGIN_FILE, array( __CLASS__, 'uninstall' ) );
+		register_activation_hook( UPTIMEMONSTER_PLUGIN_FILE, array( __CLASS__, 'install' ) );
+		register_deactivation_hook( UPTIMEMONSTER_PLUGIN_FILE, array( __CLASS__, 'uninstall' ) );
 
 		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
@@ -65,18 +65,18 @@ final class UptimeMonster_Site_Monitor {
 		// @TODO move installation to another file.
 		self::maybe_install_drop_in();
 
-		$api_keys = get_option( 'umsm_site_monitor_api_keys', array() );
+		$api_keys = get_option( 'uptimemonster_api_keys', array() );
 		if ( empty( $api_keys ) ) {
-			update_option( 'umsm_need_setup', 'yes' );
+			update_option( 'uptimemonster_need_setup', 'yes' );
 		}
 
-		if ( empty( get_option( 'umsm_first_installed' ) ) ) {
-			update_option( 'umsm_first_installed', umsm_get_current_time() );
+		if ( empty( get_option( 'uptimemonster_first_installed' ) ) ) {
+			update_option( 'uptimemonster_first_installed', uptimemonster_get_current_time() );
 		}
 
-		update_option( 'umsm_site_monitor_version', UMSM_PLUGIN_VERSION );
+		update_option( 'uptimemonster_site_monitor_version', UPTIMEMONSTER_PLUGIN_VERSION );
 
-		do_action( 'umsm_site_monitor_activation' );
+		do_action( 'uptimemonster_site_monitor_activation' );
 	}
 
 	public static function maybe_install_drop_in() {
@@ -85,13 +85,13 @@ final class UptimeMonster_Site_Monitor {
 
 	public static function uninstall() {
 		self::remove_drop_in();
-		do_action( 'umsm_site_monitor_deactivation' );
+		do_action( 'uptimemonster_site_monitor_deactivation' );
 	}
 
 	public static function get_drop_in_data( $installed = true ) {
 		$which = $installed ? 'installed' : 'dist';
 		if ( ! isset( self::$error_handler_data[ $which ] ) ) {
-			self::$error_handler_data[ $which ] = umsm_get_plugin_data( $installed ? self::$error_handler : self::$error_handler_dist );
+			self::$error_handler_data[ $which ] = uptimemonster_get_plugin_data( $installed ? self::$error_handler : self::$error_handler_dist );
 		}
 
 		return self::$error_handler_data[ $which ];
@@ -108,7 +108,7 @@ final class UptimeMonster_Site_Monitor {
 	public static function is_drop_in_installed() {
 		$data = self::get_drop_in_data();
 
-		return isset( $data['Name'] ) && 'UptimeMonster WordPress Error Monitor ' === $data['Name'];
+		return isset( $data['Name'] ) && 'UptimeMonster WordPress Error Monitor' === trim( $data['Name'] );
 	}
 
 	/**
@@ -156,7 +156,7 @@ final class UptimeMonster_Site_Monitor {
 				fclose( $fp );
 			}
 
-			do_action( 'umsm_error_logger_installed', $old_version, self::is_drop_in_installed() );
+			do_action( 'uptimemonster_error_logger_installed', $old_version, self::is_drop_in_installed() );
 		}
 	}
 
@@ -186,8 +186,8 @@ final class UptimeMonster_Site_Monitor {
 		unload_textdomain( 'uptimemonster-site-monitor' );
 
 		load_textdomain( 'uptimemonster-site-monitor', WP_LANG_DIR . '/uptimemonster-site-monitor/uptimemonster-site-monitor-' . $locale . '.mo' ); // @phpstan-ignore-line
-		load_plugin_textdomain( 'uptimemonster-site-monitor', false, plugin_basename( dirname( UMSM_PLUGIN_FILE ) ) . '/languages' );
+		load_plugin_textdomain( 'uptimemonster-site-monitor', false, plugin_basename( dirname( UPTIMEMONSTER_PLUGIN_FILE ) ) . '/languages' );
 	}
 }
 
-// End of file class-umsm_site_monitor.php.
+// End of file class-uptimemonster_site_monitor.php.

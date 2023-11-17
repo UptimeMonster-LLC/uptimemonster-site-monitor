@@ -9,6 +9,8 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use UptimeMonster\SiteMonitor\Traits\Singleton;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
@@ -22,10 +24,12 @@ class Monitor_Options_Activity extends Activity_Monitor_Base {
 	protected $check_maybe_log = false;
 
 	public function init() {
+		add_action( 'added_option', [ $this, 'log_on_change' ], 10, 2 );
 		add_action( 'updated_option', [ $this, 'log_on_change' ], 10, 2 );
+		add_action( 'deleted_option', [ $this, 'log_on_change' ] );
 	}
 
-	protected function maybe_log_option( $action, $option, $value, $new_value = null ) {
+	protected function maybe_log_option( $action, $option, $value = null, $new_value = null ) {
 
 		/**
 		 * Should report activity?
@@ -36,11 +40,18 @@ class Monitor_Options_Activity extends Activity_Monitor_Base {
 		 * @param string $value
 		 * @param string $new_value
 		 */
-		return (bool) apply_filters( 'umsm_should_log_options_activity', true, $option, $action, $value, $new_value );
+		return (bool) apply_filters( 'uptimemonster_should_log_options_activity', true, $option, $action, $value, $new_value );
 	}
 
-	public function log_on_change( $option, $old, $new = null ) {
-		$action = 'added_option' === current_filter() ? Activity_Monitor_Base::ITEM_CREATED : Activity_Monitor_Base::ITEM_UPDATED;
+	public function log_on_change( $option, $old = null, $new = null ) {
+		$action = current_filter();
+		if ( 'added_option' === $action ) {
+			$action = Activity_Monitor_Base::ITEM_CREATED;
+		} else if ( 'updated_option' === $action ) {
+			$action = Activity_Monitor_Base::ITEM_UPDATED;
+		} else {
+			$action = Activity_Monitor_Base::ITEM_DELETED;
+		}
 
 		if ( ! $this->maybe_log_option( $action, $option, $old, $new ) ) {
 			return;
@@ -49,17 +60,12 @@ class Monitor_Options_Activity extends Activity_Monitor_Base {
 		// @XXX Do not log the values (old/new) as those might contain 3rd party credentials.
 		//      We may log some of them, non-sensitive options
 
-		$this->log_activity(
-			Activity_Monitor_Base::ITEM_UPDATED,
-			0,
-			$option,
-			$option
-		);
+		$this->log_activity( $action, 0, $option, $option );
 	}
 
 	public static function get_options_to_log() {
 		return apply_filters(
-			'umsm_options_to_log', [
+			'uptimemonster_options_to_log', [
 				// General
 				'blogname',
 				'blogdescription',

@@ -9,7 +9,7 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
-use Exception;
+use UptimeMonster\SiteMonitor\Traits\Singleton;
 use Plugin_Upgrader;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -49,7 +49,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		 * @param string $action
 		 * @param string $file file path if one is being modified.
 		 */
-		return (bool) apply_filters( 'umsm_should_log_plugins_activity', true, $plugin, $action, $file );
+		return (bool) apply_filters( 'uptimemonster_should_log_plugins_activity', true, $plugin, $action, $file );
 	}
 
 	protected function log_plugin( $action, $plugin, $extra = [] ) {
@@ -99,18 +99,18 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		$hash           = md5( $plugin );
 		$data['Status'] = 2;
 
-		set_transient( 'umsm_plugin_data_' . $hash, $data, 60 );
+		set_transient( 'uptimemonster_plugin_data_' . $hash, $data, 60 );
 	}
 
 	public function on_plugin_deleted( $plugin, $deleted ) {
 		$hash = md5( $plugin );
 
-		$data = get_transient( 'umsm_plugin_data_' . $hash );
+		$data = get_transient( 'uptimemonster_plugin_data_' . $hash );
 		if ( $data ) {
 			$this->plugin[ $hash ] = $data;
 		}
 
-		delete_transient( 'umsm_plugin_data_' . $hash );
+		delete_transient( 'uptimemonster_plugin_data_' . $hash );
 
 		$this->log_plugin( Activity_Monitor_Base::ITEM_DELETED, $plugin, [ 'deleted' => $deleted ] );
 	}
@@ -131,7 +131,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 
 				// @XXX maybe we can remove this.
 				$hash                  = md5( $path );
-				$this->plugin[ $hash ] = umsm_get_plugin_data( $upgrader->skin->result['local_destination'] . '/' . $path, false, false ); // @phpstan-ignore-line
+				$this->plugin[ $hash ] = uptimemonster_get_plugin_data( $upgrader->skin->result['local_destination'] . '/' . $path, false, false ); // @phpstan-ignore-line
 
 				$this->log_plugin( Activity_Monitor_Base::ITEM_INSTALLED, $path );
 
@@ -182,10 +182,10 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 				// phpcs:enable
 
 				if ( $this->maybe_log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $plugin, $file ) && file_exists( $_file ) ) {
-					umsm_switch_to_english();
+					uptimemonster_switch_to_english();
 					/* translators: 1. Plugin Name, 2. File path. */
 					$name = $plugin === $file ? __( 'Modified main file (%2$s) of “%1$s” plugin', 'uptimemonster-site-monitor' ) : __( 'Modified file (%2$s) of “%1$s” plugin', 'uptimemonster-site-monitor' );
-					umsm_restore_locale();
+					uptimemonster_restore_locale();
 
 					$extra = [
 						'name' => sprintf( $name, $this->get_name( $plugin ), $file ),
@@ -213,7 +213,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		if ( ! isset( $this->plugin[ $hash ] ) ) {
 			$real_file = WP_PLUGIN_DIR . '/' . $plugin_file; // @phpstan-ignore-line
 
-			$this->plugin[ $hash ] = umsm_get_plugin_data( $real_file );
+			$this->plugin[ $hash ] = uptimemonster_get_plugin_data( $real_file );
 		}
 
 		if ( $header ) {
