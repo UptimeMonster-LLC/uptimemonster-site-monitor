@@ -6,4 +6,77 @@
 [![UptimeMonster Site Monitor Downloads](https://img.shields.io/wordpress/plugin/dt/uptimemonster-site-monitor?label=Downloads&style=flat-square)](https://wordpress.org/plugins/uptimemonster-site-monitor/)
 ---
 
-[UptimeMonster Site Monitor](https://uptimemonster.com/) WordPress Site Activity Monitor For UptimeMonster
+Effortlessly monitor and optimize the performance, security, and activities of multiple WordPress websites with the UptimeMonster Site Monitor plugin – your all-in-one solution for streamlined website management.
+
+## Features
+
+Track and analyze all activities on your WordPress website with the powerful and flexible UptimeMonster Site Monitor plugin.
+This plugin integrates seamlessly with UptimeMonster, an external web application that monitors your website's uptime, downtime, security, and other essential functions.
+
+UptimeMonster Site Monitor operates 24/7, allowing you to identify and address issues before they impact users globally.
+Activate the plugin with an API key to connect with the web application and monitor every aspect of your WordPress website.
+Choose from different monitoring intervals, including every minute, and receive a detailed website health report.
+
+[![UptimeMonster promo video](https://img.youtube.com/vi/UTT14RCx84k/hqdefault.jpg)](https://www.youtube.com/watch?v=UTT14RCx84k&ab_channel=UptimeMonster&sub_confirmation=1)
+
+Please subscribe to our [YouTube Channel](https://www.youtube.com/@uptimemonster?sub_confirmation=1) for tips & tricks.
+Start your journey by signing up for a [free starter account](https://uptimemonster.com/product/uptimemonster-yearly-pricing?attribute_pa_packages=starter&variation_id=1171&add-to-cart=1170) with [UptimeMonster](https://uptimemonster.com/product/uptimemonster-yearly-pricing?attribute_pa_packages=starter&variation_id=1171&add-to-cart=1170) today!
+
+
+### Monitored Activities Include:
+- WordPress core updates, cron logs.
+- Pages, Posts, CPT (Custom Post Types): add, edit, delete.
+- Categories, Tags, Taxonomies: add, edit, delete.
+- Plugins: install, activate, deactivate, update, delete.
+- Themes: install, activate, change (switch), update, delete.
+- Errors Logs: show error type, message, stack-trace and time.
+- Users: register/add, edit, delete.
+- User Activity: login, logout, login failed.
+- User Profile: Update name, email, password, etc.
+
+### WordPress Activity Log
+Explore detailed information about any action on your website through the WordPress activity log.
+Monitor post actions, user actions, plugin and theme actions, WordPress cron log, and timestamps.
+
+### Site Health Check
+Receive a detailed report on your website's health and performance, including security reports.
+UptimeMonster performs examinations to detect errors, issues, and custom checks by plugins and themes.
+
+The Site Health Status feature evaluates performance and security aspects, categorizing issues and recommendations into three layers:
+- Critical: Number of critical issues, categorized as security or performance, with suggested solutions.
+- Recommended: List of recommendations for enhancing site health with step-by-step instructions.
+- Passed Tests: Number of items with no issues, providing detailed information.
+
+The plugin also reports website activity date and time, user details, and source IP addresses.
+No setup is required; simply add the API key to connect the plugin.
+
+### Comprehensive Monitoring with UptimeMonster
+Extend your monitoring capabilities beyond website and WordPress health – UptimeMonster offers a comprehensive suite of services
+to ensure the robustness of your entire online presence.
+In addition to website and WordPress metrics, monitor the following services seamlessly from the same dashboard:
+
+#### Server Monitoring
+- Load Average
+- CPU Utilization
+- Disk Usage & Stats, iNode Usage
+- RAM & Swap Usage
+- Network Stats
+- Active SSH Connections
+- Running Processes
+
+#### Service Monitoring
+- IP blacklist
+- DNS, FTP, sFTP, SSH
+- SMTP, POP3, iMAP
+- ICMP (ping), DNS lookup
+- Custom TCP/IP Ports
+
+Gain a holistic view of your digital infrastructure, ensuring optimal performance and preemptively addressing potential issues.
+UptimeMonster simplifies the monitoring of your website, server, and additional services, providing a centralized solution for a
+robust online presence.
+
+Explore the full array of [features](https://uptimemonster.com/features) & [services](https://uptimemonster.com/management-services) available at your fingertips with UptimeMonster.
+
+## License
+
+Copyright &copy; [UptimeMonster](https://uptimemonster.com)
