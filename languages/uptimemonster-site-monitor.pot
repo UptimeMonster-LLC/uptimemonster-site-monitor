@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-11-19T15:14:42+06:00\n"
+"POT-Creation-Date: 2023-11-19T15:55:17+06:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: uptimemonster-site-monitor\n"
@@ -82,7 +82,7 @@ msgstr ""
 #: includes/Api/Controllers/V1/Plugins.php:604
 #: includes/Api/Controllers/V1/Themes.php:170
 #: includes/Api/Controllers/V1/Themes.php:401
-#: includes/helpers.php:538
+#: includes/helpers.php:544
 msgid "Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php."
 msgstr ""
 
@@ -427,7 +427,7 @@ msgstr ""
 
 #: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:408
 #: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:414
-#: includes/helpers.php:415
+#: includes/helpers.php:421
 msgid "Communication with WordPress.org"
 msgstr ""
 
@@ -518,7 +518,7 @@ msgid "Unable to determine some settings, as the %s function has been disabled."
 msgstr ""
 
 #: includes/Api/Controllers/V1/Site_Health/UptimeMonster_Debug_Data.php:552
-#: includes/helpers.php:405
+#: includes/helpers.php:411
 msgid "File uploads"
 msgstr ""
 
@@ -1254,75 +1254,75 @@ msgstr ""
 msgid "Unknown Visitor"
 msgstr ""
 
-#: includes/helpers.php:348
+#: includes/helpers.php:354
 msgid "WordPress Version"
 msgstr ""
 
-#: includes/helpers.php:352
+#: includes/helpers.php:358
 msgid "Plugin Versions"
 msgstr ""
 
-#: includes/helpers.php:356
+#: includes/helpers.php:362
 msgid "Theme Versions"
 msgstr ""
 
-#: includes/helpers.php:360
+#: includes/helpers.php:366
 msgid "PHP Version"
 msgstr ""
 
-#: includes/helpers.php:364
+#: includes/helpers.php:370
 msgid "PHP Extensions"
 msgstr ""
 
-#: includes/helpers.php:368
+#: includes/helpers.php:374
 msgid "PHP Default Timezone"
 msgstr ""
 
-#: includes/helpers.php:372
+#: includes/helpers.php:378
 msgid "PHP Sessions"
 msgstr ""
 
-#: includes/helpers.php:376
+#: includes/helpers.php:382
 msgid "Database Server version"
 msgstr ""
 
-#: includes/helpers.php:380
+#: includes/helpers.php:386
 msgid "MySQL utf8mb4 support"
 msgstr ""
 
-#: includes/helpers.php:384
+#: includes/helpers.php:390
 msgid "Secure communication"
 msgstr ""
 
-#: includes/helpers.php:388
+#: includes/helpers.php:394
 msgid "Scheduled events"
 msgstr ""
 
-#: includes/helpers.php:392
+#: includes/helpers.php:398
 msgid "HTTP Requests"
 msgstr ""
 
-#: includes/helpers.php:396
+#: includes/helpers.php:402
 msgid "REST API availability"
 msgstr ""
 
-#: includes/helpers.php:401
+#: includes/helpers.php:407
 msgid "Debugging enabled"
 msgstr ""
 
-#: includes/helpers.php:409
+#: includes/helpers.php:415
 msgid "Plugin and theme auto-updates"
 msgstr ""
 
-#: includes/helpers.php:421
+#: includes/helpers.php:427
 msgid "Background updates"
 msgstr ""
 
-#: includes/helpers.php:427
+#: includes/helpers.php:433
 msgid "Loopback request"
 msgstr ""
 
-#: includes/helpers.php:433
+#: includes/helpers.php:439
 msgid "HTTPS status"
 msgstr ""
 
