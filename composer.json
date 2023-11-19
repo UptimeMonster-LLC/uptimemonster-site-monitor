@@ -42,6 +42,7 @@
         "phpcs": "@php ./vendor/bin/phpcs --colors --extensions=php .",
         "phpcs:log": "@php ./vendor/bin/phpcs --colors --extensions=php --report-file=./logs/phpcs.log .",
         "phpcbf": "@php ./vendor/bin/phpcbf --colors --extensions=php .",
-        "analyze": "@php ./vendor/bin/phpstan analyze ."
+        "analyze": "@php ./vendor/bin/phpstan analyze .",
+        "build": "@composer install --no-dev"
     }
 }
