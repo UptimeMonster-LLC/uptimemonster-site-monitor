@@ -20,6 +20,7 @@ Choose from different monitoring interval mode, and receive a detailed report in
 [![UptimeMonster promo video](https://img.youtube.com/vi/UTT14RCx84k/hqdefault.jpg)](https://www.youtube.com/watch?v=UTT14RCx84k&ab_channel=UptimeMonster&sub_confirmation=1)
 
 Please subscribe to our [YouTube Channel](https://www.youtube.com/@uptimemonster?sub_confirmation=1) for tips & tricks.
+<br>
 Start your journey by signing up for a [free starter account](https://uptimemonster.com/product/uptimemonster-yearly-pricing?attribute_pa_packages=starter&variation_id=1171&add-to-cart=1170) with [UptimeMonster](https://uptimemonster.com/product/uptimemonster-yearly-pricing?attribute_pa_packages=starter&variation_id=1171&add-to-cart=1170) today!
 
 ### Monitor Website Activities
