@@ -150,6 +150,8 @@ function uptimemonster_get_user( $identity, $field = null ) {
 }
 
 /**
+ * Get user full name for display purpose.
+ *
  * @param WP_User|false $user
  *
  * @return string
@@ -157,15 +159,19 @@ function uptimemonster_get_user( $identity, $field = null ) {
 function uptimemonster_get_user_display_name( $user ) {
 	$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) ); // @phpstan-ignore-line
 
-	if ( empty( $name ) ) {
-		$name = $user->display_name; // @phpstan-ignore-line
+	if ( ! empty( $name ) ) {
+		return $name;
 	}
 
-	if ( empty( $name ) ) {
-		$name = $user->user_nicename; // @phpstan-ignore-line
+	if ( ! empty( $user->display_name ) ) {
+		return $user->display_name;
 	}
 
-	return $name;
+	if ( ! empty( $user->user_nicename ) ) {
+		return $user->user_nicename;
+	}
+
+	return $user->user_login;
 }
 
 /**

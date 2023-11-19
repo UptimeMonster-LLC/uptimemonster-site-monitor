@@ -102,23 +102,32 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 		$this->log_user( Activity_Monitor_Base::ITEM_UPDATED, $user, [ 'old' => $old_user_data->to_array() ] );
 	}
 
+	/**
+	 * @param int $id ID of the deleted user.
+	 * @param int|null $reassign ID of the user to reassign posts and links to.
+	 *                           Default null, for no reassignment.
+	 * @param WP_User $user WP_User object of the deleted user.
+	 *
+	 * @throws Exception
+	 */
 	public function on_deleted( $id, $reassign, $user ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
-		$reassign = uptimemonster_get_user( $reassign );
 		if ( $reassign ) {
-			$this->log_user(
-				Activity_Monitor_Base::ITEM_DELETED,
-				$user,
-				[
-					'old'           => $user->to_array(),
-					'reassigned_to' => [
-						'id'       => $reassign->ID,
-						'name'     => uptimemonster_get_user_display_name( $reassign ),
-						'email'    => $reassign->user_email,
-						'username' => $reassign->user_login,
-					],
-				]
-			);
+			$reassign = uptimemonster_get_user( $reassign );
+			$reassign = [
+				'id'       => $reassign->ID,
+				'name'     => uptimemonster_get_user_display_name( $reassign ),
+				'email'    => $reassign->user_email,
+				'username' => $reassign->user_login,
+			];
 		}
+		$this->log_user(
+			Activity_Monitor_Base::ITEM_DELETED,
+			$user,
+			[
+				'old_user' => $user->to_array(),
+				'reassign' => $reassign,
+			]
+		);
 	}
 
 	public function on_spammed( $user ) {
