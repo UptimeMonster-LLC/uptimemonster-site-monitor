@@ -16,14 +16,17 @@ Track and analyze all activities on your WordPress website with the powerful and
 This plugin integrates seamlessly with UptimeMonster, an external web application that monitors your website's uptime, downtime, security, and other essential functions.
 
 UptimeMonster Site Monitor operates 24/7, allowing you to identify and address issues before they impact users globally.
-Activate the plugin with an API key to connect with the web application and monitor every aspect of your WordPress website.
-Choose from different monitoring intervals, including every minute, and receive a detailed website health report.
+Activate the plugin with and connect with the dashboard and monitor every aspect of your WordPress website.
+Choose from different monitoring interval mode, and receive a detailed report in a centralized dashboard for all of your websites.
 
 https://www.youtube.com/watch?v=UTT14RCx84k&ab_channel=UptimeMonster&sub_confirmation=1
 
-### Monitored Activities Include:
+### Monitor Website Activities
 
-- WordPress core updates, cron logs.
+Explore detailed information about any action by anyone on your WordPress site through the activity log.
+Monitor post changes, user actions, plugin and theme activation/deactivation, WordPress cron jobs, etc.
+
+- WordPress core updates, cron job actions.
 - Pages, Posts, CPT (Custom Post Types): add, edit, delete.
 - Categories, Tags, Taxonomies: add, edit, delete.
 - Plugins: install, activate, deactivate, update, delete.
@@ -31,16 +34,10 @@ https://www.youtube.com/watch?v=UTT14RCx84k&ab_channel=UptimeMonster&sub_confirm
 - Errors Logs: show error type, message, stack-trace and time.
 - Users: register/add, edit, delete.
 - User Activity: login, logout, login failed.
-- User Profile: Update name, email, password, etc.
 
-### WordPress Activity Log
+### WordPress Health Check
 
-Explore detailed information about any action on your website through the WordPress activity log.
-Monitor post actions, user actions, plugin and theme actions, WordPress cron log, and timestamps.
-
-### Site Health Check
-
-Receive a detailed report on your website's health and performance, including security reports.
+Receive a detailed report on your WordPress site's health and performance, including security reports.
 UptimeMonster performs examinations to detect errors, issues, and custom checks by plugins and themes.
 
 The Site Health Status feature evaluates performance and security aspects, categorizing issues and recommendations into three layers:
