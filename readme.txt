@@ -1,5 +1,5 @@
 === UptimeMonster Site Monitor ===
-Contributors: uptimemonster, niamul, mhamudul_hk
+Contributors: uptimemonster, niamul, mhamudul_hk, shuvo586
 Donate link:
 Tags: site monitor, activity monitor, watchdog, logging, issue tracking, error reporting
 Requires at least: 5.2
