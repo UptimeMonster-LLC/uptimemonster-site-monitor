@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: UptimeMonster Site Monitor
- * Plugin URI: https://uptimemonster.com/
+ * Plugin URI: https://github.com/Pixelaar-LLC/uptimemonster-site-monitor
  * Description: WordPress Site Activity Monitor For UptimeMonster
  * Author: UptimeMonster
  * Author URI: https://uptimemonster.com/
