@@ -1,7 +1,7 @@
 === UptimeMonster Site Monitor ===
 Contributors: uptimemonster, niamul, mhamudul_hk, shuvo586
 Donate link:
-Tags: site monitor, activity monitor, watchdog, logging, issue tracking, error reporting
+Tags: activity monitor, health check, watchdog, logging, issue tracker, error logging
 Requires at least: 5.2
 Tested up to: 6.4
 Stable tag: 1.0.0

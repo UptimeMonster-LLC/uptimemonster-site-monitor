@@ -31,7 +31,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 		add_action( 'deleted_user', [ $this, 'on_deleted' ], 10, 3 );
 
 		add_action( 'make_spam_user', [ $this, 'on_spammed' ] );
-		add_action( 'make_ham_user', [ $this, 'on_unspammed' ] );
+		add_action( 'make_ham_user', [ $this, 'on_hammed' ] );
 	}
 
 	protected function maybe_log_activity( $action, $object_id ) {
@@ -128,7 +128,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 		);
 	}
 
-	public function on_unspammed( $user ) {
+	public function on_hammed( $user ) {
 		$this->log_user(
 			Activity_Monitor_Base::ITEM_UNSPAMMED,
 			$user
