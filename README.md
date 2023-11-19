@@ -4,8 +4,7 @@
 [//]: # ([![UptimeMonster Site Monitor Rating]&#40;https://img.shields.io/wordpress/plugin/r/uptimemonster-site-monitor?label=Rating&style=flat-square&#41;]&#40;https://wordpress.org/plugins/uptimemonster-site-monitor/&#41;)
 [//]: # ([![UptimeMonster Site Monitor Version]&#40;https://img.shields.io/wordpress/plugin/v/uptimemonster-site-monitor.svg?label=Version&style=flat-square&#41;]&#40;https://wordpress.org/plugins/uptimemonster-site-monitor/&#41;)
 [//]: # ([![UptimeMonster Site Monitor Downloads]&#40;https://img.shields.io/wordpress/plugin/dt/uptimemonster-site-monitor?label=Downloads&style=flat-square&#41;]&#40;https://wordpress.org/plugins/uptimemonster-site-monitor/&#41;)
-
----
+[//]: # (---)
 
 Effortlessly monitor and optimize the performance, security, and activities of multiple WordPress websites with the UptimeMonster Site Monitor plugin – your all-in-one solution for streamlined website management.
 
