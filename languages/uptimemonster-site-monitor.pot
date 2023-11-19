@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-11-19T15:55:17+06:00\n"
+"POT-Creation-Date: 2023-11-19T16:46:30+06:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: uptimemonster-site-monitor\n"
@@ -19,8 +19,7 @@ msgid "UptimeMonster Site Monitor"
 msgstr ""
 
 #. Plugin URI of the plugin
-#. Author URI of the plugin
-msgid "https://uptimemonster.com/"
+msgid "https://github.com/Pixelaar-LLC/uptimemonster-site-monitor"
 msgstr ""
 
 #. Description of the plugin
@@ -30,6 +29,10 @@ msgstr ""
 #. Author of the plugin
 #: includes/Dashboard.php:283
 msgid "UptimeMonster"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://uptimemonster.com/"
 msgstr ""
 
 #: includes/Api/Controllers/Controller_Base.php:50
