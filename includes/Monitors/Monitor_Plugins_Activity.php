@@ -175,9 +175,8 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( ! empty( $_POST ) && isset( $_POST['action'], $_POST['plugin'], $_POST['file'] ) && ! empty( $_POST['plugin'] ) ) {
 			if ( $this->is_plugin_file_modified( $location ) ) {
-				$_POST  = wp_unslash( $_POST );
-				$plugin = sanitize_text_field( $_POST['plugin'] );
-				$file   = sanitize_text_field( $_POST['file'] );
+				$plugin = sanitize_text_field( wp_unslash( $_POST['plugin'] ) );
+				$file   = sanitize_text_field( wp_unslash( $_POST['file'] ) );
 				$_file  = WP_PLUGIN_DIR . $plugin; // @phpstan-ignore-line
 				// phpcs:enable
 

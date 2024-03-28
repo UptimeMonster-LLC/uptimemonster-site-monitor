@@ -291,9 +291,8 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 					'update' === $_REQUEST['action'] // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.NonceVerification.Recommended
 				)
 			) {
-				$_POST = wp_unslash( $_POST );
-				$theme = sanitize_text_field( $_POST['theme'] );
-				$file  = sanitize_text_field( $_POST['file'] );
+				$theme = sanitize_text_field( wp_unslash( $_POST['theme'] ) );
+				$file  = sanitize_text_field( wp_unslash( $_POST['file'] ) );
 				$_file = WP_PLUGIN_DIR . $theme; // @phpstan-ignore-line
 
 				if ( $this->maybe_log_theme( Activity_Monitor_Base::ITEM_UPDATED, $theme, $file ) && file_exists( $_file ) ) {
