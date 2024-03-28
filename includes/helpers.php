@@ -81,7 +81,7 @@ function uptimemonster_get_current_actor() {
 		$actor     = [
 			'type'  => 'rest-api',
 			'extra' => [
-				'method'    => isset( $_SERVER['REQUEST_METHOD'] )? $_SERVER['REQUEST_METHOD'] : 'N/A', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				'method'    => isset( $_SERVER['REQUEST_METHOD'] )? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD']  ) ) : 'N/A', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				'namespace' => $namespace,
 				'route'     => $route,
 			],

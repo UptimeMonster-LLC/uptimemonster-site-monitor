@@ -68,7 +68,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		$action = isset( $_GET['action'] ) ? $_GET['action'] : 'upgrade-core'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended
+		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'upgrade-core'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended
 
 		if ( 'do-core-upgrade' === $action || 'do-core-reinstall' === $action ) {
 			if ( isset( $_POST['upgrade'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing

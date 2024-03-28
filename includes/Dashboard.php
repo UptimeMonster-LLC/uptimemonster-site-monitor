@@ -100,8 +100,7 @@ class Dashboard {
 		}
 
 		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && self::DROP_IN_ACTION === $_GET['action'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			if ( wp_verify_nonce( $_GET['_wpnonce'], self::DROP_IN_ACTION ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-				dd( $_GET );
+			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), self::DROP_IN_ACTION ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				UptimeMonster_Site_Monitor::maybe_install_drop_in();
 
 				$this->add_settings_status( __( 'Error Logger Drop-In Updated.', 'uptimemonster-site-monitor' ) );
@@ -113,7 +112,7 @@ class Dashboard {
 
 		// Disconnect api.
 		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && 'disconnect-api' === $_GET['action'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			if ( wp_verify_nonce( $_GET['_wpnonce'], 'umon-disconnect-api' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'umon-disconnect-api' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 				$client = UptimeMonster_Client::get_instance();
 				if ( $client->has_keys() ) {

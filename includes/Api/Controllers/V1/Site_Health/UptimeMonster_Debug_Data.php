@@ -710,8 +710,8 @@ class UptimeMonster_Debug_Data {
 		);
 		$info['wp-server']['fields']['httpd_software']      = array(
 			'label' => __( 'Web server', 'uptimemonster-site-monitor' ),
-			'value' => ( isset( $_SERVER['SERVER_SOFTWARE'] ) ? $_SERVER['SERVER_SOFTWARE'] : __( 'Unable to determine what web server software is used', 'uptimemonster-site-monitor' ) ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			'debug' => ( isset( $_SERVER['SERVER_SOFTWARE'] ) ? $_SERVER['SERVER_SOFTWARE'] : 'unknown' ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			'value' => ( isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_slash( $_SERVER['SERVER_SOFTWARE'] ) ) : __( 'Unable to determine what web server software is used', 'uptimemonster-site-monitor' ) ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			'debug' => ( isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_slash( $_SERVER['SERVER_SOFTWARE'] ) ) : 'unknown' ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		);
 		$info['wp-server']['fields']['php_version']         = array(
 			'label' => __( 'PHP version', 'uptimemonster-site-monitor' ),
