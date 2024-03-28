@@ -109,7 +109,7 @@ class UptimeMonster_Update_Check {
 				} else {
 					$results[ $key ] = [
 						'status' => 'recommended',
-						'label'  => __( 'A test is unavailable', 'uptimemonster-site-monitor' ),
+						'label'  => esc_html__( 'A test is unavailable', 'uptimemonster-site-monitor' ),
 					];
 				}
 			}
@@ -129,14 +129,14 @@ class UptimeMonster_Update_Check {
 	 */
 	public function get_test_plugin_theme_auto_updates() {
 		$result = [
-			'label'       => __( 'Plugin and theme auto-updates appear to be configured correctly', 'uptimemonster-site-monitor' ),
+			'label'       => esc_html__( 'Plugin and theme auto-updates appear to be configured correctly', 'uptimemonster-site-monitor' ),
 			'badge'       => [
-				'label' => __( 'Security', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Security', 'uptimemonster-site-monitor' ),
 				'color' => 'blue',
 			],
 			'description' => sprintf(
 				'<p>%s</p>',
-				__( 'Plugin and theme auto-updates ensure that the latest versions are always installed.', 'uptimemonster-site-monitor' )
+				esc_html__( 'Plugin and theme auto-updates ensure that the latest versions are always installed.', 'uptimemonster-site-monitor' )
 			),
 			'actions'     => '',
 			'test'        => 'plugin_theme_auto_updates',
@@ -147,7 +147,7 @@ class UptimeMonster_Update_Check {
 		$result['status'] = $check_plugin_theme_updates->status;
 
 		if ( 'good' !== $result['status'] ) {
-			$result['label'] = __( 'Your site may have problems auto-updating plugins and themes', 'uptimemonster-site-monitor' );
+			$result['label'] = esc_html__( 'Your site may have problems auto-updating plugins and themes', 'uptimemonster-site-monitor' );
 
 			$result['description'] .= sprintf(
 				'<p>%s</p>',
@@ -208,30 +208,30 @@ class UptimeMonster_Update_Check {
 		if ( ( ! $test_plugins_enabled && $ui_enabled_for_plugins ) || ( ! $test_themes_enabled && $ui_enabled_for_themes ) ) {
 			return (object) [
 				'status'  => 'critical',
-				'message' => __( 'Auto-updates for plugins and/or themes appear to be disabled, but settings are still set to be displayed. This could cause auto-updates to not work as expected.', 'uptimemonster-site-monitor' ),
+				'message' => esc_html__( 'Auto-updates for plugins and/or themes appear to be disabled, but settings are still set to be displayed. This could cause auto-updates to not work as expected.', 'uptimemonster-site-monitor' ),
 			];
 		}
 
 		if ( ( ! $test_plugins_enabled && $plugin_filter_present ) && ( ! $test_themes_enabled && $theme_filter_present ) ) {
 			return (object) [
 				'status'  => 'recommended',
-				'message' => __( 'Auto-updates for plugins and themes appear to be disabled. This will prevent your site from receiving new versions automatically when available.', 'uptimemonster-site-monitor' ),
+				'message' => esc_html__( 'Auto-updates for plugins and themes appear to be disabled. This will prevent your site from receiving new versions automatically when available.', 'uptimemonster-site-monitor' ),
 			];
 		} elseif ( ! $test_plugins_enabled && $plugin_filter_present ) {
 			return (object) [
 				'status'  => 'recommended',
-				'message' => __( 'Auto-updates for plugins appear to be disabled. This will prevent your site from receiving new versions automatically when available.', 'uptimemonster-site-monitor' ),
+				'message' => esc_html__( 'Auto-updates for plugins appear to be disabled. This will prevent your site from receiving new versions automatically when available.', 'uptimemonster-site-monitor' ),
 			];
 		} elseif ( ! $test_themes_enabled && $theme_filter_present ) {
 			return (object) [
 				'status'  => 'recommended',
-				'message' => __( 'Auto-updates for themes appear to be disabled. This will prevent your site from receiving new versions automatically when available.', 'uptimemonster-site-monitor' ),
+				'message' => esc_html__( 'Auto-updates for themes appear to be disabled. This will prevent your site from receiving new versions automatically when available.', 'uptimemonster-site-monitor' ),
 			];
 		}
 
 		return (object) [
 			'status'  => 'good',
-			'message' => __( 'There appear to be no issues with plugin and theme auto-updates.', 'uptimemonster-site-monitor' ),
+			'message' => esc_html__( 'There appear to be no issues with plugin and theme auto-updates.', 'uptimemonster-site-monitor' ),
 		];
 	}
 
@@ -372,28 +372,28 @@ class UptimeMonster_Update_Check {
 		$result = [
 			'label'       => sprintf(
 			/* translators: %s: The current PHP version. */
-				__( 'Your site is running the current version of PHP (%s)', 'uptimemonster-site-monitor' ),
+				esc_html__( 'Your site is running the current version of PHP (%s)', 'uptimemonster-site-monitor' ),
 				PHP_VERSION
 			),
 			'status'      => 'good',
 			'badge'       => [
-				'label' => __( 'Performance', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Performance', 'uptimemonster-site-monitor' ),
 				'color' => 'blue',
 			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				sprintf(
 				/* translators: %s: The minimum recommended PHP version. */
-					__( 'PHP is the programming language used to build and maintain WordPress. Newer versions of PHP are created with increased performance in mind, so you may see a positive effect on your site&#8217;s performance. The minimum recommended version of PHP is %s.', 'uptimemonster-site-monitor' ),
+					esc_html__( 'PHP is the programming language used to build and maintain WordPress. Newer versions of PHP are created with increased performance in mind, so you may see a positive effect on your site&#8217;s performance. The minimum recommended version of PHP is %s.', 'uptimemonster-site-monitor' ),
 					$response ? $response['recommended_version'] : ''
 				)
 			),
 			'actions'     => sprintf(
 				'<p><a href="%s" target="_blank" rel="noopener">%s <span class="screen-reader-text">%s</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></p>',
 				esc_url( wp_get_update_php_url() ),
-				__( 'Learn more about updating PHP', 'uptimemonster-site-monitor' ),
+				esc_html__( 'Learn more about updating PHP', 'uptimemonster-site-monitor' ),
 				/* translators: Accessibility text. */
-				__( '(opens in a new tab)', 'uptimemonster-site-monitor' )
+				esc_html__( '(opens in a new tab)', 'uptimemonster-site-monitor' )
 			),
 			'test'        => 'php_version',
 		];
@@ -407,7 +407,7 @@ class UptimeMonster_Update_Check {
 		if ( $response['is_supported'] ) {
 			$result['label'] = sprintf(
 			/* translators: %s: The server PHP version. */
-				__( 'Your site is running an older version of PHP (%s)', 'uptimemonster-site-monitor' ),
+				esc_html__( 'Your site is running an older version of PHP (%s)', 'uptimemonster-site-monitor' ),
 				PHP_VERSION
 			);
 			$result['status'] = 'recommended';
@@ -419,7 +419,7 @@ class UptimeMonster_Update_Check {
 		if ( $response['is_secure'] ) {
 			$result['label'] = sprintf(
 			/* translators: %s: The server PHP version. */
-				__( 'Your site is running an older version of PHP (%s), which should be updated', 'uptimemonster-site-monitor' ),
+				esc_html__( 'Your site is running an older version of PHP (%s), which should be updated', 'uptimemonster-site-monitor' ),
 				PHP_VERSION
 			);
 			$result['status'] = 'recommended';
@@ -430,11 +430,11 @@ class UptimeMonster_Update_Check {
 		// Anything no longer secure must be updated.
 		$result['label'] = sprintf(
 		/* translators: %s: The server PHP version. */
-			__( 'Your site is running an outdated version of PHP (%s), which requires an update', 'uptimemonster-site-monitor' ),
+			esc_html__( 'Your site is running an outdated version of PHP (%s), which requires an update', 'uptimemonster-site-monitor' ),
 			PHP_VERSION
 		);
 		$result['status']         = 'critical';
-		$result['badge']['label'] = __( 'Security', 'uptimemonster-site-monitor' );
+		$result['badge']['label'] = esc_html__( 'Security', 'uptimemonster-site-monitor' );
 
 		return $result;
 	}
@@ -511,7 +511,7 @@ class UptimeMonster_Update_Check {
 			'label'       => '',
 			'status'      => '',
 			'badge'       => [
-				'label' => __( 'Performance', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Performance', 'uptimemonster-site-monitor' ),
 				'color' => 'blue',
 			],
 			'description' => '',
@@ -527,19 +527,19 @@ class UptimeMonster_Update_Check {
 
 			$result['label'] = sprintf(
 			/* translators: %s: Your current version of WordPress. */
-				__( 'WordPress version %s', 'uptimemonster-site-monitor' ),
+				esc_html__( 'WordPress version %s', 'uptimemonster-site-monitor' ),
 				$core_current_version
 			);
 
 			$result['description'] = sprintf(
 				'<p>%s</p>',
-				__( 'Unable to check if any new versions of WordPress are available.', 'uptimemonster-site-monitor' )
+				esc_html__( 'Unable to check if any new versions of WordPress are available.', 'uptimemonster-site-monitor' )
 			);
 
 			$result['actions'] = sprintf(
 				'<a href="%s">%s</a>',
 				esc_url( admin_url( 'update-core.php?force-check=1' ) ),
-				__( 'Check for updates manually', 'uptimemonster-site-monitor' )
+				esc_html__( 'Check for updates manually', 'uptimemonster-site-monitor' )
 			);
 		} else {
 			foreach ( $core_updates as $core => $update ) {
@@ -552,14 +552,14 @@ class UptimeMonster_Update_Check {
 
 					$result['label'] = sprintf(
 					/* translators: %s: The latest version of WordPress available. */
-						__( 'WordPress update available (%s)', 'uptimemonster-site-monitor' ),
+						esc_html__( 'WordPress update available (%s)', 'uptimemonster-site-monitor' ),
 						$update->version
 					);
 
 					$result['actions'] = sprintf(
 						'<a href="%s">%s</a>',
 						esc_url( admin_url( 'update-core.php' ) ),
-						__( 'Install the latest version of WordPress', 'uptimemonster-site-monitor' )
+						esc_html__( 'Install the latest version of WordPress', 'uptimemonster-site-monitor' )
 					);
 
 					if ( $current_major !== $new_major ) {
@@ -567,28 +567,28 @@ class UptimeMonster_Update_Check {
 						$result['status']      = 'recommended';
 						$result['description'] = sprintf(
 							'<p>%s</p>',
-							__( 'A new version of WordPress is available.', 'uptimemonster-site-monitor' )
+							esc_html__( 'A new version of WordPress is available.', 'uptimemonster-site-monitor' )
 						);
 					} else {
 						// This is a minor version, sometimes considered more critical.
 						$result['status']         = 'critical';
-						$result['badge']['label'] = __( 'Security', 'uptimemonster-site-monitor' );
+						$result['badge']['label'] = esc_html__( 'Security', 'uptimemonster-site-monitor' );
 						$result['description']    = sprintf(
 							'<p>%s</p>',
-							__( 'A new minor update is available for your site. Because minor updates often address security, it&#8217;s important to install them.', 'uptimemonster-site-monitor' )
+							esc_html__( 'A new minor update is available for your site. Because minor updates often address security, it&#8217;s important to install them.', 'uptimemonster-site-monitor' )
 						);
 					}
 				} else {
 					$result['status'] = 'good';
 					$result['label']  = sprintf(
 					/* translators: %s: The current version of WordPress installed on this site. */
-						__( 'Your version of WordPress (%s) is up to date', 'uptimemonster-site-monitor' ),
+						esc_html__( 'Your version of WordPress (%s) is up to date', 'uptimemonster-site-monitor' ),
 						$core_current_version
 					);
 
 					$result['description'] = sprintf(
 						'<p>%s</p>',
-						__( 'You are currently running the latest version of WordPress available, keep it up!', 'uptimemonster-site-monitor' )
+						esc_html__( 'You are currently running the latest version of WordPress available, keep it up!', 'uptimemonster-site-monitor' )
 					);
 				}
 			}
@@ -609,20 +609,20 @@ class UptimeMonster_Update_Check {
 	 */
 	public function get_test_theme_version() {
 		$result = [
-			'label'       => __( 'Your themes are all up to date', 'uptimemonster-site-monitor' ),
+			'label'       => esc_html__( 'Your themes are all up to date', 'uptimemonster-site-monitor' ),
 			'status'      => 'good',
 			'badge'       => [
-				'label' => __( 'Security', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Security', 'uptimemonster-site-monitor' ),
 				'color' => 'blue',
 			],
 			'description' => sprintf(
 				'<p>%s</p>',
-				__( 'Themes add your site&#8217;s look and feel. It&#8217;s important to keep them up to date, to stay consistent with your brand and keep your site secure.', 'uptimemonster-site-monitor' )
+				esc_html__( 'Themes add your site&#8217;s look and feel. It&#8217;s important to keep them up to date, to stay consistent with your brand and keep your site secure.', 'uptimemonster-site-monitor' )
 			),
 			'actions'     => sprintf(
 				'<p><a href="%s">%s</a></p>',
 				esc_url( admin_url( 'themes.php' ) ),
-				__( 'Manage your themes', 'uptimemonster-site-monitor' )
+				esc_html__( 'Manage your themes', 'uptimemonster-site-monitor' )
 			),
 			'test'        => 'theme_version',
 		];
@@ -690,7 +690,7 @@ class UptimeMonster_Update_Check {
 		if ( $themes_need_updates > 0 ) {
 			$result['status'] = 'critical';
 
-			$result['label'] = __( 'You have themes waiting to be updated', 'uptimemonster-site-monitor' );
+			$result['label'] = esc_html__( 'You have themes waiting to be updated', 'uptimemonster-site-monitor' );
 
 			$result['description'] .= sprintf(
 				'<p>%s</p>',
@@ -709,7 +709,7 @@ class UptimeMonster_Update_Check {
 			if ( 1 === $themes_total ) {
 				$result['description'] .= sprintf(
 					'<p>%s</p>',
-					__( 'Your site has 1 installed theme, and it is up to date.', 'uptimemonster-site-monitor' )
+					esc_html__( 'Your site has 1 installed theme, and it is up to date.', 'uptimemonster-site-monitor' )
 				);
 			} else {
 				$result['description'] .= sprintf(
@@ -734,7 +734,7 @@ class UptimeMonster_Update_Check {
 				// Recommend removing inactive themes, except a default theme, your current one, and the parent theme.
 				$result['status'] = 'recommended';
 
-				$result['label'] = __( 'You should remove inactive themes', 'uptimemonster-site-monitor' );
+				$result['label'] = esc_html__( 'You should remove inactive themes', 'uptimemonster-site-monitor' );
 
 				if ( $using_default_theme ) {
 					$result['description'] .= sprintf(
@@ -750,7 +750,7 @@ class UptimeMonster_Update_Check {
 						),
 						sprintf(
 						/* translators: 1: The currently active theme. 2: The active theme's parent theme. */
-							__( 'To enhance your site&#8217;s security, you should consider removing any themes you are not using. You should keep your active theme, %1$s, and %2$s, its parent theme.', 'uptimemonster-site-monitor' ),
+							esc_html__( 'To enhance your site&#8217;s security, you should consider removing any themes you are not using. You should keep your active theme, %1$s, and %2$s, its parent theme.', 'uptimemonster-site-monitor' ),
 							$active_theme->name,
 							$active_theme->parent()->name
 						)
@@ -769,7 +769,7 @@ class UptimeMonster_Update_Check {
 						),
 						sprintf(
 						/* translators: 1: The default theme for WordPress. 2: The currently active theme. 3: The active theme's parent theme. */
-							__( 'To enhance your site&#8217;s security, you should consider removing any themes you are not using. You should keep %1$s, the default WordPress theme, %2$s, your active theme, and %3$s, its parent theme.', 'uptimemonster-site-monitor' ),
+							esc_html__( 'To enhance your site&#8217;s security, you should consider removing any themes you are not using. You should keep %1$s, the default WordPress theme, %2$s, your active theme, and %3$s, its parent theme.', 'uptimemonster-site-monitor' ),
 							$default_theme ? $default_theme->name : WP_DEFAULT_THEME,
 							$active_theme->name,
 							$active_theme->parent()->name
@@ -780,7 +780,7 @@ class UptimeMonster_Update_Check {
 				// Recommend removing all inactive themes.
 				$result['status'] = 'recommended';
 
-				$result['label'] = __( 'You should remove inactive themes', 'uptimemonster-site-monitor' );
+				$result['label'] = esc_html__( 'You should remove inactive themes', 'uptimemonster-site-monitor' );
 
 				if ( $using_default_theme ) {
 					$result['description'] .= sprintf(
@@ -795,7 +795,7 @@ class UptimeMonster_Update_Check {
 							$themes_inactive,
 							$active_theme->name
 						),
-						__( 'You should consider removing any unused themes to enhance your site&#8217;s security.', 'uptimemonster-site-monitor' )
+						esc_html__( 'You should consider removing any unused themes to enhance your site&#8217;s security.', 'uptimemonster-site-monitor' )
 					);
 				} else {
 					$result['description'] .= sprintf(
@@ -811,7 +811,7 @@ class UptimeMonster_Update_Check {
 							$default_theme ? $default_theme->name : WP_DEFAULT_THEME,
 							$active_theme->name
 						),
-						__( 'You should consider removing any unused themes to enhance your site&#8217;s security.', 'uptimemonster-site-monitor' )
+						esc_html__( 'You should consider removing any unused themes to enhance your site&#8217;s security.', 'uptimemonster-site-monitor' )
 					);
 				}
 			}
@@ -821,11 +821,11 @@ class UptimeMonster_Update_Check {
 		if ( ! $has_default_theme ) {
 			$result['status'] = 'recommended';
 
-			$result['label'] = __( 'Have a default theme available', 'uptimemonster-site-monitor' );
+			$result['label'] = esc_html__( 'Have a default theme available', 'uptimemonster-site-monitor' );
 
 			$result['description'] .= sprintf(
 				'<p>%s</p>',
-				__( 'Your site does not have any default theme. Default themes are used by WordPress automatically if anything is wrong with your chosen theme.', 'uptimemonster-site-monitor' )
+				esc_html__( 'Your site does not have any default theme. Default themes are used by WordPress automatically if anything is wrong with your chosen theme.', 'uptimemonster-site-monitor' )
 			);
 		}
 
@@ -913,20 +913,20 @@ class UptimeMonster_Update_Check {
 	 */
 	public function get_test_plugin_version() {
 		$result = [
-			'label'       => __( 'Your plugins are all up to date', 'uptimemonster-site-monitor' ),
+			'label'       => esc_html__( 'Your plugins are all up to date', 'uptimemonster-site-monitor' ),
 			'status'      => 'good',
 			'badge'       => [
-				'label' => __( 'Security', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Security', 'uptimemonster-site-monitor' ),
 				'color' => 'blue',
 			],
 			'description' => sprintf(
 				'<p>%s</p>',
-				__( 'Plugins extend your site&#8217;s functionality with things like contact forms, ecommerce and much more. That means they have deep access to your site, so it&#8217;s vital to keep them up to date.', 'uptimemonster-site-monitor' )
+				esc_html__( 'Plugins extend your site&#8217;s functionality with things like contact forms, ecommerce and much more. That means they have deep access to your site, so it&#8217;s vital to keep them up to date.', 'uptimemonster-site-monitor' )
 			),
 			'actions'     => sprintf(
 				'<p><a href="%s">%s</a></p>',
 				esc_url( admin_url( 'plugins.php' ) ),
-				__( 'Manage your plugins', 'uptimemonster-site-monitor' )
+				esc_html__( 'Manage your plugins', 'uptimemonster-site-monitor' )
 			),
 			'test'        => 'plugin_version',
 		];
@@ -963,7 +963,7 @@ class UptimeMonster_Update_Check {
 		if ( $plugins_need_update > 0 ) {
 			$result['status'] = 'critical';
 
-			$result['label'] = __( 'You have plugins waiting to be updated', 'uptimemonster-site-monitor' );
+			$result['label'] = esc_html__( 'You have plugins waiting to be updated', 'uptimemonster-site-monitor' );
 
 			$result['description'] .= sprintf(
 				'<p>%s</p>',
@@ -981,13 +981,13 @@ class UptimeMonster_Update_Check {
 			$result['actions'] .= sprintf(
 				'<p><a href="%s">%s</a></p>',
 				esc_url( network_admin_url( 'plugins.php?plugin_status=upgrade' ) ),
-				__( 'Update your plugins', 'uptimemonster-site-monitor' )
+				esc_html__( 'Update your plugins', 'uptimemonster-site-monitor' )
 			);
 		} else {
 			if ( 1 === $plugins_active ) {
 				$result['description'] .= sprintf(
 					'<p>%s</p>',
-					__( 'Your site has 1 active plugin, and it is up to date.', 'uptimemonster-site-monitor' )
+					esc_html__( 'Your site has 1 active plugin, and it is up to date.', 'uptimemonster-site-monitor' )
 				);
 			} else {
 				$result['description'] .= sprintf(
@@ -1011,7 +1011,7 @@ class UptimeMonster_Update_Check {
 
 			$result['status'] = 'recommended';
 
-			$result['label'] = __( 'You should remove inactive plugins', 'uptimemonster-site-monitor' );
+			$result['label'] = esc_html__( 'You should remove inactive plugins', 'uptimemonster-site-monitor' );
 
 			$result['description'] .= sprintf(
 				'<p>%s %s</p>',
@@ -1024,13 +1024,13 @@ class UptimeMonster_Update_Check {
 					),
 					$unused_plugins
 				),
-				__( 'Inactive plugins are tempting targets for attackers. If you are not going to use a plugin, you should consider removing it.', 'uptimemonster-site-monitor' )
+				esc_html__( 'Inactive plugins are tempting targets for attackers. If you are not going to use a plugin, you should consider removing it.', 'uptimemonster-site-monitor' )
 			);
 
 			$result['actions'] .= sprintf(
 				'<p><a href="%s">%s</a></p>',
 				esc_url( admin_url( 'plugins.php?plugin_status=inactive' ) ),
-				__( 'Manage inactive plugins', 'uptimemonster-site-monitor' )
+				esc_html__( 'Manage inactive plugins', 'uptimemonster-site-monitor' )
 			);
 		}
 

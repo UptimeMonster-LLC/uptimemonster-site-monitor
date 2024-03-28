@@ -112,7 +112,7 @@ function uptimemonster_get_current_actor() {
 		} else {
 			$actor = [
 				'type' => 'visitor',
-				'name' => __( 'Unknown Visitor', 'uptimemonster-site-monitor' ),
+				'name' => esc_html__( 'Unknown Visitor', 'uptimemonster-site-monitor' ),
 			];
 		}
 	}
@@ -351,92 +351,92 @@ function get_site_health_tests() { //phpcs:ignore WordPress.NamingConventions.Pr
 	return [
 		'direct' => [
 			'wordpress_version'         => [
-				'label' => __( 'WordPress Version', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'WordPress Version', 'uptimemonster-site-monitor' ),
 				'test'  => 'wordpress_version',
 			],
 			'plugin_version'            => [
-				'label' => __( 'Plugin Versions', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Plugin Versions', 'uptimemonster-site-monitor' ),
 				'test'  => 'plugin_version',
 			],
 			'theme_version'             => [
-				'label' => __( 'Theme Versions', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Theme Versions', 'uptimemonster-site-monitor' ),
 				'test'  => 'theme_version',
 			],
 			'php_version'               => [
-				'label' => __( 'PHP Version', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'PHP Version', 'uptimemonster-site-monitor' ),
 				'test'  => 'php_version',
 			],
 			'php_extensions'            => [
-				'label' => __( 'PHP Extensions', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'PHP Extensions', 'uptimemonster-site-monitor' ),
 				'test'  => 'php_extensions',
 			],
 			'php_default_timezone'      => [
-				'label' => __( 'PHP Default Timezone', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'PHP Default Timezone', 'uptimemonster-site-monitor' ),
 				'test'  => 'php_default_timezone',
 			],
 			'php_sessions'              => [
-				'label' => __( 'PHP Sessions', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'PHP Sessions', 'uptimemonster-site-monitor' ),
 				'test'  => 'php_sessions',
 			],
 			'sql_server'                => [
-				'label' => __( 'Database Server version', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Database Server version', 'uptimemonster-site-monitor' ),
 				'test'  => 'sql_server',
 			],
 			'utf8mb4_support'           => [
-				'label' => __( 'MySQL utf8mb4 support', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'MySQL utf8mb4 support', 'uptimemonster-site-monitor' ),
 				'test'  => 'utf8mb4_support',
 			],
 			'ssl_support'               => [
-				'label' => __( 'Secure communication', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Secure communication', 'uptimemonster-site-monitor' ),
 				'test'  => 'ssl_support',
 			],
 			'scheduled_events'          => [
-				'label' => __( 'Scheduled events', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Scheduled events', 'uptimemonster-site-monitor' ),
 				'test'  => 'scheduled_events',
 			],
 			'http_requests'             => [
-				'label' => __( 'HTTP Requests', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'HTTP Requests', 'uptimemonster-site-monitor' ),
 				'test'  => 'http_requests',
 			],
 			'rest_availability'         => [
-				'label'     => __( 'REST API availability', 'uptimemonster-site-monitor' ),
+				'label'     => esc_html__( 'REST API availability', 'uptimemonster-site-monitor' ),
 				'test'      => 'rest_availability',
 				'skip_cron' => true,
 			],
 			'debug_enabled'             => [
-				'label' => __( 'Debugging enabled', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Debugging enabled', 'uptimemonster-site-monitor' ),
 				'test'  => 'is_in_debug_mode',
 			],
 			'file_uploads'              => [
-				'label' => __( 'File uploads', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'File uploads', 'uptimemonster-site-monitor' ),
 				'test'  => 'file_uploads',
 			],
 			'plugin_theme_auto_updates' => [
-				'label' => __( 'Plugin and theme auto-updates', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Plugin and theme auto-updates', 'uptimemonster-site-monitor' ),
 				'test'  => 'plugin_theme_auto_updates',
 			],
 		],
 		'async'  => [
 			'dotorg_communication' => [
-				'label'             => __( 'Communication with WordPress.org', 'uptimemonster-site-monitor' ),
+				'label'             => esc_html__( 'Communication with WordPress.org', 'uptimemonster-site-monitor' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/dotorg-communication' ),
 				'has_rest'          => true,
 				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_dotorg_communication' ],
 			],
 			'background_updates'   => [
-				'label'             => __( 'Background updates', 'uptimemonster-site-monitor' ),
+				'label'             => esc_html__( 'Background updates', 'uptimemonster-site-monitor' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/background-updates' ),
 				'has_rest'          => true,
 				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_background_updates' ],
 			],
 			'loopback_requests'    => [
-				'label'             => __( 'Loopback request', 'uptimemonster-site-monitor' ),
+				'label'             => esc_html__( 'Loopback request', 'uptimemonster-site-monitor' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/loopback-requests' ),
 				'has_rest'          => true,
 				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_loopback_requests' ],
 			],
 			'https_status'         => [
-				'label'             => __( 'HTTPS status', 'uptimemonster-site-monitor' ),
+				'label'             => esc_html__( 'HTTPS status', 'uptimemonster-site-monitor' ),
 				'test'              => rest_url( 'wp-site-health/v1/tests/https-status' ),
 				'has_rest'          => true,
 				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_https_status' ],
@@ -541,7 +541,7 @@ function uptimemonster_need_filesystem_credentials( $redirect ) {
 
 	// Check if credentials aren't provided or wrong credentials.
 	if ( false === $credentials || ! \WP_Filesystem( $credentials ) ) {
-		return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
+		return new WP_Error( 'fs-readonly', esc_html__( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
 	}
 
 	return false;

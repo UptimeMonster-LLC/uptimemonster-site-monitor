@@ -47,7 +47,7 @@ abstract class Controller_Base extends WP_REST_Controller {
 		$api_keys = get_option( 'uptimemonster_api_keys', [] );
 
 		if ( empty( $api_keys['api_key'] ) || empty( $api_keys['api_secret'] ) ) {
-			return new WP_Error( 'invalid_api_keys', __( 'Invalid API Keys, Update Plugin Settings.', 'uptimemonster-site-monitor' ) );
+			return new WP_Error( 'invalid_api_keys', esc_html__( 'Invalid API Keys, Update Plugin Settings.', 'uptimemonster-site-monitor' ) );
 		}
 
 		$request_api_key = $request->get_header( 'X-Api-Key' ) ? $request->get_header( 'X-Api-Key' ) : '';
@@ -73,7 +73,7 @@ abstract class Controller_Base extends WP_REST_Controller {
 			return true;
 		}
 
-		return new WP_Error( 'invalid_signature', __( 'Invalid Signature', 'uptimemonster-site-monitor' ) );
+		return new WP_Error( 'invalid_signature', esc_html__( 'Invalid Signature', 'uptimemonster-site-monitor' ) );
 	}
 
 	/**

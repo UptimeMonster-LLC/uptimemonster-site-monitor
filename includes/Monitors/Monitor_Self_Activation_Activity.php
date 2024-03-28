@@ -48,7 +48,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 			Activity_Monitor_Base::ITEM_ACTIVATED,
 			0,
 			'monitor',
-			__( 'Site Monitor Activated', 'uptimemonster-site-monitor' ),
+			esc_html__( 'Site Monitor Activated', 'uptimemonster-site-monitor' ),
 			[ 'include_installed' => true ]
 		);
 		uptimemonster_restore_locale();
@@ -64,7 +64,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 			Activity_Monitor_Base::ITEM_DEACTIVATED,
 			0,
 			'monitor',
-			__( 'Site Monitor Deactivated', 'uptimemonster-site-monitor' )
+			esc_html__( 'Site Monitor Deactivated', 'uptimemonster-site-monitor' )
 		);
 		uptimemonster_restore_locale();
 	}
@@ -77,9 +77,9 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 		uptimemonster_switch_to_english();
 
 		if ( $installed ) {
-			$name = $old ? __( '“Error Logger” Drop-In Updated', 'uptimemonster-site-monitor' ) : __( '“Error Logger” Drop-In Installed', 'uptimemonster-site-monitor' );
+			$name = $old ? esc_html__( '“Error Logger” Drop-In Updated', 'uptimemonster-site-monitor' ) : esc_html__( '“Error Logger” Drop-In Installed', 'uptimemonster-site-monitor' );
 		} else {
-			$name = __( 'Failed To Install “Error Logger” Drop-In.', 'uptimemonster-site-monitor' );
+			$name = esc_html__( 'Failed To Install “Error Logger” Drop-In.', 'uptimemonster-site-monitor' );
 		}
 
 		uptimemonster_restore_locale();

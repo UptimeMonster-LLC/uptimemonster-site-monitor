@@ -175,7 +175,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => sprintf( __( '%s already installed.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
+					'message' => sprintf( esc_html__( '%s already installed.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
 				];
 				continue;
 			}
@@ -199,11 +199,11 @@ class Plugins extends Controller_Base {
 			$result = $upgrader->install( $api->download_link );
 
 			if ( false === $result ) {
-				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
+				return new WP_Error( 'fs-readonly', esc_html__( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
 			}
 
 			/* translators: 1. Theme/plugin name, 2. Error details */
-			$failed = __( '%1$s installation failed. Error: %2$s', 'uptimemonster-site-monitor' );
+			$failed = esc_html__( '%1$s installation failed. Error: %2$s', 'uptimemonster-site-monitor' );
 			if ( is_wp_error( $result ) ) {
 				$status['message'] = sprintf( $failed, $api->name, $result->get_error_message() );
 			} elseif ( is_wp_error( $skin->result ) ) {
@@ -213,7 +213,7 @@ class Plugins extends Controller_Base {
 			} else {
 				$status['status'] = true;
 				/* translators: Theme/Plugin name */
-				$status['message'] = sprintf( __( '%s successfully installed.', 'uptimemonster-site-monitor' ), $api->name );
+				$status['message'] = sprintf( esc_html__( '%s successfully installed.', 'uptimemonster-site-monitor' ), $api->name );
 				$is_installed      = true;
 			}
 
@@ -260,7 +260,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => sprintf( __( 'Plugin %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $plugin ),
+					'message' => sprintf( esc_html__( 'Plugin %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $plugin ),
 				];
 
 				$changed = true;
@@ -272,7 +272,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => sprintf( __( '“%s” already active', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
+					'message' => sprintf( esc_html__( '“%s” already active', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
 				];
 
 				continue;
@@ -283,11 +283,11 @@ class Plugins extends Controller_Base {
 
 			if ( is_wp_error( $activate ) ) {
 				// translators: Plugin name
-				$status['message'] = sprintf( __( 'Error activating “%1$s”. Error: %2$s', 'uptimemonster-site-monitor' ), $plugin_data['Name'], $activate->get_error_message() );
+				$status['message'] = sprintf( esc_html__( 'Error activating “%1$s”. Error: %2$s', 'uptimemonster-site-monitor' ), $plugin_data['Name'], $activate->get_error_message() );
 			} else {
 				$status['status'] = true;
 				// translators: Plugin name
-				$status['message'] = sprintf( __( '“%s” activated', 'uptimemonster-site-monitor' ), $plugin_data['Name'] );
+				$status['message'] = sprintf( esc_html__( '“%s” activated', 'uptimemonster-site-monitor' ), $plugin_data['Name'] );
 				$changed           = true;
 			}
 
@@ -335,7 +335,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => sprintf( __( 'Plugin %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $plugin ),
+					'message' => sprintf( esc_html__( 'Plugin %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $plugin ),
 				];
 
 				$changed = true;
@@ -347,7 +347,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => sprintf( __( '“%s” already inactive.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
+					'message' => sprintf( esc_html__( '“%s” already inactive.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
 				];
 
 				continue;
@@ -357,12 +357,12 @@ class Plugins extends Controller_Base {
 			if ( is_plugin_inactive( $plugin ) ) {
 				$status['status'] = false;
 				// translators: Plugin name
-				$status['message'] = sprintf( __( 'Unable to deactivated “%s”.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] );
+				$status['message'] = sprintf( esc_html__( 'Unable to deactivated “%s”.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] );
 			} else {
 				deactivate_plugins( $plugin );
 				$status['status'] = true;
 				// translators: Plugin name
-				$status['message'] = sprintf( __( '“%s” deactivated.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] );
+				$status['message'] = sprintf( esc_html__( '“%s” deactivated.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] );
 
 				if ( ! $changed ) {
 					$changed = true;
@@ -414,7 +414,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => sprintf( __( 'Plugin %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $plugin ),
+					'message' => sprintf( esc_html__( 'Plugin %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $plugin ),
 				];
 
 				$changed = true;
@@ -426,7 +426,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => __( 'Failed to uninstallation “%s”. This Plugin is currently Active.', 'uptimemonster-site-monitor' ),
+					'message' => esc_html__( 'Failed to uninstallation “%s”. This Plugin is currently Active.', 'uptimemonster-site-monitor' ),
 				];
 
 				continue;
@@ -436,7 +436,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => sprintf( __( 'Plugin “%s” can not be uninstalled.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
+					'message' => sprintf( esc_html__( 'Plugin “%s” can not be uninstalled.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
 				];
 
 				continue;
@@ -446,7 +446,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => true,
 					// translators: Plugin name
-					'message' => sprintf( __( 'Plugin “%s” uninstalled successfully.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
+					'message' => sprintf( esc_html__( 'Plugin “%s” uninstalled successfully.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
 				];
 
 				$changed = true;
@@ -454,7 +454,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => true,
 					// translators: Plugin name
-					'message' => sprintf( __( 'Plugin “%s” does not have uninstall.php included.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
+					'message' => sprintf( esc_html__( 'Plugin “%s” does not have uninstall.php included.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
 				];
 			}
 		}
@@ -501,7 +501,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => sprintf( __( 'Plugin %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $plugin ),
+					'message' => sprintf( esc_html__( 'Plugin %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $plugin ),
 				];
 
 				$changed = true;
@@ -513,20 +513,20 @@ class Plugins extends Controller_Base {
 			$deleted = delete_plugins( [ $plugin ] );
 
 			if ( null === $deleted ) {
-				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
+				return new WP_Error( 'fs-readonly', esc_html__( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
 			}
 
 			if ( is_wp_error( $deleted ) ) {
 				$status = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => sprintf( __( 'Failed to delete “%1$s”. Error: %2$s', 'uptimemonster-site-monitor' ), $plugin_data['Name'], $deleted->get_error_message() ),
+					'message' => sprintf( esc_html__( 'Failed to delete “%1$s”. Error: %2$s', 'uptimemonster-site-monitor' ), $plugin_data['Name'], $deleted->get_error_message() ),
 				];
 			} else {
 				$status  = [
 					'status'  => true,
 					/* translators: Theme/Plugin name */
-					'message' => sprintf( __( '%s successfully deleted.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
+					'message' => sprintf( esc_html__( '%s successfully deleted.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] ),
 				];
 				$changed = true;
 			}
@@ -586,7 +586,7 @@ class Plugins extends Controller_Base {
 				$response[ $plugin ] = [
 					'status'  => false,
 					// translators: Plugin name
-					'message' => sprintf( __( 'Plugin %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $plugin ),
+					'message' => sprintf( esc_html__( 'Plugin %s does not exists or already deleted.', 'uptimemonster-site-monitor' ), $plugin ),
 				];
 
 				// Send plugin list to uptime.
@@ -601,29 +601,29 @@ class Plugins extends Controller_Base {
 
 			if ( false === $results || false === $result ) {
 				// File system is not writable, we can't update anything, no need to loop.
-				return new WP_Error( 'fs-readonly', __( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
+				return new WP_Error( 'fs-readonly', esc_html__( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
 			}
 
 			$status = [ 'status' => false ];
 
 			/* translators: 1. Theme/plugin name, 2. Error details */
-			$failed = __( 'Failed to update %1$s. Error: %2$s', 'uptimemonster-site-monitor' );
+			$failed = esc_html__( 'Failed to update %1$s. Error: %2$s', 'uptimemonster-site-monitor' );
 			if ( is_wp_error( $skin->result ) ) {
 				$status['message'] = sprintf( $failed, $plugin_data['Name'], $skin->result->get_error_message() );
 			} elseif ( $skin->get_errors()->has_errors() ) {
 				$status['message'] = sprintf( $failed, $plugin_data['Name'], $skin->get_error_messages() );
 			} elseif ( true === $result ) {
 				// translators: Plugin name
-				$status['message'] = sprintf( __( '“%s” is at the latest version.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] );
+				$status['message'] = sprintf( esc_html__( '“%s” is at the latest version.', 'uptimemonster-site-monitor' ), $plugin_data['Name'] );
 			} else {
 				$status['status'] = true;
 				$plugin_file      = '/' . $result[ $plugin ]['destination_name'];
 				$plugin_data_new  = get_plugins( $plugin_file );
 				$plugin_data_new  = $plugin_data_new[ plugin_basename( $plugin_file ) ];
-				$version          = ! empty( $plugin_data['Version'] ) ? $plugin_data['Version'] : __( 'Unknown', 'uptimemonster-site-monitor' );
+				$version          = ! empty( $plugin_data['Version'] ) ? $plugin_data['Version'] : esc_html__( 'Unknown', 'uptimemonster-site-monitor' );
 				$version_new      = ! empty( $plugin_data_new['Version'] ) ? $plugin_data_new['Version'] : '';
 				// translators: Plugin name
-				$status['message'] = sprintf( __( '“%1$s” Updated from version %2$s to %3$s.', 'uptimemonster-site-monitor' ), $plugin_data['Name'], $version, $version_new );
+				$status['message'] = sprintf( esc_html__( '“%1$s” Updated from version %2$s to %3$s.', 'uptimemonster-site-monitor' ), $plugin_data['Name'], $version, $version_new );
 				$changed           = true;
 			}
 
@@ -680,7 +680,7 @@ class Plugins extends Controller_Base {
 			$response[ UPTIMEMONSTER_PLUGIN_BASENAME ] = [
 				'status'  => false,
 				// translators: Plugin name
-				'message' => sprintf( __( 'Self (%s) destruction is prohibited', 'uptimemonster-site-monitor' ), $plugins_data[ UPTIMEMONSTER_PLUGIN_BASENAME ]['Name'] ?? UPTIMEMONSTER_PLUGIN_BASENAME ),
+				'message' => sprintf( esc_html__( 'Self (%s) destruction is prohibited', 'uptimemonster-site-monitor' ), $plugins_data[ UPTIMEMONSTER_PLUGIN_BASENAME ]['Name'] ?? UPTIMEMONSTER_PLUGIN_BASENAME ),
 			];
 
 			$plugins = array_flip( $plugins );
@@ -694,7 +694,7 @@ class Plugins extends Controller_Base {
 	 */
 	private function check_slug( $data ) {
 		if ( empty( $data->slugs ) || ! is_array( $data->slugs ) ) {
-			return new WP_Error( 'plugin-not-specified', __( 'No plugin specified.', 'uptimemonster-site-monitor' ) );
+			return new WP_Error( 'plugin-not-specified', esc_html__( 'No plugin specified.', 'uptimemonster-site-monitor' ) );
 		}
 
 		return true;

@@ -69,65 +69,65 @@ class UptimeMonster_Debug_Data {
 		$info = [];
 
 		$info['wp-core'] = [
-			'label'          => __( 'WordPress', 'uptimemonster-site-monitor' ),
+			'label'          => esc_html__( 'WordPress', 'uptimemonster-site-monitor' ),
 			'version'        => $core_version,
 			'latest_version' => $core_update_needed,
 			'update'         => version_compare( $core_version, $core_update_needed, '<' ),
 			'fields'         => [
 				'site_language'          => [
-					'label' => __( 'Site Language', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Site Language', 'uptimemonster-site-monitor' ),
 					'value' => get_locale(),
 				],
 				'user_language'          => [
-					'label' => __( 'User Language', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'User Language', 'uptimemonster-site-monitor' ),
 					'value' => get_user_locale(),
 				],
 				'timezone'               => [
-					'label' => __( 'Timezone', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Timezone', 'uptimemonster-site-monitor' ),
 					'value' => wp_timezone_string(),
 				],
 				'home_url'               => [
-					'label'   => __( 'Home URL', 'uptimemonster-site-monitor' ),
+					'label'   => esc_html__( 'Home URL', 'uptimemonster-site-monitor' ),
 					'value'   => get_bloginfo( 'url' ),
 					'private' => true,
 				],
 				'site_url'               => [
-					'label'   => __( 'Site URL', 'uptimemonster-site-monitor' ),
+					'label'   => esc_html__( 'Site URL', 'uptimemonster-site-monitor' ),
 					'value'   => get_bloginfo( 'wpurl' ),
 					'private' => true,
 				],
 				'permalink'              => [
-					'label' => __( 'Permalink structure', 'uptimemonster-site-monitor' ),
-					'value' => $permalink_structure ? $permalink_structure : __( 'No permalink structure set', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Permalink structure', 'uptimemonster-site-monitor' ),
+					'value' => $permalink_structure ? $permalink_structure : esc_html__( 'No permalink structure set', 'uptimemonster-site-monitor' ),
 					'debug' => $permalink_structure,
 				],
 				'https_status'           => [
-					'label' => __( 'Is this site using HTTPS?', 'uptimemonster-site-monitor' ),
-					'value' => $is_ssl ? __( 'Yes', 'uptimemonster-site-monitor' ) : __( 'No', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Is this site using HTTPS?', 'uptimemonster-site-monitor' ),
+					'value' => $is_ssl ? esc_html__( 'Yes', 'uptimemonster-site-monitor' ) : esc_html__( 'No', 'uptimemonster-site-monitor' ),
 					'debug' => $is_ssl,
 				],
 				'multisite'              => [
-					'label' => __( 'Is this a multisite?', 'uptimemonster-site-monitor' ),
-					'value' => $is_multisite ? __( 'Yes', 'uptimemonster-site-monitor' ) : __( 'No', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Is this a multisite?', 'uptimemonster-site-monitor' ),
+					'value' => $is_multisite ? esc_html__( 'Yes', 'uptimemonster-site-monitor' ) : esc_html__( 'No', 'uptimemonster-site-monitor' ),
 					'debug' => $is_multisite,
 				],
 				'user_registration'      => [
-					'label' => __( 'Can anyone register on this site?', 'uptimemonster-site-monitor' ),
-					'value' => $users_can_register ? __( 'Yes', 'uptimemonster-site-monitor' ) : __( 'No', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Can anyone register on this site?', 'uptimemonster-site-monitor' ),
+					'value' => $users_can_register ? esc_html__( 'Yes', 'uptimemonster-site-monitor' ) : esc_html__( 'No', 'uptimemonster-site-monitor' ),
 					'debug' => $users_can_register,
 				],
 				'blog_public'            => [
-					'label' => __( 'Is this site discouraging search engines?', 'uptimemonster-site-monitor' ),
-					'value' => $blog_public ? __( 'No', 'uptimemonster-site-monitor' ) : __( 'Yes', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Is this site discouraging search engines?', 'uptimemonster-site-monitor' ),
+					'value' => $blog_public ? esc_html__( 'No', 'uptimemonster-site-monitor' ) : esc_html__( 'Yes', 'uptimemonster-site-monitor' ),
 					'debug' => $blog_public,
 				],
 				'default_comment_status' => [
-					'label' => __( 'Default comment status', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Default comment status', 'uptimemonster-site-monitor' ),
 					'value' => 'open' === $default_comment_status ? _x( 'Open', 'comment status', 'uptimemonster-site-monitor' ) : _x( 'Closed', 'comment status', 'uptimemonster-site-monitor' ),
 					'debug' => $default_comment_status,
 				],
 				'environment_type'       => [
-					'label' => __( 'Environment type', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Environment type', 'uptimemonster-site-monitor' ),
 					'value' => $environment_type,
 					'debug' => $environment_type,
 				],
@@ -136,17 +136,17 @@ class UptimeMonster_Debug_Data {
 
 		if ( ! $is_multisite ) {
 			$info['wp-paths-sizes'] = array(
-				'label'  => __( 'Directories and Sizes', 'uptimemonster-site-monitor' ),
+				'label'  => esc_html__( 'Directories and Sizes', 'uptimemonster-site-monitor' ),
 				'fields' => array(),
 			);
 		}
 
 		$info['wp-dropins'] = array(
-			'label'       => __( 'Drop-ins', 'uptimemonster-site-monitor' ),
+			'label'       => esc_html__( 'Drop-ins', 'uptimemonster-site-monitor' ),
 			'show_count'  => true,
 			'description' => sprintf(
 			/* translators: %s: wp-content directory name. */
-				__( 'Drop-ins are single files, found in the %s directory, that replace or enhance WordPress features in ways that are not possible for traditional plugins.', 'uptimemonster-site-monitor' ),
+				esc_html__( 'Drop-ins are single files, found in the %s directory, that replace or enhance WordPress features in ways that are not possible for traditional plugins.', 'uptimemonster-site-monitor' ),
 				'<code>' . str_replace( ABSPATH, '', WP_CONTENT_DIR ) . '</code>'
 			),
 			'fields'      => array(),
@@ -159,72 +159,72 @@ class UptimeMonster_Debug_Data {
 		$info['wp-themes-inactive'] = [];
 
 		$info['wp-mu-plugins'] = array(
-			'label'      => __( 'Must Use Plugins', 'uptimemonster-site-monitor' ),
+			'label'      => esc_html__( 'Must Use Plugins', 'uptimemonster-site-monitor' ),
 			'show_count' => true,
 			'fields'     => array(),
 		);
 
 		$info['wp-plugins-active'] = array(
-			'label'      => __( 'Active Plugins', 'uptimemonster-site-monitor' ),
+			'label'      => esc_html__( 'Active Plugins', 'uptimemonster-site-monitor' ),
 			'show_count' => true,
 			'fields'     => array(),
 		);
 
 		$info['wp-plugins-inactive'] = array(
-			'label'      => __( 'Inactive Plugins', 'uptimemonster-site-monitor' ),
+			'label'      => esc_html__( 'Inactive Plugins', 'uptimemonster-site-monitor' ),
 			'show_count' => true,
 			'fields'     => array(),
 		);
 
 		$info['wp-media'] = array(
-			'label'  => __( 'Media Handling', 'uptimemonster-site-monitor' ),
+			'label'  => esc_html__( 'Media Handling', 'uptimemonster-site-monitor' ),
 			'fields' => array(),
 		);
 
 		$info['wp-server'] = array(
-			'label'       => __( 'Server', 'uptimemonster-site-monitor' ),
-			'description' => __( 'The options shown below relate to your server setup. If changes are required, you may need your web host&#8217;s assistance.', 'uptimemonster-site-monitor' ),
+			'label'       => esc_html__( 'Server', 'uptimemonster-site-monitor' ),
+			'description' => esc_html__( 'The options shown below relate to your server setup. If changes are required, you may need your web host&#8217;s assistance.', 'uptimemonster-site-monitor' ),
 			'fields'      => array(),
 		);
 
 		$info['wp-database'] = array(
-			'label'  => __( 'Database', 'uptimemonster-site-monitor' ),
+			'label'  => esc_html__( 'Database', 'uptimemonster-site-monitor' ),
 			'fields' => array(),
 		);
 
 		// Check if WP_DEBUG_LOG is set.
-		$wp_debug_log_value = __( 'Disabled', 'uptimemonster-site-monitor' );
+		$wp_debug_log_value = esc_html__( 'Disabled', 'uptimemonster-site-monitor' );
 
 		if ( is_string( WP_DEBUG_LOG ) ) {
 			$wp_debug_log_value = WP_DEBUG_LOG;
 		} elseif ( WP_DEBUG_LOG ) {
-			$wp_debug_log_value = __( 'Enabled', 'uptimemonster-site-monitor' );
+			$wp_debug_log_value = esc_html__( 'Enabled', 'uptimemonster-site-monitor' );
 		}
 
 		// Check CONCATENATE_SCRIPTS.
 		if ( defined( 'CONCATENATE_SCRIPTS' ) ) {
-			$concatenate_scripts       = CONCATENATE_SCRIPTS ? __( 'Enabled', 'uptimemonster-site-monitor' ) : __( 'Disabled', 'uptimemonster-site-monitor' );
+			$concatenate_scripts       = CONCATENATE_SCRIPTS ? esc_html__( 'Enabled', 'uptimemonster-site-monitor' ) : esc_html__( 'Disabled', 'uptimemonster-site-monitor' );
 			$concatenate_scripts_debug = CONCATENATE_SCRIPTS ? 'true' : 'false';
 		} else {
-			$concatenate_scripts       = __( 'Undefined', 'uptimemonster-site-monitor' );
+			$concatenate_scripts       = esc_html__( 'Undefined', 'uptimemonster-site-monitor' );
 			$concatenate_scripts_debug = 'undefined';
 		}
 
 		// Check COMPRESS_SCRIPTS.
 		if ( defined( 'COMPRESS_SCRIPTS' ) ) {
-			$compress_scripts       = COMPRESS_SCRIPTS ? __( 'Enabled', 'uptimemonster-site-monitor' ) : __( 'Disabled', 'uptimemonster-site-monitor' );
+			$compress_scripts       = COMPRESS_SCRIPTS ? esc_html__( 'Enabled', 'uptimemonster-site-monitor' ) : esc_html__( 'Disabled', 'uptimemonster-site-monitor' );
 			$compress_scripts_debug = COMPRESS_SCRIPTS ? 'true' : 'false';
 		} else {
-			$compress_scripts       = __( 'Undefined', 'uptimemonster-site-monitor' );
+			$compress_scripts       = esc_html__( 'Undefined', 'uptimemonster-site-monitor' );
 			$compress_scripts_debug = 'undefined';
 		}
 
 		// Check COMPRESS_CSS.
 		if ( defined( 'COMPRESS_CSS' ) ) {
-			$compress_css       = COMPRESS_CSS ? __( 'Enabled', 'uptimemonster-site-monitor' ) : __( 'Disabled', 'uptimemonster-site-monitor' );
+			$compress_css       = COMPRESS_CSS ? esc_html__( 'Enabled', 'uptimemonster-site-monitor' ) : esc_html__( 'Disabled', 'uptimemonster-site-monitor' );
 			$compress_css_debug = COMPRESS_CSS ? 'true' : 'false';
 		} else {
-			$compress_css       = __( 'Undefined', 'uptimemonster-site-monitor' );
+			$compress_css       = esc_html__( 'Undefined', 'uptimemonster-site-monitor' );
 			$compress_css_debug = 'undefined';
 		}
 
@@ -232,12 +232,12 @@ class UptimeMonster_Debug_Data {
 		if ( defined( 'WP_ENVIRONMENT_TYPE' ) ) {
 			$wp_environment_type = WP_ENVIRONMENT_TYPE;
 		} else {
-			$wp_environment_type = __( 'Undefined', 'uptimemonster-site-monitor' );
+			$wp_environment_type = esc_html__( 'Undefined', 'uptimemonster-site-monitor' );
 		}
 
 		$info['wp-constants'] = array(
-			'label'       => __( 'WordPress Constants', 'uptimemonster-site-monitor' ),
-			'description' => __( 'These settings alter where and how parts of WordPress are loaded.', 'uptimemonster-site-monitor' ),
+			'label'       => esc_html__( 'WordPress Constants', 'uptimemonster-site-monitor' ),
+			'description' => esc_html__( 'These settings alter where and how parts of WordPress are loaded.', 'uptimemonster-site-monitor' ),
 			'fields'      => array(
 				'ABSPATH'             => array(
 					'label'   => 'ABSPATH',
@@ -246,12 +246,12 @@ class UptimeMonster_Debug_Data {
 				),
 				'WP_HOME'             => array(
 					'label' => 'WP_HOME',
-					'value' => ( defined( 'WP_HOME' ) ? WP_HOME : __( 'Undefined', 'uptimemonster-site-monitor' ) ),
+					'value' => ( defined( 'WP_HOME' ) ? WP_HOME : esc_html__( 'Undefined', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( defined( 'WP_HOME' ) ? WP_HOME : 'undefined' ),
 				),
 				'WP_SITEURL'          => array(
 					'label' => 'WP_SITEURL',
-					'value' => ( defined( 'WP_SITEURL' ) ? WP_SITEURL : __( 'Undefined', 'uptimemonster-site-monitor' ) ),
+					'value' => ( defined( 'WP_SITEURL' ) ? WP_SITEURL : esc_html__( 'Undefined', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( defined( 'WP_SITEURL' ) ? WP_SITEURL : 'undefined' ),
 				),
 				'WP_CONTENT_DIR'      => array(
@@ -272,12 +272,12 @@ class UptimeMonster_Debug_Data {
 				),
 				'WP_DEBUG'            => array(
 					'label' => 'WP_DEBUG',
-					'value' => WP_DEBUG ? __( 'Enabled', 'uptimemonster-site-monitor' ) : __( 'Disabled', 'uptimemonster-site-monitor' ),
+					'value' => WP_DEBUG ? esc_html__( 'Enabled', 'uptimemonster-site-monitor' ) : esc_html__( 'Disabled', 'uptimemonster-site-monitor' ),
 					'debug' => WP_DEBUG,
 				),
 				'WP_DEBUG_DISPLAY'    => array(
 					'label' => 'WP_DEBUG_DISPLAY',
-					'value' => WP_DEBUG_DISPLAY ? __( 'Enabled', 'uptimemonster-site-monitor' ) : __( 'Disabled', 'uptimemonster-site-monitor' ),
+					'value' => WP_DEBUG_DISPLAY ? esc_html__( 'Enabled', 'uptimemonster-site-monitor' ) : esc_html__( 'Disabled', 'uptimemonster-site-monitor' ),
 					'debug' => WP_DEBUG_DISPLAY,
 				),
 				'WP_DEBUG_LOG'        => array(
@@ -287,12 +287,12 @@ class UptimeMonster_Debug_Data {
 				),
 				'SCRIPT_DEBUG'        => array(
 					'label' => 'SCRIPT_DEBUG',
-					'value' => SCRIPT_DEBUG ? __( 'Enabled', 'uptimemonster-site-monitor' ) : __( 'Disabled', 'uptimemonster-site-monitor' ),
+					'value' => SCRIPT_DEBUG ? esc_html__( 'Enabled', 'uptimemonster-site-monitor' ) : esc_html__( 'Disabled', 'uptimemonster-site-monitor' ),
 					'debug' => SCRIPT_DEBUG,
 				),
 				'WP_CACHE'            => array(
 					'label' => 'WP_CACHE',
-					'value' => WP_CACHE ? __( 'Enabled', 'uptimemonster-site-monitor' ) : __( 'Disabled', 'uptimemonster-site-monitor' ),
+					'value' => WP_CACHE ? esc_html__( 'Enabled', 'uptimemonster-site-monitor' ) : esc_html__( 'Disabled', 'uptimemonster-site-monitor' ),
 					'debug' => WP_CACHE,
 				),
 				'CONCATENATE_SCRIPTS' => array(
@@ -317,12 +317,12 @@ class UptimeMonster_Debug_Data {
 				),
 				'DB_CHARSET'          => array(
 					'label' => 'DB_CHARSET',
-					'value' => ( defined( 'DB_CHARSET' ) ? DB_CHARSET : __( 'Undefined', 'uptimemonster-site-monitor' ) ),
+					'value' => ( defined( 'DB_CHARSET' ) ? DB_CHARSET : esc_html__( 'Undefined', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( defined( 'DB_CHARSET' ) ? DB_CHARSET : 'undefined' ),
 				),
 				'DB_COLLATE'          => array(
 					'label' => 'DB_COLLATE',
-					'value' => ( defined( 'DB_COLLATE' ) ? DB_COLLATE : __( 'Undefined', 'uptimemonster-site-monitor' ) ),
+					'value' => ( defined( 'DB_COLLATE' ) ? DB_COLLATE : esc_html__( 'Undefined', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( defined( 'DB_COLLATE' ) ? DB_COLLATE : 'undefined' ),
 				),
 			),
@@ -335,32 +335,32 @@ class UptimeMonster_Debug_Data {
 		$is_writable_template_directory = wp_is_writable( get_theme_root( get_template() ) );
 
 		$info['wp-filesystem'] = array(
-			'label'       => __( 'Filesystem Permissions', 'uptimemonster-site-monitor' ),
-			'description' => __( 'Shows whether WordPress is able to write to the directories it needs access to.', 'uptimemonster-site-monitor' ),
+			'label'       => esc_html__( 'Filesystem Permissions', 'uptimemonster-site-monitor' ),
+			'description' => esc_html__( 'Shows whether WordPress is able to write to the directories it needs access to.', 'uptimemonster-site-monitor' ),
 			'fields'      => array(
 				'wordpress'  => array(
-					'label' => __( 'The main WordPress directory', 'uptimemonster-site-monitor' ),
-					'value' => ( $is_writable_abspath ? __( 'Writable', 'uptimemonster-site-monitor' ) : __( 'Not writable', 'uptimemonster-site-monitor' ) ),
+					'label' => esc_html__( 'The main WordPress directory', 'uptimemonster-site-monitor' ),
+					'value' => ( $is_writable_abspath ? esc_html__( 'Writable', 'uptimemonster-site-monitor' ) : esc_html__( 'Not writable', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( $is_writable_abspath ? 'writable' : 'not writable' ),
 				),
 				'wp-content' => array(
-					'label' => __( 'The wp-content directory', 'uptimemonster-site-monitor' ),
-					'value' => ( $is_writable_wp_content_dir ? __( 'Writable', 'uptimemonster-site-monitor' ) : __( 'Not writable', 'uptimemonster-site-monitor' ) ),
+					'label' => esc_html__( 'The wp-content directory', 'uptimemonster-site-monitor' ),
+					'value' => ( $is_writable_wp_content_dir ? esc_html__( 'Writable', 'uptimemonster-site-monitor' ) : esc_html__( 'Not writable', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( $is_writable_wp_content_dir ? 'writable' : 'not writable' ),
 				),
 				'uploads'    => array(
-					'label' => __( 'The uploads directory', 'uptimemonster-site-monitor' ),
-					'value' => ( $is_writable_upload_dir ? __( 'Writable', 'uptimemonster-site-monitor' ) : __( 'Not writable', 'uptimemonster-site-monitor' ) ),
+					'label' => esc_html__( 'The uploads directory', 'uptimemonster-site-monitor' ),
+					'value' => ( $is_writable_upload_dir ? esc_html__( 'Writable', 'uptimemonster-site-monitor' ) : esc_html__( 'Not writable', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( $is_writable_upload_dir ? 'writable' : 'not writable' ),
 				),
 				'plugins'    => array(
-					'label' => __( 'The plugins directory', 'uptimemonster-site-monitor' ),
-					'value' => ( $is_writable_wp_plugin_dir ? __( 'Writable', 'uptimemonster-site-monitor' ) : __( 'Not writable', 'uptimemonster-site-monitor' ) ),
+					'label' => esc_html__( 'The plugins directory', 'uptimemonster-site-monitor' ),
+					'value' => ( $is_writable_wp_plugin_dir ? esc_html__( 'Writable', 'uptimemonster-site-monitor' ) : esc_html__( 'Not writable', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( $is_writable_wp_plugin_dir ? 'writable' : 'not writable' ),
 				),
 				'themes'     => array(
-					'label' => __( 'The themes directory', 'uptimemonster-site-monitor' ),
-					'value' => ( $is_writable_template_directory ? __( 'Writable', 'uptimemonster-site-monitor' ) : __( 'Not writable', 'uptimemonster-site-monitor' ) ),
+					'label' => esc_html__( 'The themes directory', 'uptimemonster-site-monitor' ),
+					'value' => ( $is_writable_template_directory ? esc_html__( 'Writable', 'uptimemonster-site-monitor' ) : esc_html__( 'Not writable', 'uptimemonster-site-monitor' ) ),
 					'debug' => ( $is_writable_template_directory ? 'writable' : 'not writable' ),
 				),
 			),
@@ -383,19 +383,19 @@ class UptimeMonster_Debug_Data {
 			}
 
 			$info['wp-core']['fields']['site_count'] = array(
-				'label' => __( 'Site count', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Site count', 'uptimemonster-site-monitor' ),
 				'value' => $site_count,
 			);
 
 			$info['wp-core']['fields']['network_count'] = array(
-				'label' => __( 'Network count', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Network count', 'uptimemonster-site-monitor' ),
 				'value' => $network_query->found_networks,
 			);
 		}
 
 		if ( function_exists( 'get_user_count' ) ) {
 			$info['wp-core']['fields']['user_count'] = array(
-				'label' => __( 'User count', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'User count', 'uptimemonster-site-monitor' ),
 				'value' => get_user_count(),
 			);
 		}
@@ -405,16 +405,16 @@ class UptimeMonster_Debug_Data {
 
 		if ( ! is_wp_error( $wp_dotorg ) ) {
 			$info['wp-core']['fields']['dotorg_communication'] = array(
-				'label' => __( 'Communication with WordPress.org', 'uptimemonster-site-monitor' ),
-				'value' => __( 'WordPress.org is reachable', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Communication with WordPress.org', 'uptimemonster-site-monitor' ),
+				'value' => esc_html__( 'WordPress.org is reachable', 'uptimemonster-site-monitor' ),
 				'debug' => 'true',
 			);
 		} else {
 			$info['wp-core']['fields']['dotorg_communication'] = array(
-				'label' => __( 'Communication with WordPress.org', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Communication with WordPress.org', 'uptimemonster-site-monitor' ),
 				'value' => sprintf(
 				/* translators: 1: The IP address WordPress.org resolves to. 2: The error returned by the lookup. */
-					__( 'Unable to reach WordPress.org at %1$s: %2$s', 'uptimemonster-site-monitor' ),
+					esc_html__( 'Unable to reach WordPress.org at %1$s: %2$s', 'uptimemonster-site-monitor' ),
 					gethostbyname( 'wordpress.org' ),
 					$wp_dotorg->get_error_message()
 				),
@@ -424,52 +424,52 @@ class UptimeMonster_Debug_Data {
 
 		// Remove accordion for Directories and Sizes if in Multisite.
 		if ( ! $is_multisite ) {
-			$loading = __( 'Loading&hellip;', 'uptimemonster-site-monitor' );
+			$loading = esc_html__( 'Loading&hellip;', 'uptimemonster-site-monitor' );
 
 			$info['wp-paths-sizes']['fields'] = array(
 				'wordpress_path' => array(
-					'label' => __( 'WordPress directory location', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'WordPress directory location', 'uptimemonster-site-monitor' ),
 					'value' => untrailingslashit( ABSPATH ),
 				),
 				'wordpress_size' => array(
-					'label' => __( 'WordPress directory size', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'WordPress directory size', 'uptimemonster-site-monitor' ),
 					'value' => $loading,
 					'debug' => 'loading...',
 				),
 				'uploads_path'   => array(
-					'label' => __( 'Uploads directory location', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Uploads directory location', 'uptimemonster-site-monitor' ),
 					'value' => $upload_dir['basedir'],
 				),
 				'uploads_size'   => array(
-					'label' => __( 'Uploads directory size', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Uploads directory size', 'uptimemonster-site-monitor' ),
 					'value' => $loading,
 					'debug' => 'loading...',
 				),
 				'themes_path'    => array(
-					'label' => __( 'Themes directory location', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Themes directory location', 'uptimemonster-site-monitor' ),
 					'value' => get_theme_root(),
 				),
 				'themes_size'    => array(
-					'label' => __( 'Themes directory size', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Themes directory size', 'uptimemonster-site-monitor' ),
 					'value' => $loading,
 					'debug' => 'loading...',
 				),
 				'plugins_path'   => array(
-					'label' => __( 'Plugins directory location', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Plugins directory location', 'uptimemonster-site-monitor' ),
 					'value' => WP_PLUGIN_DIR,
 				),
 				'plugins_size'   => array(
-					'label' => __( 'Plugins directory size', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Plugins directory size', 'uptimemonster-site-monitor' ),
 					'value' => $loading,
 					'debug' => 'loading...',
 				),
 				'database_size'  => array(
-					'label' => __( 'Database size', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Database size', 'uptimemonster-site-monitor' ),
 					'value' => $loading,
 					'debug' => 'loading...',
 				),
 				'total_size'     => array(
-					'label' => __( 'Total installation size', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'Total installation size', 'uptimemonster-site-monitor' ),
 					'value' => $loading,
 					'debug' => 'loading...',
 				),
@@ -483,7 +483,7 @@ class UptimeMonster_Debug_Data {
 		//$dropin_descriptions = _get_dropins();
 
 		// Spare few function calls.
-		$not_available = __( 'Not available', 'uptimemonster-site-monitor' );
+		$not_available = esc_html__( 'Not available', 'uptimemonster-site-monitor' );
 		$common_data   = [
 			'new_version' => null,
 			'need_update' => null,
@@ -500,7 +500,7 @@ class UptimeMonster_Debug_Data {
 
 		// Populate the media fields.
 		$info['wp-media']['fields']['image_editor'] = array(
-			'label' => __( 'Active editor', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'Active editor', 'uptimemonster-site-monitor' ),
 			'value' => _wp_image_editor_choose(),
 		);
 
@@ -510,32 +510,32 @@ class UptimeMonster_Debug_Data {
 			$imagick             = new \Imagick();
 			$imagemagick_version = $imagick->getVersion();
 		} else {
-			$imagemagick_version = __( 'Not available', 'uptimemonster-site-monitor' );
+			$imagemagick_version = esc_html__( 'Not available', 'uptimemonster-site-monitor' );
 		}
 
 		$info['wp-media']['fields']['imagick_module_version'] = array(
-			'label' => __( 'ImageMagick version number', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'ImageMagick version number', 'uptimemonster-site-monitor' ),
 			'value' => ( is_array( $imagemagick_version ) ? $imagemagick_version['versionNumber'] : $imagemagick_version ),
 		);
 
 		$info['wp-media']['fields']['imagemagick_version'] = array(
-			'label' => __( 'ImageMagick version string', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'ImageMagick version string', 'uptimemonster-site-monitor' ),
 			'value' => ( is_array( $imagemagick_version ) ? $imagemagick_version['versionString'] : $imagemagick_version ),
 		);
 
 		$imagick_version = phpversion( 'imagick' );
 
 		$info['wp-media']['fields']['imagick_version'] = array(
-			'label' => __( 'Imagick version', 'uptimemonster-site-monitor' ),
-			'value' => ( $imagick_version ) ? $imagick_version : __( 'Not available', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'Imagick version', 'uptimemonster-site-monitor' ),
+			'value' => ( $imagick_version ) ? $imagick_version : esc_html__( 'Not available', 'uptimemonster-site-monitor' ),
 		);
 
 		if ( ! function_exists( 'ini_get' ) ) {
 			$info['wp-media']['fields']['ini_get'] = array(
-				'label' => __( 'File upload settings', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'File upload settings', 'uptimemonster-site-monitor' ),
 				'value' => sprintf(
 				/* translators: %s: ini_get() */
-					__( 'Unable to determine some settings, as the %s function has been disabled.', 'uptimemonster-site-monitor' ),
+					esc_html__( 'Unable to determine some settings, as the %s function has been disabled.', 'uptimemonster-site-monitor' ),
 					'ini_get()'
 				),
 				'debug' => 'ini_get() is disabled',
@@ -549,24 +549,24 @@ class UptimeMonster_Debug_Data {
 
 			// Add info in Media section.
 			$info['wp-media']['fields']['file_uploads']        = array(
-				'label' => __( 'File uploads', 'uptimemonster-site-monitor' ),
-				'value' => empty( ini_get( 'file_uploads' ) ) ? __( 'Disabled', 'uptimemonster-site-monitor' ) : __( 'Enabled', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'File uploads', 'uptimemonster-site-monitor' ),
+				'value' => empty( ini_get( 'file_uploads' ) ) ? esc_html__( 'Disabled', 'uptimemonster-site-monitor' ) : esc_html__( 'Enabled', 'uptimemonster-site-monitor' ),
 				'debug' => 'File uploads is turned off',
 			);
 			$info['wp-media']['fields']['post_max_size']       = array(
-				'label' => __( 'Max size of post data allowed', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Max size of post data allowed', 'uptimemonster-site-monitor' ),
 				'value' => $post_max_size,
 			);
 			$info['wp-media']['fields']['upload_max_filesize'] = array(
-				'label' => __( 'Max size of an uploaded file', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Max size of an uploaded file', 'uptimemonster-site-monitor' ),
 				'value' => $upload_max_filesize,
 			);
 			$info['wp-media']['fields']['max_effective_size']  = array(
-				'label' => __( 'Max effective file size', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Max effective file size', 'uptimemonster-site-monitor' ),
 				'value' => size_format( $effective ),
 			);
 			$info['wp-media']['fields']['max_file_uploads']    = array(
-				'label' => __( 'Max number of files allowed', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Max number of files allowed', 'uptimemonster-site-monitor' ),
 				'value' => number_format( $max_file_uploads ),
 			);
 		}
@@ -592,7 +592,7 @@ class UptimeMonster_Debug_Data {
 			);
 
 			$info['wp-media']['fields']['imagick_limits'] = array(
-				'label' => __( 'Imagick Resource Limits', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Imagick Resource Limits', 'uptimemonster-site-monitor' ),
 				'value' => $limits,
 				'debug' => $limits_debug,
 			);
@@ -604,8 +604,8 @@ class UptimeMonster_Debug_Data {
 			}
 
 			$info['wp-media']['fields']['imagemagick_file_formats'] = array(
-				'label' => __( 'ImageMagick supported file formats', 'uptimemonster-site-monitor' ),
-				'value' => ( empty( $formats ) ) ? __( 'Unable to determine', 'uptimemonster-site-monitor' ) : implode( ', ', $formats ),
+				'label' => esc_html__( 'ImageMagick supported file formats', 'uptimemonster-site-monitor' ),
+				'value' => ( empty( $formats ) ) ? esc_html__( 'Unable to determine', 'uptimemonster-site-monitor' ) : implode( ', ', $formats ),
 				'debug' => ( empty( $formats ) ) ? 'Unable to determine' : implode( ', ', $formats ),
 			);
 		}
@@ -618,7 +618,7 @@ class UptimeMonster_Debug_Data {
 		}
 
 		$info['wp-media']['fields']['gd_version'] = array(
-			'label' => __( 'GD version', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'GD version', 'uptimemonster-site-monitor' ),
 			'value' => ( is_array( $gd ) ? $gd['GD Version'] : $not_available ),
 			'debug' => ( is_array( $gd ) ? $gd['GD Version'] : 'not available' ),
 		);
@@ -645,7 +645,7 @@ class UptimeMonster_Debug_Data {
 
 		if ( ! empty( $gd_image_formats ) ) {
 			$info['wp-media']['fields']['gd_formats'] = array(
-				'label' => __( 'GD supported file formats', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'GD supported file formats', 'uptimemonster-site-monitor' ),
 				'value' => implode( ', ', $gd_image_formats ),
 			);
 		}
@@ -661,12 +661,12 @@ class UptimeMonster_Debug_Data {
 				$gs_debug = $gs;
 			}
 		} else {
-			$gs       = __( 'Unable to determine if Ghostscript is installed', 'uptimemonster-site-monitor' );
+			$gs       = esc_html__( 'Unable to determine if Ghostscript is installed', 'uptimemonster-site-monitor' );
 			$gs_debug = 'unknown';
 		}
 
 		$info['wp-media']['fields']['ghostscript_version'] = array(
-			'label' => __( 'Ghostscript version', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'Ghostscript version', 'uptimemonster-site-monitor' ),
 			'value' => $gs,
 			'debug' => $gs_debug,
 		);
@@ -686,14 +686,14 @@ class UptimeMonster_Debug_Data {
 			$php_version = sprintf(
 				'%s %s',
 				$php_version_debug,
-				( $php64bit ? __( '(Supports 64bit values)', 'uptimemonster-site-monitor' ) : __( '(Does not support 64bit values)', 'uptimemonster-site-monitor' ) )
+				( $php64bit ? esc_html__( '(Supports 64bit values)', 'uptimemonster-site-monitor' ) : esc_html__( '(Does not support 64bit values)', 'uptimemonster-site-monitor' ) )
 			);
 
 			if ( $php64bit ) {
 				$php_version_debug .= ' 64bit';
 			}
 		} else {
-			$php_version       = __( 'Unable to determine PHP version', 'uptimemonster-site-monitor' );
+			$php_version       = esc_html__( 'Unable to determine PHP version', 'uptimemonster-site-monitor' );
 			$php_version_debug = 'unknown';
 		}
 
@@ -704,73 +704,73 @@ class UptimeMonster_Debug_Data {
 		}
 
 		$info['wp-server']['fields']['server_architecture'] = array(
-			'label' => __( 'Server architecture', 'uptimemonster-site-monitor' ),
-			'value' => ( 'unknown' !== $server_architecture ? $server_architecture : __( 'Unable to determine server architecture', 'uptimemonster-site-monitor' ) ),
+			'label' => esc_html__( 'Server architecture', 'uptimemonster-site-monitor' ),
+			'value' => ( 'unknown' !== $server_architecture ? $server_architecture : esc_html__( 'Unable to determine server architecture', 'uptimemonster-site-monitor' ) ),
 			'debug' => $server_architecture,
 		);
 		$info['wp-server']['fields']['httpd_software']      = array(
-			'label' => __( 'Web server', 'uptimemonster-site-monitor' ),
-			'value' => ( isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_slash( $_SERVER['SERVER_SOFTWARE'] ) ) : __( 'Unable to determine what web server software is used', 'uptimemonster-site-monitor' ) ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			'label' => esc_html__( 'Web server', 'uptimemonster-site-monitor' ),
+			'value' => ( isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_slash( $_SERVER['SERVER_SOFTWARE'] ) ) : esc_html__( 'Unable to determine what web server software is used', 'uptimemonster-site-monitor' ) ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			'debug' => ( isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_slash( $_SERVER['SERVER_SOFTWARE'] ) ) : 'unknown' ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		);
 		$info['wp-server']['fields']['php_version']         = array(
-			'label' => __( 'PHP version', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'PHP version', 'uptimemonster-site-monitor' ),
 			'value' => $php_version,
 			'debug' => $php_version_debug,
 		);
 		$info['wp-server']['fields']['php_sapi']            = array(
-			'label' => __( 'PHP SAPI', 'uptimemonster-site-monitor' ),
-			'value' => ( 'unknown' !== $php_sapi ? $php_sapi : __( 'Unable to determine PHP SAPI', 'uptimemonster-site-monitor' ) ),
+			'label' => esc_html__( 'PHP SAPI', 'uptimemonster-site-monitor' ),
+			'value' => ( 'unknown' !== $php_sapi ? $php_sapi : esc_html__( 'Unable to determine PHP SAPI', 'uptimemonster-site-monitor' ) ),
 			'debug' => $php_sapi,
 		);
 
 		// Some servers disable `ini_set()` and `ini_get()`, we check this before trying to get configuration values.
 		if ( ! function_exists( 'ini_get' ) ) {
 			$info['wp-server']['fields']['ini_get'] = array(
-				'label' => __( 'Server settings', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Server settings', 'uptimemonster-site-monitor' ),
 				'value' => sprintf(
 				/* translators: %s: ini_get() */
-					__( 'Unable to determine some settings, as the %s function has been disabled.', 'uptimemonster-site-monitor' ),
+					esc_html__( 'Unable to determine some settings, as the %s function has been disabled.', 'uptimemonster-site-monitor' ),
 					'ini_get()'
 				),
 				'debug' => 'ini_get() is disabled',
 			);
 		} else {
 			$info['wp-server']['fields']['max_input_variables'] = array(
-				'label' => __( 'PHP max input variables', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'PHP max input variables', 'uptimemonster-site-monitor' ),
 				'value' => ini_get( 'max_input_vars' ),
 			);
 			$info['wp-server']['fields']['time_limit']          = array(
-				'label' => __( 'PHP time limit', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'PHP time limit', 'uptimemonster-site-monitor' ),
 				'value' => ini_get( 'max_execution_time' ),
 			);
 
 			if ( \WP_Site_Health::get_instance()->php_memory_limit !== ini_get( 'memory_limit' ) ) {
 				$info['wp-server']['fields']['memory_limit']       = array(
-					'label' => __( 'PHP memory limit', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'PHP memory limit', 'uptimemonster-site-monitor' ),
 					'value' => \WP_Site_Health::get_instance()->php_memory_limit,
 				);
 				$info['wp-server']['fields']['admin_memory_limit'] = array(
-					'label' => __( 'PHP memory limit (only for admin screens)', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'PHP memory limit (only for admin screens)', 'uptimemonster-site-monitor' ),
 					'value' => ini_get( 'memory_limit' ),
 				);
 			} else {
 				$info['wp-server']['fields']['memory_limit'] = array(
-					'label' => __( 'PHP memory limit', 'uptimemonster-site-monitor' ),
+					'label' => esc_html__( 'PHP memory limit', 'uptimemonster-site-monitor' ),
 					'value' => ini_get( 'memory_limit' ),
 				);
 			}
 
 			$info['wp-server']['fields']['max_input_time']      = array(
-				'label' => __( 'Max input time', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Max input time', 'uptimemonster-site-monitor' ),
 				'value' => ini_get( 'max_input_time' ),
 			);
 			$info['wp-server']['fields']['upload_max_filesize'] = array(
-				'label' => __( 'Upload max filesize', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'Upload max filesize', 'uptimemonster-site-monitor' ),
 				'value' => ini_get( 'upload_max_filesize' ),
 			);
 			$info['wp-server']['fields']['php_post_max_size']   = array(
-				'label' => __( 'PHP post max size', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'PHP post max size', 'uptimemonster-site-monitor' ),
 				'value' => ini_get( 'post_max_size' ),
 			);
 		}
@@ -779,12 +779,12 @@ class UptimeMonster_Debug_Data {
 			$curl = curl_version();
 
 			$info['wp-server']['fields']['curl_version'] = array(
-				'label' => __( 'cURL version', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'cURL version', 'uptimemonster-site-monitor' ),
 				'value' => sprintf( '%s %s', $curl['version'], $curl['ssl_version'] ),
 			);
 		} else {
 			$info['wp-server']['fields']['curl_version'] = array(
-				'label' => __( 'cURL version', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'cURL version', 'uptimemonster-site-monitor' ),
 				'value' => $not_available,
 			);
 		}
@@ -793,24 +793,24 @@ class UptimeMonster_Debug_Data {
 		$suhosin_loaded = ( extension_loaded( 'suhosin' ) || ( defined( 'SUHOSIN_PATCH' ) && constant( 'SUHOSIN_PATCH' ) ) );
 
 		$info['wp-server']['fields']['suhosin'] = array(
-			'label' => __( 'Is SUHOSIN installed?', 'uptimemonster-site-monitor' ),
-			'value' => ( $suhosin_loaded ? __( 'Yes', 'uptimemonster-site-monitor' ) : __( 'No', 'uptimemonster-site-monitor' ) ),
+			'label' => esc_html__( 'Is SUHOSIN installed?', 'uptimemonster-site-monitor' ),
+			'value' => ( $suhosin_loaded ? esc_html__( 'Yes', 'uptimemonster-site-monitor' ) : esc_html__( 'No', 'uptimemonster-site-monitor' ) ),
 		);
 
 		// Imagick.
 		$imagick_loaded = extension_loaded( 'imagick' );
 
 		$info['wp-server']['fields']['imagick_availability'] = array(
-			'label' => __( 'Is the Imagick library available?', 'uptimemonster-site-monitor' ),
-			'value' => ( $imagick_loaded ? __( 'Yes', 'uptimemonster-site-monitor' ) : __( 'No', 'uptimemonster-site-monitor' ) ),
+			'label' => esc_html__( 'Is the Imagick library available?', 'uptimemonster-site-monitor' ),
+			'value' => ( $imagick_loaded ? esc_html__( 'Yes', 'uptimemonster-site-monitor' ) : esc_html__( 'No', 'uptimemonster-site-monitor' ) ),
 		);
 
 		// Pretty permalinks.
 		$pretty_permalinks_supported = $this->update_check->got_url_rewrite();
 
 		$info['wp-server']['fields']['pretty_permalinks'] = [
-			'label' => __( 'Are pretty permalinks supported?', 'uptimemonster-site-monitor' ),
-			'value' => ( $pretty_permalinks_supported ? __( 'Yes', 'uptimemonster-site-monitor' ) : __( 'No', 'uptimemonster-site-monitor' ) ),
+			'label' => esc_html__( 'Are pretty permalinks supported?', 'uptimemonster-site-monitor' ),
+			'value' => ( $pretty_permalinks_supported ? esc_html__( 'Yes', 'uptimemonster-site-monitor' ) : esc_html__( 'No', 'uptimemonster-site-monitor' ) ),
 		];
 
 		// Check if a .htaccess file exists.
@@ -824,14 +824,14 @@ class UptimeMonster_Debug_Data {
 
 			if ( $filtered_htaccess_content ) {
 				/* translators: %s: .htaccess */
-				$htaccess_rules_string = sprintf( __( 'Custom rules have been added to your %s file.', 'uptimemonster-site-monitor' ), '.htaccess' );
+				$htaccess_rules_string = sprintf( esc_html__( 'Custom rules have been added to your %s file.', 'uptimemonster-site-monitor' ), '.htaccess' );
 			} else {
 				/* translators: %s: .htaccess */
-				$htaccess_rules_string = sprintf( __( 'Your %s file contains only core WordPress features.', 'uptimemonster-site-monitor' ), '.htaccess' );
+				$htaccess_rules_string = sprintf( esc_html__( 'Your %s file contains only core WordPress features.', 'uptimemonster-site-monitor' ), '.htaccess' );
 			}
 
 			$info['wp-server']['fields']['htaccess_extra_rules'] = array(
-				'label' => __( '.htaccess rules', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( '.htaccess rules', 'uptimemonster-site-monitor' ),
 				'value' => $htaccess_rules_string,
 				'debug' => $filtered_htaccess_content,
 			);
@@ -864,63 +864,63 @@ class UptimeMonster_Debug_Data {
 		}
 
 		$info['wp-database']['fields']['extension'] = array(
-			'label' => __( 'Extension', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'Extension', 'uptimemonster-site-monitor' ),
 			'value' => $extension,
 		);
 
 		$info['wp-database']['fields']['server_version'] = array(
-			'label' => __( 'Server version', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'Server version', 'uptimemonster-site-monitor' ),
 			'value' => $server,
 		);
 
 		$info['wp-database']['fields']['client_version'] = array(
-			'label' => __( 'Client version', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'Client version', 'uptimemonster-site-monitor' ),
 			'value' => $client_version,
 		);
 
 		$info['wp-database']['fields']['database_user'] = array(
-			'label'   => __( 'Database username', 'uptimemonster-site-monitor' ),
+			'label'   => esc_html__( 'Database username', 'uptimemonster-site-monitor' ),
 			'value'   => $wpdb->dbuser,
 			'private' => true,
 		);
 
 		$info['wp-database']['fields']['database_host'] = array(
-			'label'   => __( 'Database host', 'uptimemonster-site-monitor' ),
+			'label'   => esc_html__( 'Database host', 'uptimemonster-site-monitor' ),
 			'value'   => $wpdb->dbhost,
 			'private' => true,
 		);
 
 		$info['wp-database']['fields']['database_name'] = array(
-			'label'   => __( 'Database name', 'uptimemonster-site-monitor' ),
+			'label'   => esc_html__( 'Database name', 'uptimemonster-site-monitor' ),
 			'value'   => $wpdb->dbname,
 			'private' => true,
 		);
 
 		$info['wp-database']['fields']['database_prefix'] = array(
-			'label'   => __( 'Table prefix', 'uptimemonster-site-monitor' ),
+			'label'   => esc_html__( 'Table prefix', 'uptimemonster-site-monitor' ),
 			'value'   => $wpdb->prefix,
 			'private' => true,
 		);
 
 		$info['wp-database']['fields']['database_charset'] = array(
-			'label'   => __( 'Database charset', 'uptimemonster-site-monitor' ),
+			'label'   => esc_html__( 'Database charset', 'uptimemonster-site-monitor' ),
 			'value'   => $wpdb->charset,
 			'private' => true,
 		);
 
 		$info['wp-database']['fields']['database_collate'] = array(
-			'label'   => __( 'Database collation', 'uptimemonster-site-monitor' ),
+			'label'   => esc_html__( 'Database collation', 'uptimemonster-site-monitor' ),
 			'value'   => $wpdb->collate,
 			'private' => true,
 		);
 
 		$info['wp-database']['fields']['max_allowed_packet'] = array(
-			'label' => __( 'Max allowed packet size', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'Max allowed packet size', 'uptimemonster-site-monitor' ),
 			'value' => self::get_mysql_var( 'max_allowed_packet' ),
 		);
 
 		$info['wp-database']['fields']['max_connections'] = array(
-			'label' => __( 'Max connections number', 'uptimemonster-site-monitor' ),
+			'label' => esc_html__( 'Max connections number', 'uptimemonster-site-monitor' ),
 			'value' => self::get_mysql_var( 'max_connections' ),
 		);
 
@@ -1037,7 +1037,7 @@ class UptimeMonster_Debug_Data {
 		}
 
 		$parent_theme = [
-			'name' => __( 'None', 'uptimemonster-site-monitor' ),
+			'name' => esc_html__( 'None', 'uptimemonster-site-monitor' ),
 			'slug' => 'none',
 		];
 
@@ -1218,7 +1218,7 @@ class UptimeMonster_Debug_Data {
 			$is_writable_wpmu_plugin_dir = wp_is_writable( WPMU_PLUGIN_DIR );
 
 			$info['wp-filesystem']['fields']['mu-plugins'] = [
-				'label' => __( 'The must use plugins directory', 'uptimemonster-site-monitor' ),
+				'label' => esc_html__( 'The must use plugins directory', 'uptimemonster-site-monitor' ),
 				'value' => ( $is_writable_wpmu_plugin_dir ? 'writable' : 'not-writable' ),
 			];
 		}
@@ -1422,14 +1422,14 @@ class UptimeMonster_Debug_Data {
 
 			if ( false === $dir_size ) {
 				// Error reading.
-				$results['size']  = __( 'The size cannot be calculated. The directory is not accessible. Usually caused by invalid permissions.', 'uptimemonster-site-monitor'  );
+				$results['size']  = esc_html__( 'The size cannot be calculated. The directory is not accessible. Usually caused by invalid permissions.', 'uptimemonster-site-monitor'  );
 				$results['debug'] = 'not accessible';
 
 				// Stop total size calculation.
 				$size_total = null;
 			} elseif ( null === $dir_size ) {
 				// Timeout.
-				$results['size']  = __( 'The directory size calculation has timed out. Usually caused by a very large number of sub-directories and files.', 'uptimemonster-site-monitor' );
+				$results['size']  = esc_html__( 'The directory size calculation has timed out. Usually caused by a very large number of sub-directories and files.', 'uptimemonster-site-monitor' );
 				$results['debug'] = 'timeout while calculating size';
 
 				// Stop total size calculation.
@@ -1457,7 +1457,7 @@ class UptimeMonster_Debug_Data {
 			);
 		} else {
 			$all_sizes['database_size'] = array(
-				'size'  => __( 'Not available', 'uptimemonster-site-monitor' ),
+				'size'  => esc_html__( 'Not available', 'uptimemonster-site-monitor' ),
 				'debug' => 'not available',
 			);
 		}
@@ -1473,7 +1473,7 @@ class UptimeMonster_Debug_Data {
 			);
 		} else {
 			$all_sizes['total_size'] = array(
-				'size'  => __( 'Total size is not available. Some errors were encountered when determining the size of your installation.', 'uptimemonster-site-monitor' ),
+				'size'  => esc_html__( 'Total size is not available. Some errors were encountered when determining the size of your installation.', 'uptimemonster-site-monitor' ),
 				'debug' => 'not available',
 			);
 		}
@@ -1507,9 +1507,9 @@ class UptimeMonster_Debug_Data {
 			trigger_error( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
 				sprintf(
 				/* translators: %s: Support forums URL. */
-					__( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.', 'uptimemonster-site-monitor' ),
-					__( 'https://wordpress.org/support/forums/', 'uptimemonster-site-monitor' )
-				) . ' UptimeMonster_Debug_Data.php' . __( '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)', 'uptimemonster-site-monitor' ),
+					esc_html__( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.', 'uptimemonster-site-monitor' ),
+					esc_html__( 'https://wordpress.org/support/forums/', 'uptimemonster-site-monitor' )
+				) . ' UptimeMonster_Debug_Data.php' . esc_html__( '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)', 'uptimemonster-site-monitor' ),
 				headers_sent() || WP_DEBUG ? E_USER_WARNING : E_USER_NOTICE
 			);
 			$response = wp_remote_get( $http_url, $options ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
@@ -1575,24 +1575,24 @@ class UptimeMonster_Debug_Data {
 					<# if ( 'plugin' === data.type ) { #>
 					<?php
 					/* translators: %s: Number of plugins. */
-					printf( __( '%s plugin successfully updated.', 'uptimemonster-site-monitor' ), '{{ data.successes }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					printf( esc_html__( '%s plugin successfully updated.', 'uptimemonster-site-monitor' ), '{{ data.successes }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 					<# } else { #>
 					<?php
 					/* translators: %s: Number of themes. */
-					printf( __( '%s theme successfully updated.', 'uptimemonster-site-monitor' ), '{{ data.successes }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					printf( esc_html__( '%s theme successfully updated.', 'uptimemonster-site-monitor' ), '{{ data.successes }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 					<# } #>
 					<# } else { #>
 					<# if ( 'plugin' === data.type ) { #>
 					<?php
 					/* translators: %s: Number of plugins. */
-					printf( __( '%s plugins successfully updated.', 'uptimemonster-site-monitor' ), '{{ data.successes }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					printf( esc_html__( '%s plugins successfully updated.', 'uptimemonster-site-monitor' ), '{{ data.successes }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 					<# } else { #>
 					<?php
 					/* translators: %s: Number of themes. */
-					printf( __( '%s themes successfully updated.', 'uptimemonster-site-monitor' ), '{{ data.successes }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					printf( esc_html__( '%s themes successfully updated.', 'uptimemonster-site-monitor' ), '{{ data.successes }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 					<# } #>
 					<# } #>
@@ -1602,15 +1602,15 @@ class UptimeMonster_Debug_Data {
 						<# if ( 1 === data.errors ) { #>
 						<?php
 						/* translators: %s: Number of failed updates. */
-						printf( __( '%s update failed.', 'uptimemonster-site-monitor' ), '{{ data.errors }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						printf( esc_html__( '%s update failed.', 'uptimemonster-site-monitor' ), '{{ data.errors }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						?>
 						<# } else { #>
 						<?php
 						/* translators: %s: Number of failed updates. */
-						printf( __( '%s updates failed.', 'uptimemonster-site-monitor' ), '{{ data.errors }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						printf( esc_html__( '%s updates failed.', 'uptimemonster-site-monitor' ), '{{ data.errors }}' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						?>
 						<# } #>
-						<span class="screen-reader-text"><?php _e( 'Show more details', 'uptimemonster-site-monitor' ); ?></span>
+						<span class="screen-reader-text"><?php esc_html_e( 'Show more details', 'uptimemonster-site-monitor' ); ?></span>
 						<span class="toggle-indicator" aria-hidden="true"></span>
 					</button>
 					<# } #>
@@ -1637,7 +1637,7 @@ class UptimeMonster_Debug_Data {
 
 		// Check if the event exists.
 		if ( false === $next_update_time ) {
-			$message = __( 'Automatic update not scheduled. There may be a problem with WP-Cron.', 'uptimemonster-site-monitor' );
+			$message = esc_html__( 'Automatic update not scheduled. There may be a problem with WP-Cron.', 'uptimemonster-site-monitor' );
 		} else {
 			$time_to_next_update = human_time_diff( (int) $next_update_time );
 
@@ -1647,13 +1647,13 @@ class UptimeMonster_Debug_Data {
 			if ( $overdue ) {
 				$message = sprintf(
 				/* translators: %s: Duration that WP-Cron has been overdue. */
-					__( 'Automatic update overdue by %s. There may be a problem with WP-Cron.', 'uptimemonster-site-monitor' ),
+					esc_html__( 'Automatic update overdue by %s. There may be a problem with WP-Cron.', 'uptimemonster-site-monitor' ),
 					$time_to_next_update
 				);
 			} else {
 				$message = sprintf(
 				/* translators: %s: Time until the next update. */
-					__( 'Automatic update scheduled in %s.', 'uptimemonster-site-monitor' ),
+					esc_html__( 'Automatic update scheduled in %s.', 'uptimemonster-site-monitor' ),
 					$time_to_next_update
 				);
 			}

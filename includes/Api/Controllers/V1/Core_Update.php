@@ -52,28 +52,28 @@ class Core_Update extends Controller_Base {
 					'args'                => [
 						'minor'   => [
 							'default'           => false,
-							'description'       => __( 'Only perform updates for minor releases (e.g. update from WP 4.3 to 4.3.3 instead of 4.4.2.', 'uptimemonster-site-monitor' ),
+							'description'       => esc_html__( 'Only perform updates for minor releases (e.g. update from WP 4.3 to 4.3.3 instead of 4.4.2.', 'uptimemonster-site-monitor' ),
 							'type'              => 'boolean',
 							'sanitize_callback' => 'sanitize_key',
 							'validate_callback' => 'rest_validate_request_arg',
 						],
 						'version' => [
 							'default'           => '',
-							'description'       => __( 'Update to a specific version, instead of to the latest version. Alternatively accepts \'nightly\'.', 'uptimemonster-site-monitor' ),
+							'description'       => esc_html__( 'Update to a specific version, instead of to the latest version. Alternatively accepts \'nightly\'.', 'uptimemonster-site-monitor' ),
 							'type'              => 'string',
 							'sanitize_callback' => 'sanitize_key',
 							'validate_callback' => 'rest_validate_request_arg',
 						],
 						'force'   => [
 							'default'           => false,
-							'description'       => __( 'Update even when installed WP version is greater than the requested version.', 'uptimemonster-site-monitor' ),
+							'description'       => esc_html__( 'Update even when installed WP version is greater than the requested version.', 'uptimemonster-site-monitor' ),
 							'type'              => 'boolean',
 							'sanitize_callback' => 'sanitize_key',
 							'validate_callback' => 'rest_validate_request_arg',
 						],
 						'locale'  => [
 							'default'           => '',
-							'description'       => __( 'Select which language you want to download.', 'uptimemonster-site-monitor' ),
+							'description'       => esc_html__( 'Select which language you want to download.', 'uptimemonster-site-monitor' ),
 							'type'              => 'string',
 							'sanitize_callback' => 'sanitize_key',
 							'validate_callback' => 'rest_validate_request_arg',
@@ -147,7 +147,7 @@ class Core_Update extends Controller_Base {
 				if ( empty( $update ) ) {
 					return [
 						'need_db_update' => false,
-						'message'        => __( 'WordPress is at the latest minor release.', 'uptimemonster-site-monitor' ),
+						'message'        => esc_html__( 'WordPress is at the latest minor release.', 'uptimemonster-site-monitor' ),
 					];
 				}
 			} else {
@@ -203,13 +203,13 @@ class Core_Update extends Controller_Base {
 
 				return [
 					'need_db_update' => true,
-					'message'        => is_wp_error( $cleanup ) ? $cleanup : __( 'WordPress updated successfully.', 'uptimemonster-site-monitor' ),
+					'message'        => is_wp_error( $cleanup ) ? $cleanup : esc_html__( 'WordPress updated successfully.', 'uptimemonster-site-monitor' ),
 				];
 			}
 		} else {
 			return [
 				'need_db_update' => false,
-				'message'        => __( 'WordPress is up to date.', 'uptimemonster-site-monitor' ),
+				'message'        => esc_html__( 'WordPress is up to date.', 'uptimemonster-site-monitor' ),
 			];
 		}
 	}
@@ -517,7 +517,7 @@ class Core_Update extends Controller_Base {
 
 		throw new \InvalidArgumentException(
 			sprintf(
-				__( 'Unsupported argument type passed', 'uptimemonster-site-monitor' ),
+				esc_html__( 'Unsupported argument type passed', 'uptimemonster-site-monitor' ),
 				gettype( $errors )
 			)
 		);

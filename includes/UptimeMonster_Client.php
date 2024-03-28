@@ -138,7 +138,7 @@ class UptimeMonster_Client {
 	 */
 	public function request( $route, $data = [], $method = 'get', $args = [] ) {
 		if ( ! $this->has_keys() ) {
-			return new WP_Error( 'missing-api-keys', __( 'Missing API Keys.', 'uptimemonster-site-monitor' ) );
+			return new WP_Error( 'missing-api-keys', esc_html__( 'Missing API Keys.', 'uptimemonster-site-monitor' ) );
 		}
 
 		list( $algo, $timestamp, $signature ) = $this->signature( $data, $method );
@@ -215,7 +215,7 @@ class UptimeMonster_Client {
 			}
 
 			if ( ! $message ) {
-				$message = __( 'Something went wrong', 'uptimemonster-site-monitor' );
+				$message = esc_html__( 'Something went wrong', 'uptimemonster-site-monitor' );
 			}
 
 			return new WP_Error( $code, $message, $body );

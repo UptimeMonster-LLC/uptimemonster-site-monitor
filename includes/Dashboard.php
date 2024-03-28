@@ -57,8 +57,8 @@ class Dashboard {
 
 	public function register_menu() {
 		add_options_page(
-			__( 'UptimeMonster API Settings', 'uptimemonster-site-monitor' ),
-			__( 'UptimeMonster Settings', 'uptimemonster-site-monitor' ),
+			esc_html__( 'UptimeMonster API Settings', 'uptimemonster-site-monitor' ),
+			esc_html__( 'UptimeMonster Settings', 'uptimemonster-site-monitor' ),
 			'manage_options',
 			'uptimemonster-settings',
 			[ $this, 'settings_page' ]
@@ -87,11 +87,11 @@ class Dashboard {
 	public function handle_post() {
 		if ( 'yes' === get_option( 'uptimemonster_need_setup' ) ) {
 			if ( empty( $this->installed_on() ) ) {
-				$this->add_settings_status( __( 'Thank you for installing UptimeMonster Site Monitor.', 'uptimemonster-site-monitor' ) );
-				$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'uptimemonster-site-monitor' ) );
+				$this->add_settings_status( esc_html__( 'Thank you for installing UptimeMonster Site Monitor.', 'uptimemonster-site-monitor' ) );
+				$this->add_settings_status( esc_html__( 'Please update the api keys to activate it properly.', 'uptimemonster-site-monitor' ) );
 			}
 
-			$this->add_settings_status( __( 'Please update the api keys to activate it properly.', 'uptimemonster-site-monitor' ) );
+			$this->add_settings_status( esc_html__( 'Please update the api keys to activate it properly.', 'uptimemonster-site-monitor' ) );
 
 			update_option( 'uptimemonster_need_setup', 'no' );
 
@@ -103,7 +103,7 @@ class Dashboard {
 			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), self::DROP_IN_ACTION ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				UptimeMonster_Site_Monitor::maybe_install_drop_in();
 
-				$this->add_settings_status( __( 'Error Logger Drop-In Updated.', 'uptimemonster-site-monitor' ) );
+				$this->add_settings_status( esc_html__( 'Error Logger Drop-In Updated.', 'uptimemonster-site-monitor' ) );
 
 				wp_safe_redirect( $this->get_page_url() );
 				die();
@@ -144,7 +144,7 @@ class Dashboard {
 
 			$this->is_connected( false );
 			delete_option( 'uptimemonster_api_keys' );
-			$this->add_settings_status( __( 'UptimeMonster API Disconnected.', 'uptimemonster-site-monitor' ), 'warning' );
+			$this->add_settings_status( esc_html__( 'UptimeMonster API Disconnected.', 'uptimemonster-site-monitor' ), 'warning' );
 
 			do_action( 'uptimemonster_site_monitor_api_deactivated' );
 
@@ -174,18 +174,18 @@ class Dashboard {
 
 					update_option( 'uptimemonster_api_keys', $new_keys );
 
-					$this->add_settings_status( __( 'Api connected.', 'uptimemonster-site-monitor' ) );
+					$this->add_settings_status( esc_html__( 'Api connected.', 'uptimemonster-site-monitor' ) );
 
 					do_action( 'uptimemonster_site_monitor_api_updated' );
 				} else {
 					$this->add_settings_status( sprintf(
 						/* translators: 1. Error Details. */
-						__( 'Error connecting UptimeMonster API with following error: %s.', 'uptimemonster-site-monitor' ),
+						esc_html__( 'Error connecting UptimeMonster API with following error: %s.', 'uptimemonster-site-monitor' ),
 						$response->get_error_message()
 					), 'error' );
 				}
 			} else {
-				$this->add_settings_status( __( 'Both api key & secret required.', 'uptimemonster-site-monitor' ), 'error' );
+				$this->add_settings_status( esc_html__( 'Both api key & secret required.', 'uptimemonster-site-monitor' ), 'error' );
 			}
 
 			wp_safe_redirect( $this->get_page_url() );
@@ -259,8 +259,8 @@ class Dashboard {
 							<p><?php printf(
 								/* translators: %1$s: Manage Subscription link, %2$s: Dashboard link */
 									esc_html__( 'Manage your UptimeMonster %1$s or goto %2$s', 'uptimemonster-site-monitor' ),
-									'<a href="https://uptimemonster.com/my-account/" target="_blank" rel="noopener">' . __( 'Subscription', 'uptimemonster-site-monitor' ) . '</a>',
-									'<a href="https://uptimemonster.com/my-account/" target="_blank" rel="noopener">' . __( 'Dashboard', 'uptimemonster-site-monitor' ) . '</a>'
+									'<a href="https://uptimemonster.com/my-account/" target="_blank" rel="noopener">' . esc_html__( 'Subscription', 'uptimemonster-site-monitor' ) . '</a>',
+									'<a href="https://uptimemonster.com/my-account/" target="_blank" rel="noopener">' . esc_html__( 'Dashboard', 'uptimemonster-site-monitor' ) . '</a>'
 								); ?></p>
 						</td>
 					</tr>
@@ -279,7 +279,7 @@ class Dashboard {
 							<p><?php printf(
 								/* translators: %s: Signup link */
 									esc_html__( 'Signup now on %s for free and start monitoring your site.', 'uptimemonster-site-monitor' ),
-									'<a href="https://uptimemonster.com/pricing/" target="_blank" rel="noopener">' . __( 'UptimeMonster', 'uptimemonster-site-monitor' ) . '</a>',
+									'<a href="https://uptimemonster.com/pricing/" target="_blank" rel="noopener">' . esc_html__( 'UptimeMonster', 'uptimemonster-site-monitor' ) . '</a>',
 								); ?></p>
 						</td>
 					</tr>
@@ -298,7 +298,7 @@ class Dashboard {
 											if ( UptimeMonster_Site_Monitor::drop_in_need_update() ) {
 												printf(
 												/* translators: 1. New Version Number, 2. Update URL */
-													__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													esc_html__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 													esc_html( UptimeMonster_Site_Monitor::drop_in_version( false ) ),
 													esc_url( $install_url )
 												);
@@ -315,13 +315,13 @@ class Dashboard {
 											if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
 												printf(
 												/* translators: 1. Installation URL */
-													__( 'Click <a href="%s">here</a> to install the drop-in.', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													esc_html__( 'Click <a href="%s">here</a> to install the drop-in.', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 													esc_url( $install_url )
 												);
 											} else {
 												printf(
 												/* translators: 1. Source file path. 2. Destination file path. */
-													__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													esc_html__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 													esc_html( UptimeMonster_Site_Monitor::get_drop_in_dist_file() ),
 													esc_html( UptimeMonster_Site_Monitor::get_drop_in_file() )
 												);
@@ -366,7 +366,7 @@ class Dashboard {
 				</table>
 				<?php
 				if ( ! $this->is_connected() ) {
-					submit_button( __( 'Save Changes', 'uptimemonster-site-monitor' ), 'primary', 'uptimemonster-save-settings' );
+					submit_button( esc_html__( 'Save Changes', 'uptimemonster-site-monitor' ), 'primary', 'uptimemonster-save-settings' );
 				}
 				?>
 			</form>

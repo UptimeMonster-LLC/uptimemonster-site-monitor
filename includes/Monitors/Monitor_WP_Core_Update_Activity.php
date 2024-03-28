@@ -50,7 +50,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		if ( 'wp_maybe_auto_update' === current_filter() ) {
 			uptimemonster_switch_to_english();
 			/* translators: 1. WordPress Version. */
-			$name = __( 'WordPress Auto Upgrading From %s', 'uptimemonster-site-monitor' );
+			$name = esc_html__( 'WordPress Auto Upgrading From %s', 'uptimemonster-site-monitor' );
 			uptimemonster_restore_locale();
 
 			$version = get_bloginfo( 'version' );
@@ -75,7 +75,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 				$action = 'do-core-upgrade' === $action ? Activity_Monitor_Base::ITEM_UPGRADING : Activity_Monitor_Base::ITEM_REINSTALLING;
 				uptimemonster_switch_to_english();
 				/* translators: 1. WordPress Version. */
-				$name = 'do-core-upgrade' == $action ? __( 'WordPress Upgrading From %s', 'uptimemonster-site-monitor' ) : __( 'WordPress Reinstalling %s', 'uptimemonster-site-monitor' );
+				$name = 'do-core-upgrade' == $action ? esc_html__( 'WordPress Upgrading From %s', 'uptimemonster-site-monitor' ) : esc_html__( 'WordPress Reinstalling %s', 'uptimemonster-site-monitor' );
 				uptimemonster_restore_locale();
 
 				$version = get_bloginfo( 'version' );
@@ -96,7 +96,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 
 		uptimemonster_switch_to_english();
 		/* translators: 1. WordPress Updated Version. */
-		$name = 'update-core.php' !== $pagenow ? __( 'WordPress Auto Updated to %s', 'uptimemonster-site-monitor' ) : __( 'WordPress Updated to %s', 'uptimemonster-site-monitor' );
+		$name = 'update-core.php' !== $pagenow ? esc_html__( 'WordPress Auto Updated to %s', 'uptimemonster-site-monitor' ) : esc_html__( 'WordPress Updated to %s', 'uptimemonster-site-monitor' );
 		uptimemonster_restore_locale();
 
 		$this->log_activity(
