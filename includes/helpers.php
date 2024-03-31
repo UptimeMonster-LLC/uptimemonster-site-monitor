@@ -241,6 +241,11 @@ function uptimemonster_get_plugin_data( $plugin_file ) {
 	return $plugin_data;
 }
 
+/**
+ * Get all plugins data
+ *
+ * @return array|array[]
+ */
 function uptimemonster_get_all_plugins() {
 	if ( ! function_exists( 'get_plugins' ) ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -347,7 +352,7 @@ function uptimemonster_get_theme_data_headers( $theme ) {
 	return $data;
 }
 
-function get_site_health_tests() { //phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+function uptimemonster_get_site_health_tests() {
 	return [
 		'direct' => [
 			'wordpress_version'         => [

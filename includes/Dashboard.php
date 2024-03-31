@@ -34,8 +34,8 @@ class Dashboard {
 	}
 
 	public function admin_notice() {
-		$data = get_transient( 'rwp-setting-status' );
-		delete_transient( 'rwp-setting-status' );
+		$data = get_transient( 'uptimemonster-setting-status' );
+		delete_transient( 'uptimemonster-setting-status' );
 
 		if ( $data ) {
 			foreach ( $data as $item ) {
@@ -66,14 +66,14 @@ class Dashboard {
 	}
 
 	protected function add_settings_status( $message, $type = 'success' ) {
-		$data = get_transient( 'rwp-setting-status' );
+		$data = get_transient( 'uptimemonster-setting-status' );
 		if ( ! $data ) {
 			$data = [];
 		}
 		$hash          = md5( $message . $type );
 		$data[ $hash ] = [ $message, $type ];
 
-		set_transient( 'rwp-setting-status', $data, 60 );
+		set_transient( 'uptimemonster-setting-status', $data, 60 );
 	}
 
 	public function get_page_url() {
