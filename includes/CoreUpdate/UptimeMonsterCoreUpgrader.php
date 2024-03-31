@@ -65,10 +65,12 @@ class UptimeMonsterCoreUpgrader extends DefaultCoreUpgrader {
 
 	/**
 	 * Error handler to ignore failures on accessing SSL "https://api.wordpress.org/core/checksums/1.0/" in `get_core_checksums()` which seem to occur intermittently.
+	 * This to suppress ```An unexpected error occurred. Something may be wrong with WordPress.org or this server's configuration.
+	 * If you continue to have problems, please try the support forums.``` notice while updating WordPress core.
 	 */
 	public static function error_handler( $errno, $errstr, $errfile, $errline, $errcontext = null ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
 		// If ignoring E_USER_WARNING | E_USER_NOTICE, default.
-		if ( ! ( error_reporting() & $errno ) ) { // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_error_reporting
+		if ( ! ( ini_get( 'error_reporting' ) & $errno ) ) {
 			return false;
 		}
 
