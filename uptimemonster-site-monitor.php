@@ -39,7 +39,7 @@ use UptimeMonster\SiteMonitor\UptimeMonster_Site_Monitor;
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
-	die();
+	exit; // Exit if accessed directly
 }
 
 if ( ! defined( 'UPTIMEMONSTER_PLUGIN_VERSION' ) ) {

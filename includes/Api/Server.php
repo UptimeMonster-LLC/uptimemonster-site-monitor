@@ -17,7 +17,7 @@ use UptimeMonster\SiteMonitor\Api\Controllers\V1\Core_Update;
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
-	die();
+	exit; // Exit if accessed directly
 }
 
 final class Server {

@@ -17,7 +17,7 @@ use WP_Term;
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
-	die();
+	exit; // Exit if accessed directly
 }
 
 class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {

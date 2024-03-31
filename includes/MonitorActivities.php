@@ -27,7 +27,7 @@ use UptimeMonster\SiteMonitor\Monitors\Monitor_WP_Export_Content_Activity;
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
-	die();
+	exit; // Exit if accessed directly
 }
 
 class MonitorActivities {

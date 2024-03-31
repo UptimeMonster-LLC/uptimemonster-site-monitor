@@ -11,7 +11,7 @@ namespace UptimeMonster\SiteMonitor\Api\Controllers\V1;
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
-	die();
+	exit; // Exit if accessed directly
 }
 
 use Plugin_Upgrader;
@@ -26,7 +26,7 @@ use WP_REST_Server;
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
-	die();
+	exit; // Exit if accessed directly
 }
 
 if ( ! function_exists( 'deactivate_plugins' ) ) {

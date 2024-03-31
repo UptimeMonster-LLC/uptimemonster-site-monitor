@@ -17,7 +17,7 @@ use WP_REST_Request;
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
-	die();
+	exit; // Exit if accessed directly
 }
 
 abstract class Controller_Base extends WP_REST_Controller {

@@ -18,7 +18,7 @@ use WP_Theme;
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
-	die();
+	exit; // Exit if accessed directly
 }
 
 class Monitor_Themes_Activity extends Activity_Monitor_Base {

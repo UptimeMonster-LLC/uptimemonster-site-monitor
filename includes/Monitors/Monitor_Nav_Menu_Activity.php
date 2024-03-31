@@ -14,7 +14,7 @@ use UptimeMonster\SiteMonitor\Traits\Singleton;
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
-	die();
+	exit; // Exit if accessed directly
 }
 
 class Monitor_Nav_Menu_Activity extends Activity_Monitor_Base {
