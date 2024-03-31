@@ -282,46 +282,38 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 	 */
 	public function on_theme_file_modify( $location = null ) {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		if ( ! empty( $_POST ) && isset( $_POST['action'], $_POST['theme'], $_POST['file'] ) && ! empty( $_POST['theme'] ) ) {
-			if (
-				'edit-theme-plugin-file' === $_POST['action'] ||
-				(
-					'wp_redirect' === current_filter() &&
-					false !== strpos( $location, 'plugin-editor.php' ) &&
-					'update' === $_REQUEST['action'] // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.NonceVerification.Recommended
-				)
-			) {
-				$theme = sanitize_text_field( wp_unslash( $_POST['theme'] ) );
-				$file  = sanitize_text_field( wp_unslash( $_POST['file'] ) );
-				$_file = WP_PLUGIN_DIR . $theme; // @phpstan-ignore-line
-
-				if ( $this->maybe_log_theme( Activity_Monitor_Base::ITEM_UPDATED, $theme, $file ) && file_exists( $_file ) ) {
+		// phpcs:enable
+		if (
+			! empty( $_POST['action'] ) &&
+			(
+				( 'wp_redirect' === current_filter() && $location && false !== strpos( $location, 'theme-editor.php' ) && 'update' === $_REQUEST['action'] )
+				||
+				( 'edit-theme-plugin-file' === $_POST['action'] && ! empty( $_POST['theme'] ) && ! empty( $_POST['file'] ) )
+			)
+		) {
+			$stylesheet = sanitize_text_field( wp_unslash( $_POST['theme'] ) );
+			$file  = sanitize_text_field( wp_unslash( $_POST['file'] ) );
+			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'edit-theme_' . $stylesheet . '_' . $file ) ) {
+				$_file = WP_PLUGIN_DIR . $stylesheet; // @phpstan-ignore-line
+				if ( $this->maybe_log_theme( Activity_Monitor_Base::ITEM_UPDATED, $stylesheet, $file ) && file_exists( $_file ) ) {
 					uptimemonster_switch_to_english();
 					/* translators: %1$s. Theme Name, %2$s. File path. */
 					$name = esc_html__( 'Modified file (%2$s) of “%1$s” theme', 'uptimemonster-site-monitor' );
 					uptimemonster_restore_locale();
 
-					try {
-						$this->log_activity(
-							Activity_Monitor_Base::ITEM_UPDATED,
-							0,
-							$theme,
-							sprintf( $name, $this->get_name( $theme ), $file ),
-							[
-								'slug' => $theme,
-								'file' => $file,
-							]
-						);
-					} catch ( Exception $e ) {
-						if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-							throw $e;
-						}
-					}
+					$this->log_activity(
+						Activity_Monitor_Base::ITEM_UPDATED,
+						0,
+						$stylesheet,
+						sprintf( $name, $this->get_name( $stylesheet ), $file ),
+						[
+							'slug' => $stylesheet,
+							'file' => $file,
+						]
+					);
 				}
 			}
 		}
-
-		// phpcs:enable
 
 		// return the location so wp_redirect can complete.
 		return $location;

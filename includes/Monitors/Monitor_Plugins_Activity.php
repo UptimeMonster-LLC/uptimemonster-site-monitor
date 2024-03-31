@@ -156,16 +156,6 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		}
 	}
 
-	protected function is_plugin_file_modified( $location = null ) {
-		return (
-			'edit-theme-plugin-file' === $_POST['action'] || // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.NonceVerification.Recommended,WordPress.Security.NonceVerification.Missing
-			(
-				'wp_redirect' === current_filter() &&
-				false !== strpos( $location, 'plugin-editor.php' ) && 'update' === $_REQUEST['action'] // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.NonceVerification.Recommended
-			)
-		);
-	}
-
 	/**
 	 * Hooked into plugin file edit ajax action
 	 *
@@ -173,12 +163,19 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 	 */
 	public function on_plugin_file_modify( $location = null ) {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		if ( ! empty( $_POST ) && isset( $_POST['action'], $_POST['plugin'], $_POST['file'] ) && ! empty( $_POST['plugin'] ) ) {
-			if ( $this->is_plugin_file_modified( $location ) ) {
+		// phpcs:enable
+		if (
+			! empty( $_POST['action'] ) &&
+			(
+				( 'wp_redirect' === current_filter() && $location && false !== strpos( $location, 'plugin-editor.php' ) && 'update' === $_REQUEST['action'] )
+				||
+				( 'edit-theme-plugin-file' === $_POST['action'] && ! empty( $_POST['plugin'] ) && ! empty( $_POST['file'] ) )
+			)
+		) {
+			$file = sanitize_text_field( wp_unslash( $_POST['file'] ) );
+			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'edit-plugin_' . $file ) ) {
 				$plugin = sanitize_text_field( wp_unslash( $_POST['plugin'] ) );
-				$file   = sanitize_text_field( wp_unslash( $_POST['file'] ) );
 				$_file  = WP_PLUGIN_DIR . $plugin; // @phpstan-ignore-line
-				// phpcs:enable
 
 				if ( $this->maybe_log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $plugin, $file ) && file_exists( $_file ) ) {
 					uptimemonster_switch_to_english();
@@ -186,12 +183,10 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 					$name = $plugin === $file ? esc_html__( 'Modified main file (%2$s) of “%1$s” plugin', 'uptimemonster-site-monitor' ) : esc_html__( 'Modified file (%2$s) of “%1$s” plugin', 'uptimemonster-site-monitor' );
 					uptimemonster_restore_locale();
 
-					$extra = [
+					$this->log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $plugin, [
 						'name' => sprintf( $name, $this->get_name( $plugin ), $file ),
 						'file' => $file,
-					];
-
-					$this->log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $plugin, $extra );
+					] );
 				}
 			}
 		}

@@ -24,7 +24,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 
 	public function init() {
 		add_action( 'admin_head', [ $this, 'log_on_update_start' ] );
-		add_action( 'wp_maybe_auto_update', [ $this, 'log_on_update_start' ] );
+		add_action( 'wp_maybe_auto_update', [ $this, 'log_on_auto_update_start' ] );
 		add_action( '_core_updated_successfully', [ $this, 'log_on_successful_update' ] );
 		// @TODO find way to log update failed.
 	}
@@ -41,53 +41,41 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		return (bool) apply_filters( 'uptimemonster_should_log_wp_core_update_activity', true, null, $action );
 	}
 
+	public function log_on_auto_update_start() {
+		uptimemonster_switch_to_english();
+		/* translators: 1. WordPress Version. */
+		$name = esc_html__( 'WordPress Auto Upgrading From %s', 'uptimemonster-site-monitor' );
+		uptimemonster_restore_locale();
+
+		$version = get_bloginfo( 'version' );
+
+		$this->log_activity( Activity_Monitor_Base::ITEM_UPGRADING, 0, 'WordPressCore', sprintf( $name, $version ) );
+	}
+
 	/**
 	 * @throws Exception
 	 */
 	public function log_on_update_start() {
 		global $pagenow;
+		if ( 'update-core.php' !== $pagenow ) {
+			return;
+		}
 
-		if ( 'wp_maybe_auto_update' === current_filter() ) {
+		if ( ! empty( $_GET['action'] ) && isset( $_POST['upgrade'] ) && in_array( sanitize_text_field( $_GET['action'] ), [ 'do-core-upgrade', 'do-core-reinstall' ] ) && wp_verify_nonce( sanitize_text_field( $_REQUEST['_wpnonce'] ), 'upgrade-core' ) ) {
+			$action = sanitize_text_field( $_GET['action'] );
 			uptimemonster_switch_to_english();
 			/* translators: 1. WordPress Version. */
-			$name = esc_html__( 'WordPress Auto Upgrading From %s', 'uptimemonster-site-monitor' );
+			$name = 'do-core-upgrade' == $action ? esc_html__( 'WordPress Upgrading From %s', 'uptimemonster-site-monitor' ) : esc_html__( 'WordPress Reinstalling %s', 'uptimemonster-site-monitor' );
 			uptimemonster_restore_locale();
 
 			$version = get_bloginfo( 'version' );
 
 			$this->log_activity(
-				Activity_Monitor_Base::ITEM_UPGRADING,
+				'do-core-upgrade' === $action ? Activity_Monitor_Base::ITEM_UPGRADING : Activity_Monitor_Base::ITEM_REINSTALLING,
 				0,
 				'WordPressCore',
-				sprintf( $name, $version ),
-				[ 'new_version' => $version ]
+				sprintf( $name, $version )
 			);
-		}
-
-		if ( 'update-core.php' !== $pagenow ) {
-			return;
-		}
-
-		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'upgrade-core'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended
-
-		if ( 'do-core-upgrade' === $action || 'do-core-reinstall' === $action ) {
-			if ( isset( $_POST['upgrade'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-				$action = 'do-core-upgrade' === $action ? Activity_Monitor_Base::ITEM_UPGRADING : Activity_Monitor_Base::ITEM_REINSTALLING;
-				uptimemonster_switch_to_english();
-				/* translators: 1. WordPress Version. */
-				$name = 'do-core-upgrade' == $action ? esc_html__( 'WordPress Upgrading From %s', 'uptimemonster-site-monitor' ) : esc_html__( 'WordPress Reinstalling %s', 'uptimemonster-site-monitor' );
-				uptimemonster_restore_locale();
-
-				$version = get_bloginfo( 'version' );
-
-				$this->log_activity(
-					$action,
-					0,
-					'WordPressCore',
-					sprintf( $name, $version ),
-					[ 'new_version' => $version ]
-				);
-			}
 		}
 	}
 
@@ -99,13 +87,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		$name = 'update-core.php' !== $pagenow ? esc_html__( 'WordPress Auto Updated to %s', 'uptimemonster-site-monitor' ) : esc_html__( 'WordPress Updated to %s', 'uptimemonster-site-monitor' );
 		uptimemonster_restore_locale();
 
-		$this->log_activity(
-			Activity_Monitor_Base::ITEM_UPDATED,
-			0,
-			'WordPressCore',
-			sprintf( $name, $version ),
-			[ 'new_version' => $version ]
-		);
+		$this->log_activity( Activity_Monitor_Base::ITEM_UPDATED, 0, 'WordPressCore', sprintf( $name, $version ), [ 'wp_version' => $version ] );
 	}
 }
 
