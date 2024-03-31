@@ -176,12 +176,12 @@ class UptimeMonster_Update_Check {
 			'url'          => 'https://wordpress.org/plugins/a-fake-plugin/',
 			'package'      => 'https://downloads.wordpress.org/plugin/a-fake-plugin.9.9.zip',
 			'icons'        => [
-				'2x' => 'https://ps.w.org/a-fake-plugin/assets/icon-256x256.png',
-				'1x' => 'https://ps.w.org/a-fake-plugin/assets/icon-128x128.png',
+				'2x' => UPTIMEMONSTER_PLUGIN_URL . 'assets/img/icon-256x256.png',
+				'1x' => UPTIMEMONSTER_PLUGIN_URL . 'assets/img/icon-128x128.png',
 			],
 			'banners'      => [
-				'2x' => 'https://ps.w.org/a-fake-plugin/assets/banner-1544x500.png',
-				'1x' => 'https://ps.w.org/a-fake-plugin/assets/banner-772x250.png',
+				'2x' =>  UPTIMEMONSTER_PLUGIN_URL . 'assets/banner-1544x500.png',
+				'1x' =>  UPTIMEMONSTER_PLUGIN_URL . 'assets/banner-772x250.png',
 			],
 			'banners_rtl'  => [],
 			'tested'       => '5.5.0',
