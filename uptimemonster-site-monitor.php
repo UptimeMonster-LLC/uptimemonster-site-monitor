@@ -5,15 +5,19 @@
  * Description: WordPress Site Activity Monitor For UptimeMonster
  * Author: UptimeMonster
  * Author URI: https://uptimemonster.com/
- * License: GPLv2
+ * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: uptimemonster-site-monitor
  * Domain Path: /languages
  * Version: 1.0.0
  *
- * RequiresPHP: 5.6
- * RequiresWP: 5.5.0
+ * Requires PHP: 7.0
+ *
+ * Requires at least: 5.6
  * Tested Upto: 6.4
+ *
+ * WC requires at least: 5.6
+ * WC tested up to: 8.7.0
  *
  * @package UptimeMonster\SiteMonitor
  *
