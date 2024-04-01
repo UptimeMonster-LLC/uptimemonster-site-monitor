@@ -87,9 +87,6 @@ class Core_Update extends Controller_Base {
 	public function core_update( $request ) { // phpcs:ignore Generic.NamingConventions.ConstructorName.OldStyle
 		remove_action( 'init', 'smilies_init', 5 );
 
-		set_time_limit( 0 );
-
-
 		$update = $this->update( $request );
 
 		if ( $update['need_db_update'] ) {

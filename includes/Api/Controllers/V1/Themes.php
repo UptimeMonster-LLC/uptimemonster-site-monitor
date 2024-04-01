@@ -119,7 +119,6 @@ class Themes extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response|
 	 */
 	public function install_themes( WP_REST_Request $request ) {
-		set_time_limit( 0 );
 
 		$data = json_decode( $request->get_body() );
 
@@ -211,7 +210,6 @@ class Themes extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function activate_theme( $request ) {
-		set_time_limit( 0 );
 
 		$data = json_decode( $request->get_body() );
 		$slug = $data->slugs[0] ?? ( $data->slug ?? false );
@@ -269,7 +267,6 @@ class Themes extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function delete_themes( WP_REST_Request $request ) {
-		set_time_limit( 0 );
 
 		$data = json_decode( $request->get_body() );
 
@@ -359,7 +356,6 @@ class Themes extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response|
 	 */
 	public function update_themes( WP_REST_Request $request ) {
-		set_time_limit( 0 );
 
 		$data = json_decode( $request->get_body() );
 

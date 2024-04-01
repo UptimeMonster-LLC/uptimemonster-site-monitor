@@ -151,7 +151,6 @@ class Plugins extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response|
 	 */
 	public function install_plugins( $request ) {
-		set_time_limit( 0 );
 
 		$data  = json_decode( $request->get_body() );
 		$check = $this->check_slug( $data );
@@ -238,7 +237,6 @@ class Plugins extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response|
 	 */
 	public function activate_plugins( $request ) {
-		set_time_limit( 0 );
 
 		$data  = json_decode( $request->get_body() );
 		$check = $this->check_slug( $data );
@@ -312,7 +310,6 @@ class Plugins extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response|
 	 */
 	public function deactivate_plugins( WP_REST_Request $request ) {
-		set_time_limit( 0 );
 
 		$data  = json_decode( $request->get_body() );
 		$check = $this->check_slug( $data );
@@ -390,7 +387,6 @@ class Plugins extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function uninstall_plugins( WP_REST_Request $request ) {
-		set_time_limit( 0 );
 
 		$data  = json_decode( $request->get_body() );
 		$check = $this->check_slug( $data );
@@ -477,7 +473,6 @@ class Plugins extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response|
 	 */
 	public function delete_plugins( WP_REST_Request $request ) {
-		set_time_limit( 0 );
 
 		$data  = json_decode( $request->get_body() );
 		$check = $this->check_slug( $data );
@@ -553,7 +548,6 @@ class Plugins extends Controller_Base {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response|
 	 */
 	public function update_plugins( WP_REST_Request $request ) {
-		set_time_limit( 0 );
 
 		$data = json_decode( $request->get_body() );
 
