@@ -8,8 +8,8 @@
 
 namespace UptimeMonster\SiteMonitor\Api\Controllers;
 
-use UptimeMonster\SiteMonitor\Site_Health\UptimeMonster_Debug_Data;
-use UptimeMonster\SiteMonitor\Site_Health\UptimeMonster_Update_Check;
+use UptimeMonster\SiteMonitor\Site_Health\Site_Health;
+use UptimeMonster\SiteMonitor\Site_Health\Debug_Data;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -85,15 +85,17 @@ abstract class Controller_Base extends WP_REST_Controller {
 
 	protected function add_extra_data( &$response ) {
 		// Check for update.
-		UptimeMonster_Debug_Data::check_for_updates();
+		Debug_Data::check_for_updates();
 
 		if ( null === self::$extra_data ) {
 			self::$extra_data = [
-				'site_health' => UptimeMonster_Update_Check::get_site_health(),
-				'site_info'   => UptimeMonster_Debug_Data::debug_data(),
+				'site_health' => Site_Health::get_reports(),
+				'site_info'   => Debug_Data::debug_data(),
 			];
 		}
 
 		$response['extra'] = self::$extra_data;
 	}
 }
+
+// End of file Controller_Base.php.

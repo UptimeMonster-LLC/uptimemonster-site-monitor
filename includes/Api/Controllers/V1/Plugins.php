@@ -694,3 +694,5 @@ class Plugins extends Controller_Base {
 		return true;
 	}
 }
+
+// End of file Plugins.php.

@@ -433,3 +433,5 @@ class Themes extends Controller_Base {
 		return rest_ensure_response( $response );
 	}
 }
+
+// End of file Themes.php.

@@ -88,3 +88,5 @@ class Health_Check extends Controller_Base {
 	}
 
 }
+
+// End of file Health_Check.php.

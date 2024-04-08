@@ -33,7 +33,7 @@ if ( ! class_exists( '\WP_Debug_Data' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
 }
 
-class UptimeMonster_Debug_Data extends WP_Debug_Data {
+class Debug_Data extends WP_Debug_Data {
 
 	protected static function process_dropins_data( &$info ) {
 		$dropins = get_dropins();
@@ -419,3 +419,5 @@ class UptimeMonster_Debug_Data extends WP_Debug_Data {
 		];
 	}
 }
+
+// End of file Debug_Data.php.

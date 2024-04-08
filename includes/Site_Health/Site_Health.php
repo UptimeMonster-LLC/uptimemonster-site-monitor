@@ -20,9 +20,9 @@ if ( ! class_exists( '\WP_Site_Health' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-site-health.php';
 }
 
-class UptimeMonster_Update_Check {
+class Site_Health {
 
-	public static function get_site_health(): array {
+	public static function get_reports(): array {
 		$site_health = WP_Site_Health::get_instance();
 		$tests       = WP_Site_Health::get_tests();
 		$results     = [];
@@ -118,3 +118,5 @@ class UptimeMonster_Update_Check {
 		return apply_filters( 'site_status_test_result', call_user_func( $callback ) );
 	}
 }
+
+// End of file Site_Health.php.
