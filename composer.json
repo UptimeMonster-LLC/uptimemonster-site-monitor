@@ -17,6 +17,10 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.0",
+        "ext-json": "*",
+        "ext-iconv": "*",
+        "ext-mysqli": "*",
+        "ext-imagick": "*",
         "composer/semver": "^3.3"
     },
     "require-dev": {

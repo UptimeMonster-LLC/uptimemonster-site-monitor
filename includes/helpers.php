@@ -352,104 +352,6 @@ function uptimemonster_get_theme_data_headers( $theme ) {
 	return $data;
 }
 
-function uptimemonster_get_site_health_tests() {
-	return [
-		'direct' => [
-			'wordpress_version'         => [
-				'label' => esc_html__( 'WordPress Version', 'uptimemonster-site-monitor' ),
-				'test'  => 'wordpress_version',
-			],
-			'plugin_version'            => [
-				'label' => esc_html__( 'Plugin Versions', 'uptimemonster-site-monitor' ),
-				'test'  => 'plugin_version',
-			],
-			'theme_version'             => [
-				'label' => esc_html__( 'Theme Versions', 'uptimemonster-site-monitor' ),
-				'test'  => 'theme_version',
-			],
-			'php_version'               => [
-				'label' => esc_html__( 'PHP Version', 'uptimemonster-site-monitor' ),
-				'test'  => 'php_version',
-			],
-			'php_extensions'            => [
-				'label' => esc_html__( 'PHP Extensions', 'uptimemonster-site-monitor' ),
-				'test'  => 'php_extensions',
-			],
-			'php_default_timezone'      => [
-				'label' => esc_html__( 'PHP Default Timezone', 'uptimemonster-site-monitor' ),
-				'test'  => 'php_default_timezone',
-			],
-			'php_sessions'              => [
-				'label' => esc_html__( 'PHP Sessions', 'uptimemonster-site-monitor' ),
-				'test'  => 'php_sessions',
-			],
-			'sql_server'                => [
-				'label' => esc_html__( 'Database Server version', 'uptimemonster-site-monitor' ),
-				'test'  => 'sql_server',
-			],
-			'utf8mb4_support'           => [
-				'label' => esc_html__( 'MySQL utf8mb4 support', 'uptimemonster-site-monitor' ),
-				'test'  => 'utf8mb4_support',
-			],
-			'ssl_support'               => [
-				'label' => esc_html__( 'Secure communication', 'uptimemonster-site-monitor' ),
-				'test'  => 'ssl_support',
-			],
-			'scheduled_events'          => [
-				'label' => esc_html__( 'Scheduled events', 'uptimemonster-site-monitor' ),
-				'test'  => 'scheduled_events',
-			],
-			'http_requests'             => [
-				'label' => esc_html__( 'HTTP Requests', 'uptimemonster-site-monitor' ),
-				'test'  => 'http_requests',
-			],
-			'rest_availability'         => [
-				'label'     => esc_html__( 'REST API availability', 'uptimemonster-site-monitor' ),
-				'test'      => 'rest_availability',
-				'skip_cron' => true,
-			],
-			'debug_enabled'             => [
-				'label' => esc_html__( 'Debugging enabled', 'uptimemonster-site-monitor' ),
-				'test'  => 'is_in_debug_mode',
-			],
-			'file_uploads'              => [
-				'label' => esc_html__( 'File uploads', 'uptimemonster-site-monitor' ),
-				'test'  => 'file_uploads',
-			],
-			'plugin_theme_auto_updates' => [
-				'label' => esc_html__( 'Plugin and theme auto-updates', 'uptimemonster-site-monitor' ),
-				'test'  => 'plugin_theme_auto_updates',
-			],
-		],
-		'async'  => [
-			'dotorg_communication' => [
-				'label'             => esc_html__( 'Communication with WordPress.org', 'uptimemonster-site-monitor' ),
-				'test'              => rest_url( 'wp-site-health/v1/tests/dotorg-communication' ),
-				'has_rest'          => true,
-				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_dotorg_communication' ],
-			],
-			'background_updates'   => [
-				'label'             => esc_html__( 'Background updates', 'uptimemonster-site-monitor' ),
-				'test'              => rest_url( 'wp-site-health/v1/tests/background-updates' ),
-				'has_rest'          => true,
-				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_background_updates' ],
-			],
-			'loopback_requests'    => [
-				'label'             => esc_html__( 'Loopback request', 'uptimemonster-site-monitor' ),
-				'test'              => rest_url( 'wp-site-health/v1/tests/loopback-requests' ),
-				'has_rest'          => true,
-				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_loopback_requests' ],
-			],
-			'https_status'         => [
-				'label'             => esc_html__( 'HTTPS status', 'uptimemonster-site-monitor' ),
-				'test'              => rest_url( 'wp-site-health/v1/tests/https-status' ),
-				'has_rest'          => true,
-				'async_direct_test' => [ WP_Site_Health::get_instance(), 'get_test_https_status' ],
-			],
-		],
-	];
-}
-
 function uptimemonster_wp_version_compare( $since, $operator ) {
 	$wp_version = str_replace( '-src', '', $GLOBALS['wp_version'] );
 	$since      = str_replace( '-src', '', $since );
@@ -470,30 +372,27 @@ function uptimemonster_parse_boolval( $maybe_bool ) {
 	return 'true' === $maybe_bool || 'yes' === $maybe_bool || 'on' === $maybe_bool;
 }
 
-function uptimemonster_prepare_plugin_data( $plugin ) {
+function uptimemonster_prepare_plugin_data( $raw_data ): array {
 	$data = [
-		'author'      => ! empty( $plugin['Author'] ) ? $plugin['Author'] : ( ! empty( $plugin['AuthorName'] ) ? $plugin['AuthorName'] :  'unavailable' ),
-		'version'     => ! empty( $plugin['Version'] ) ? $plugin['Version'] : 'unavailable',
-		'plugin_uri'  => ! empty( $plugin['PluginURI'] ) ? $plugin['PluginURI'] : '',
-		'author_uri'  => ! empty( $plugin['AuthorURI'] ) ? $plugin['AuthorURI'] : '',
-		'network'     => ! empty( $plugin['Network'] ) ? $plugin['Network'] : '',
-		'description' => ! empty( $plugin['Description'] ) ? $plugin['Description'] : '',
+		'author'      => ! empty( $raw_data['Author'] ) ? $raw_data['Author'] : ( ! empty( $raw_data['AuthorName'] ) ? $raw_data['AuthorName'] :  'unavailable' ),
+		'version'     => ! empty( $raw_data['Version'] ) ? $raw_data['Version'] : 'unavailable',
+		'plugin_uri'  => ! empty( $raw_data['PluginURI'] ) ? $raw_data['PluginURI'] : '',
+		'author_uri'  => ! empty( $raw_data['AuthorURI'] ) ? $raw_data['AuthorURI'] : '',
+		'network'     => ! empty( $raw_data['Network'] ) ? $raw_data['Network'] : '',
+		'description' => ! empty( $raw_data['Description'] ) ? $raw_data['Description'] : '',
 		'new_version' => null,
 		'need_update' => false,
 		'auto_update' => 'disabled',
 	];
 
-	// phpcs:disable
 	unset(
-		$plugin['Author'], $plugin['AuthorName'],
-		$plugin['Version'], $plugin['PluginURI'],
-		$plugin['AuthorURI'], $plugin['Network'],
-		$plugin['Description'], $plugin['Name'],
-		$plugin['Title'], $plugin['Woo'],
+		$raw_data['Author'], $raw_data['AuthorName'], $raw_data['Version'],
+		$raw_data['PluginURI'], $raw_data['AuthorURI'], $raw_data['Network'],
+		$raw_data['Description'], $raw_data['Name'], $raw_data['Title'],
+		$raw_data['Woo']
 	);
-	// phpcs:enable
 
-	return array_merge( $data, $plugin );
+	return array_merge( $data, $raw_data );
 }
 
 /**

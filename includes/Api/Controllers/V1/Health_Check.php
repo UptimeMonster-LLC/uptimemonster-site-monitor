@@ -8,13 +8,12 @@
 
 namespace UptimeMonster\SiteMonitor\Api\Controllers\V1;
 
-use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Debug_Data;
-use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Update_Check;
 use UptimeMonster\SiteMonitor\Api\Controllers\Controller_Base;
 use WP_Error;
 use WP_HTTP_Response;
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_REST_Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -41,7 +40,7 @@ class Health_Check extends Controller_Base {
 			$this->rest_base,
 			[
 				[
-					'methods'             => \WP_REST_Server::READABLE,
+					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'send_site_health_info' ],
 					'permission_callback' => [ $this, 'get_route_access' ],
 					'args'                => [],
@@ -56,7 +55,7 @@ class Health_Check extends Controller_Base {
 			'/ping',
 			[
 				[
-					'methods'             => \WP_REST_Server::READABLE,
+					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_ping' ],
 					'permission_callback' => [ $this, 'get_route_access' ],
 					'args'                => [],
@@ -67,21 +66,16 @@ class Health_Check extends Controller_Base {
 	}
 
 	/**
-	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 *
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
-	public function get_ping( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
-		return rest_ensure_response( 'ok' );
+	public function get_ping() { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
+		return rest_ensure_response( 'pong' );
 	}
 
 	/**
-	 * @param WP_REST_Request $request Full details about the request.
-	 *
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
-	public function send_site_health_info( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
+	public function send_site_health_info() { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
 		$response = [];
 
 		$this->add_extra_data( $response );

@@ -8,8 +8,8 @@
 
 namespace UptimeMonster\SiteMonitor\Api\Controllers;
 
-use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Debug_Data;
-use UptimeMonster\SiteMonitor\Api\Controllers\V1\Site_Health\UptimeMonster_Update_Check;
+use UptimeMonster\SiteMonitor\Site_Health\UptimeMonster_Debug_Data;
+use UptimeMonster\SiteMonitor\Site_Health\UptimeMonster_Update_Check;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -77,20 +77,6 @@ abstract class Controller_Base extends WP_REST_Controller {
 	}
 
 	/**
-	 * Class For Debug data.
-	 *
-	 * @var object
-	 */
-	protected static $update_check_model;
-
-	/**
-	 * Update Check.
-	 *
-	 * @var object
-	 */
-	protected static $debug_model;
-
-	/**
 	 * Extra data.
 	 *
 	 * @var array
@@ -98,20 +84,13 @@ abstract class Controller_Base extends WP_REST_Controller {
 	protected static $extra_data;
 
 	protected function add_extra_data( &$response ) {
-		if ( null === self::$update_check_model ) {
-			// Health data
-			self::$update_check_model = new UptimeMonster_Update_Check();
-		}
-
-		if ( null === self::$debug_model ) {
-			// Debug data.
-			self::$debug_model = new UptimeMonster_Debug_Data();
-		}
+		// Check for update.
+		UptimeMonster_Debug_Data::check_for_updates();
 
 		if ( null === self::$extra_data ) {
 			self::$extra_data = [
-				'site_health' => self::$update_check_model->get_site_health(),
-				'site_info'   => self::$debug_model->debug_data(),
+				'site_health' => UptimeMonster_Update_Check::get_site_health(),
+				'site_info'   => UptimeMonster_Debug_Data::debug_data(),
 			];
 		}
 
