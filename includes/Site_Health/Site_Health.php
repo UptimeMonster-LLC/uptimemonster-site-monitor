@@ -59,14 +59,23 @@ class Site_Health {
 			if ( is_string( $test['test'] ) ) {
 				// Check if this test has a REST API endpoint.
 				if ( isset( $test['has_rest'] ) && $test['has_rest'] ) {
-					$result_fetch = wp_remote_get(
-						$test['test'],
-						[
-							'body' => [
-								'_wpnonce' => wp_create_nonce( 'wp_rest' ),
-							],
-						]
-					);
+					if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
+						$result_fetch = vip_safe_wp_remote_get( $test['test'],
+							[
+								'body' => [
+									'_wpnonce' => wp_create_nonce( 'wp_rest' ),
+								],
+							] );
+					} else {
+						$result_fetch = wp_remote_get( // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
+							$test['test'],
+							[
+								'body' => [
+									'_wpnonce' => wp_create_nonce( 'wp_rest' ),
+								],
+							]
+						);
+					}
 				} else {
 					$result_fetch = wp_remote_post(
 						admin_url( 'admin-ajax.php' ),
@@ -102,17 +111,18 @@ class Site_Health {
 
 		return [
 			'version' => '1.0.5',
-			'data' => $results,
+			'data'    => $results,
 		];
 	}
 
 	/**
 	 * @param $callback
 	 *
-	 * @return mixed|void
+	 * @return mixed
 	 */
 	private static function perform_test( $callback ) {
-		return apply_filters( 'site_status_test_result', call_user_func( $callback ) );
+		// Core triggers site_status_test_result filter hook on output of test callback.
+		return call_user_func( $callback );
 	}
 }
 

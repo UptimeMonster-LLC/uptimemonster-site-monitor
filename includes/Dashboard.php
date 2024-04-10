@@ -113,7 +113,6 @@ class Dashboard {
 		// Disconnect api.
 		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && 'disconnect-api' === $_GET['action'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'umon-disconnect-api' ) ) {
-
 				$client = UptimeMonster_Client::get_instance();
 				if ( $client->has_keys() ) {
 					$client->send_log( [
@@ -220,6 +219,15 @@ class Dashboard {
 	}
 
 	public function settings_page() {
+		$api_key    = '';
+		$api_secret = '';
+		if ( $this->is_connected() ) {
+			$api_keys = get_option( 'uptimemonster_api_keys', [] );
+			if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
+				$api_key    = $api_keys['api_key'];
+				$api_secret = $api_keys['api_secret'];
+			}
+		}
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline">
@@ -231,16 +239,7 @@ class Dashboard {
 				<?php wp_nonce_field( 'uptimemonster-site-monitor-settings' ); ?>
 				<table class="form-table" role="presentation">
 					<tbody>
-					<?php if ( $this->is_connected() ) {
-						$api_keys = get_option( 'uptimemonster_api_keys', [] );
-						if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
-							$api_key    = $api_keys['api_key'];
-							$api_secret = $api_keys['api_secret'];
-						} else {
-							$api_key    = '';
-							$api_secret = '';
-						}
-					?>
+					<?php if ( $this->is_connected() ) { ?>
 					<tr>
 						<th scope="row"><label for="umon-api-key"><?php esc_html_e( 'Api Key', 'uptimemonster-site-monitor' ); ?></label></th>
 						<td><input type="text" id="umon-api-key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="none" readonly></td>
@@ -279,7 +278,7 @@ class Dashboard {
 							<p><?php printf(
 								/* translators: %s: Signup link */
 									esc_html__( 'Signup now on %s for free and start monitoring your site.', 'uptimemonster-site-monitor' ),
-									'<a href="https://uptimemonster.com/pricing/" target="_blank" rel="noopener">' . esc_html__( 'UptimeMonster', 'uptimemonster-site-monitor' ) . '</a>',
+									'<a href="https://uptimemonster.com/pricing/" target="_blank" rel="noopener">' . esc_html__( 'UptimeMonster', 'uptimemonster-site-monitor' ) . '</a>'
 								); ?></p>
 						</td>
 					</tr>

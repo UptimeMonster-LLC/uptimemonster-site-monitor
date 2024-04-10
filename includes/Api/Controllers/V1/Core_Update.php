@@ -49,8 +49,7 @@ class Core_Update extends Controller_Base {
 			$this->namespace,
 			$this->rest_base . '/update', [
 				[
-					//'methods'             => WP_REST_Server::CREATABLE,
-					'methods'             => WP_REST_Server::READABLE,
+					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'run_core_updater' ],
 					'permission_callback' => [ $this, 'get_route_access' ],
 					'args'                => [
@@ -151,13 +150,10 @@ class Core_Update extends Controller_Base {
 					];
 				}
 			} else {
-				if ( ! empty( $from_api->updates ) ) {
-					list( $update ) = $from_api->updates;
-					foreach ( $from_api->updates as $_update ) {
-						if ( 'upgrade' === $_update->response ) {
-							$update = $_update;
-							break;
-						}
+				foreach ( $from_api->updates as $_update ) {
+					if ( 'upgrade' === $_update->response ) {
+						$update = $_update;
+						break;
 					}
 				}
 			}
@@ -237,12 +233,11 @@ class Core_Update extends Controller_Base {
 			$wpdb->suppress_errors();
 
 			// WP upgrade expects `$_SERVER['HTTP_HOST']` to be set in `wp_guess_url()`, otherwise get PHP notice.
-			/* @see wp_guess_url() */
 			if ( ! isset( $_SERVER['HTTP_HOST'] ) ) {
 				// As it will be running on already installed WordPress, we can just get value from db;
 				// Remove url scheme and the trailing slash, keep everything else (can be a sub-dir).
 
-				$site_host = preg_replace( '#^\w+://#', '', site_url() );
+				$site_host            = preg_replace( '#^\w+://#', '', site_url() );
 				$_SERVER['HTTP_HOST'] = rtrim( $site_host, '/' );
 			}
 
@@ -345,7 +340,7 @@ class Core_Update extends Controller_Base {
 
 				if ( file_exists( ABSPATH . $file ) ) {
 					unlink( ABSPATH . $file ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_unlink
-					$count ++;
+					++$count;
 				}
 			}
 		}
@@ -384,20 +379,16 @@ class Core_Update extends Controller_Base {
 	 * @return ?string
 	 */
 	private static function get_wp_details() {
-		global $wp_filesystem;
-
 		// Load file systeam.
-		uptimemonster_get_file_systeam();
+		$fs = uptimemonster_get_file_systeam();
 
 		$versions_path = ABSPATH . 'wp-includes/version.php';
 
-		if ( ! $wp_filesystem->is_readable( $versions_path ) ) {
+		if ( ! $fs->is_readable( $versions_path ) ) {
 			return null;
 		}
 
-		$version_content = $wp_filesystem->get_contents( $versions_path );
-
-		// 'wp_version', 'wp_db_version', 'tinymce_version', 'wp_local_package'
+		$version_content = $fs->get_contents( $versions_path );
 
 		return self::find_var( 'wp_version', $version_content );
 	}
@@ -472,7 +463,7 @@ class Core_Update extends Controller_Base {
 			sprintf(
 				/* translators: %s: Argument type string. */
 				esc_html__( 'Unsupported argument type passed. Argument 1 must be one of string, WP_Error, Exception (or any Throwable), %s given.', 'uptimemonster-site-monitor' ),
-				gettype( $errors )
+				esc_html( gettype( $errors ) )
 			)
 		);
 	}

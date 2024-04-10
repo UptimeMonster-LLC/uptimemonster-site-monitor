@@ -27,10 +27,6 @@ phpunit.xml
 phpunit.xml.dist
 multisite.xml
 multisite.xml.dist
-.phpcs.xml
-phpcs.xml
-.phpcs.xml.dist
-phpcs.xml.dist
 README.md
 webpack.config.js
 wp-cli.local.yml
@@ -40,3 +36,8 @@ node_modules
 *.sql
 *.tar.gz
 *.zip
+.valetrc
+.phpcs.xml
+phpcs.xml
+.phpcs.xml.dist
+phpcs.xml.dist

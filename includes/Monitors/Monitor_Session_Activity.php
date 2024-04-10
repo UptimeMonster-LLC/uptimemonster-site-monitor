@@ -53,7 +53,7 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 
 		$this->log_activity(
 			$action,
-			$user->ID, // @phpstan-ignore-line
+			$user->ID,
 			'session',
 			uptimemonster_get_user_display_name( $user ),
 			array_merge( [

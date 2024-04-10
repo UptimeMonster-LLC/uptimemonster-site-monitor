@@ -58,10 +58,10 @@ abstract class Controller_Base extends WP_REST_Controller {
 
 		if ( empty( $data ) ) {
 			$data = '';
-		} else {
-			if ( ! is_string( $data ) ) {
-				$data = wp_json_encode( $data );
-			}
+		}
+
+		if ( ! is_string( $data ) ) {
+			$data = wp_json_encode( $data, JSON_UNESCAPED_SLASHES );
 		}
 
 		$is_valid = hash_equals(
@@ -90,7 +90,7 @@ abstract class Controller_Base extends WP_REST_Controller {
 		if ( null === self::$extra_data ) {
 			self::$extra_data = [
 				'site_health' => Site_Health::get_reports(),
-				'site_info'   => Debug_Data::debug_data(),
+				'site_info'   => Debug_Data::get_report(),
 			];
 		}
 

@@ -36,13 +36,19 @@ if ( ! class_exists( '\WP_Debug_Data' ) ) {
 
 class Debug_Data extends WP_Debug_Data {
 
+	/**
+	 * @param $info
+	 *
+	 * @return void
+	 * @see get_core_updates()
+	 */
 	protected static function process_core_update_status( &$info ) {
 		$fields = $info['wp-core']['fields'];
 
 		unset( $info['wp-core']['fields'], $fields['version'] );
 
 		$core_version = get_bloginfo( 'version' );
-		$from_api     = get_site_transient( 'update_core' ); /* @see get_core_updates() */
+		$from_api     = get_site_transient( 'update_core' );
 
 		$info['wp-core']['version']        = $core_version;
 		$info['wp-core']['latest_version'] = $core_version;
@@ -53,7 +59,7 @@ class Debug_Data extends WP_Debug_Data {
 			foreach ( $from_api->updates as $update ) {
 				if ( 'upgrade' === $update->response ) {
 					$info['wp-core']['latest_version'] = $update->version;
-					$info['wp-core']['update'] = version_compare( $core_version, $update->version, '<' );
+					$info['wp-core']['update']         = version_compare( $core_version, $update->version, '<' );
 					break;
 				}
 			}
@@ -78,6 +84,7 @@ class Debug_Data extends WP_Debug_Data {
 				$_dropin[ $dropin_key ][0],
 				$value['description']
 			) );
+			// Assign field value.
 			$info['wp-dropins']['fields'][] = [
 				'label' => $dropin['Name'],
 				'slug'  => sanitize_text_field( $dropin_key ),
@@ -340,7 +347,7 @@ class Debug_Data extends WP_Debug_Data {
 				'author_website' => $theme->display( 'AuthorURI' ),
 				'parent_theme'   => ! $theme->parent_theme ? null : [
 					'name' => $theme->parent_theme,
-					'slug' => $theme->get_template()
+					'slug' => $theme->get_template(),
 				],
 				'theme_features' => null,
 				'theme_path'     => get_template_directory(),
@@ -406,9 +413,8 @@ class Debug_Data extends WP_Debug_Data {
 	 * @throws ImagickException
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 */
-	public static function debug_data(): array {
-		$info   = parent::debug_data();
-
+	public static function get_report(): array {
+		$info = parent::debug_data();
 		// WP Core Update.
 		self::process_core_update_status( $info );
 		// Dropins data.

@@ -30,7 +30,6 @@ class Monitor_Options_Activity extends Activity_Monitor_Base {
 	}
 
 	protected function maybe_log_option( $action, $option, $value = null, $new_value = null ) {
-
 		/**
 		 * Should report activity?
 		 *
@@ -43,17 +42,17 @@ class Monitor_Options_Activity extends Activity_Monitor_Base {
 		return (bool) apply_filters( 'uptimemonster_should_log_options_activity', true, $option, $action, $value, $new_value );
 	}
 
-	public function log_on_change( $option, $old = null, $new = null ) {
+	public function log_on_change( $option, $old_value = null, $new_value = null ) {
 		$action = current_filter();
 		if ( 'added_option' === $action ) {
 			$action = Activity_Monitor_Base::ITEM_CREATED;
-		} else if ( 'updated_option' === $action ) {
+		} elseif ( 'updated_option' === $action ) {
 			$action = Activity_Monitor_Base::ITEM_UPDATED;
 		} else {
 			$action = Activity_Monitor_Base::ITEM_DELETED;
 		}
 
-		if ( ! $this->maybe_log_option( $action, $option, $old, $new ) ) {
+		if ( ! $this->maybe_log_option( $action, $option, $old_value, $new_value ) ) {
 			return;
 		}
 

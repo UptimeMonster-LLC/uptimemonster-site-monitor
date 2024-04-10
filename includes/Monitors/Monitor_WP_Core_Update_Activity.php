@@ -61,7 +61,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		if ( ! empty( $_GET['action'] ) && isset( $_POST['upgrade'] ) && in_array( sanitize_text_field( $_GET['action'] ), [ 'do-core-upgrade', 'do-core-reinstall' ] ) && wp_verify_nonce( sanitize_text_field( $_REQUEST['_wpnonce'] ), 'upgrade-core' ) ) {
+		if ( isset( $_POST['upgrade'], $_REQUEST['_wpnonce'] ) && ! empty( $_GET['action'] ) && in_array( sanitize_text_field( $_GET['action'] ), [ 'do-core-upgrade', 'do-core-reinstall' ] ) && wp_verify_nonce( sanitize_text_field( $_REQUEST['_wpnonce'] ), 'upgrade-core' ) ) {
 			$action = sanitize_text_field( $_GET['action'] );
 			uptimemonster_switch_to_english();
 			/* translators: 1. WordPress Version. */

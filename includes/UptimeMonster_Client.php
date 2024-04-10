@@ -43,7 +43,7 @@ class UptimeMonster_Client {
 	 * @return $this
 	 */
 	public function reload_api_keys() {
-		$api_keys = get_option( 'uptimemonster_api_keys', [] );
+		$api_keys = (array) get_option( 'uptimemonster_api_keys', [] );
 
 		if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
 			$this->api_key    = $api_keys['api_key'];
@@ -179,7 +179,7 @@ class UptimeMonster_Client {
 			$response = wp_remote_request( $request_url, $args );
 		} elseif ( function_exists( 'vip_safe_wp_remote_request' ) ) {
 			/** @noinspection PhpUndefinedFunctionInspection */
-			$response = vip_safe_wp_remote_request( $request_url, '', 3, 5, 20, $args ); // @phpstan-ignore-line
+			$response = vip_safe_wp_remote_request( $request_url, '', 3, 5, 20, $args );
 		} else {
 			$response = wp_safe_remote_request( $request_url, $args );
 		}
@@ -237,10 +237,10 @@ class UptimeMonster_Client {
 
 		if ( empty( $data ) ) {
 			$data = '';
-		} else {
-			if ( ! is_string( $data ) ) {
-				$data = wp_json_encode( $data, JSON_UNESCAPED_SLASHES );
-			}
+		}
+
+		if ( ! is_string( $data ) ) {
+			$data = wp_json_encode( $data, JSON_UNESCAPED_SLASHES );
 		}
 
 		// Signature Timestamp.

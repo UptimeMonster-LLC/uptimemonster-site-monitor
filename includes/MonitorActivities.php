@@ -72,7 +72,7 @@ class MonitorActivities {
 			/**
 			 * @var Activity_Monitor_Base $monitor
 			 */
-			$monitor = call_user_func( [ $monitor, 'get_instance' ] ); // @phpstan-ignore-line
+			$monitor = call_user_func( [ $monitor, 'get_instance' ] );
 			$monitor->init();
 		}
 	}

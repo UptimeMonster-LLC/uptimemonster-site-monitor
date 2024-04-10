@@ -20,7 +20,6 @@ interface Activity_Monitor_Interface {
 	public static function get_instance();
 
 	public function init();
-
 }
 
 // End of file Activity_Monitor_Interface.php.

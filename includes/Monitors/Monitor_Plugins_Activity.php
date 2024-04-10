@@ -131,7 +131,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 
 				// @XXX maybe we can remove this.
 				$hash                  = md5( $path );
-				$this->plugin[ $hash ] = uptimemonster_get_plugin_data( $upgrader->skin->result['local_destination'] . '/' . $path, false, false ); // @phpstan-ignore-line
+				$this->plugin[ $hash ] = uptimemonster_get_plugin_data( $upgrader->skin->result['local_destination'] . '/' . $path, false, false );
 
 				$this->log_plugin( Activity_Monitor_Base::ITEM_INSTALLED, $path );
 
@@ -162,20 +162,18 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 	 * @see wp_edit_theme_plugin_file()
 	 */
 	public function on_plugin_file_modify( $location = null ) {
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		// phpcs:enable
 		if (
 			! empty( $_POST['action'] ) &&
 			(
-				( 'wp_redirect' === current_filter() && $location && false !== strpos( $location, 'plugin-editor.php' ) && 'update' === $_REQUEST['action'] )
+				( 'wp_redirect' === current_filter() && $location && false !== strpos( $location, 'plugin-editor.php' ) && 'update' === $_REQUEST['action'] ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 				||
 				( 'edit-theme-plugin-file' === $_POST['action'] && ! empty( $_POST['plugin'] ) && ! empty( $_POST['file'] ) )
 			)
 		) {
 			$file = sanitize_text_field( wp_unslash( $_POST['file'] ) );
-			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'edit-plugin_' . $file ) ) {
+			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'edit-plugin_' . $file ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 				$plugin = sanitize_text_field( wp_unslash( $_POST['plugin'] ) );
-				$_file  = WP_PLUGIN_DIR . $plugin; // @phpstan-ignore-line
+				$_file  = WP_PLUGIN_DIR . $plugin;
 
 				if ( $this->maybe_log_plugin( Activity_Monitor_Base::ITEM_UPDATED, $plugin, $file ) && file_exists( $_file ) ) {
 					uptimemonster_switch_to_english();
@@ -205,7 +203,7 @@ class Monitor_Plugins_Activity extends Activity_Monitor_Base {
 		$hash = md5( $plugin_file );
 
 		if ( ! isset( $this->plugin[ $hash ] ) ) {
-			$real_file = WP_PLUGIN_DIR . '/' . $plugin_file; // @phpstan-ignore-line
+			$real_file = WP_PLUGIN_DIR . '/' . $plugin_file;
 
 			$this->plugin[ $hash ] = uptimemonster_get_plugin_data( $real_file );
 		}

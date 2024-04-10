@@ -96,7 +96,7 @@ function uptimemonster_get_current_time(): string {
 /**
  * Get current actor data.
  *
- * @return array|string[]
+ * @return array<string, array<string, string>|int|string>
  */
 function uptimemonster_get_current_actor(): array {
 	if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
@@ -120,7 +120,7 @@ function uptimemonster_get_current_actor(): array {
 		$actor     = [
 			'type'  => 'rest-api',
 			'extra' => [
-				'method'    => isset( $_SERVER['REQUEST_METHOD'] )? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD']  ) ) : 'N/A',
+				'method'    => isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'N/A',
 				'namespace' => $namespace,
 				'route'     => $route,
 			],
@@ -196,7 +196,7 @@ function uptimemonster_get_user( $identity, $field = null ) {
  * @return string
  */
 function uptimemonster_get_user_display_name( WP_User $user ): string {
-	$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) ); // @phpstan-ignore-line
+	$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) );
 
 	if ( ! empty( $name ) ) {
 		return $name;
@@ -248,7 +248,11 @@ function uptimemonster_get_ip_address(): string {
 
 			if ( strpos( $ip, ',' ) ) {
 				/** @noinspection PhpPregSplitWithoutRegExpInspection */
-				$ip = (string) rest_is_ip_address( trim( current( preg_split( '/,/', $ip ) ) ) );
+				$ip = preg_split( '/,/', $ip );
+				if ( ! is_array( $ip ) ) {
+					break;
+				}
+				$ip = (string) rest_is_ip_address( trim( current( $ip ) ) );
 			}
 
 			break;
@@ -283,7 +287,7 @@ function uptimemonster_get_plugin_data( string $plugin_file ) {
 /**
  * Get all plugins data
  *
- * @return array|array[]
+ * @return array<array<string,bool|null|string|int>>
  */
 function uptimemonster_get_all_plugins() {
 	if ( ! function_exists( 'get_plugins' ) ) {
@@ -325,7 +329,7 @@ function uptimemonster_get_all_plugins() {
 	uptimemonster_restore_locale();
 
 	if ( isset( $data['fatal-error-handler.php'] ) || isset( $data['uptimemonster-site-monitor/uptimemonster-site-monitor.php'] ) ) {
-		$data['fatal-error-handler.php']['isRoxMon'] = true;
+		$data['fatal-error-handler.php']['isUptimeMonster'] = true;
 	}
 
 	return $data;
@@ -334,7 +338,7 @@ function uptimemonster_get_all_plugins() {
 /**
  * Get All theme with data.
  *
- * @return array|array[]
+ * @return array<array<string,bool|null|string>>
  */
 function uptimemonster_get_all_themes() {
 	if ( ! function_exists( 'wp_get_themes' ) ) {
@@ -358,7 +362,7 @@ function uptimemonster_get_all_themes() {
 /**
  * @param WP_Theme $theme
  *
- * @return array
+ * @return array<string,bool|string|null>
  */
 function uptimemonster_get_theme_data_headers( $theme ) {
 	$headers = [
@@ -391,13 +395,27 @@ function uptimemonster_get_theme_data_headers( $theme ) {
 	return $data;
 }
 
+/**
+ * @param string $since
+ * @param string $operator
+ *
+ * @return bool
+ */
 function uptimemonster_wp_version_compare( $since, $operator ) {
-	$wp_version = str_replace( '-src', '', $GLOBALS['wp_version'] );
+	$wp_version = str_replace( '-src', '', $GLOBALS['wp_version'] ); // @phpstan-ignore-line
 	$since      = str_replace( '-src', '', $since );
 	return version_compare( $wp_version, $since, $operator );
 }
 
-function uptimemonster_parse_boolval( $maybe_bool ) {
+/**
+ * @param string|bool|numeric|null $maybe_bool
+ *
+ * @return bool
+ */
+function uptimemonster_parse_boolval( $maybe_bool ): bool {
+	if ( null === $maybe_bool ) {
+		return false;
+	}
 	if ( is_bool( $maybe_bool ) ) {
 		return $maybe_bool;
 	}
@@ -411,9 +429,14 @@ function uptimemonster_parse_boolval( $maybe_bool ) {
 	return 'true' === $maybe_bool || 'yes' === $maybe_bool || 'on' === $maybe_bool;
 }
 
-function uptimemonster_prepare_plugin_data( $raw_data ): array {
+/**
+ * @param array<string,string>  $raw_data
+ *
+ * @return array<string,bool|string|null>
+ */
+function uptimemonster_prepare_plugin_data( array $raw_data ): array {
 	$data = [
-		'author'      => ! empty( $raw_data['Author'] ) ? $raw_data['Author'] : ( ! empty( $raw_data['AuthorName'] ) ? $raw_data['AuthorName'] :  'unavailable' ),
+		'author'      => ! empty( $raw_data['Author'] ) ? $raw_data['Author'] : ( ! empty( $raw_data['AuthorName'] ) ? $raw_data['AuthorName'] : 'unavailable' ),
 		'version'     => ! empty( $raw_data['Version'] ) ? $raw_data['Version'] : 'unavailable',
 		'plugin_uri'  => ! empty( $raw_data['PluginURI'] ) ? $raw_data['PluginURI'] : '',
 		'author_uri'  => ! empty( $raw_data['AuthorURI'] ) ? $raw_data['AuthorURI'] : '',

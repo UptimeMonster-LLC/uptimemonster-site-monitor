@@ -47,46 +47,46 @@ class Monitor_Deprecated_Activity extends Activity_Monitor_Base {
 		return (bool) apply_filters( 'uptimemonster_should_log_deprecated_activity', true, $which );
 	}
 
-	protected function log_deprecated_function( $function, $replacement, $version ) {
+	protected function log_deprecated_function( $function_name, $replacement, $version ) {
 		if ( ! $this->maybe_log_deprecated( 'function' ) ) {
 			return;
 		}
 
 		if ( $replacement ) {
-			$message = sprintf( '%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', $function, $version, $replacement );
+			$message = sprintf( '%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', $function_name, $version, $replacement );
 		} else {
-			$message = sprintf( '%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.', $function, $version );
+			$message = sprintf( '%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.', $function_name, $version );
 		}
 
-		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'function', $message, compact( $function, $replacement, $version ) );
+		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'function', $message, compact( $function_name, $replacement, $version ) );
 	}
 
-	protected function log_deprecated_class( $class, $version, $parent_class ) {
+	protected function log_deprecated_class( $class_name, $version, $parent_class ) {
 		if ( ! $this->maybe_log_deprecated( 'class' ) ) {
 			return;
 		}
 
 		if ( $parent_class ) {
-			$message = sprintf( 'The called constructor method for %1$s in %2$s is <strong>deprecated</strong> since version %3$s! Use %4$s instead.', $class, $parent_class, $version, '<code>__construct()</code>' );
+			$message = sprintf( 'The called constructor method for %1$s in %2$s is <strong>deprecated</strong> since version %3$s! Use %4$s instead.', $class_name, $parent_class, $version, '<code>__construct()</code>' );
 		} else {
-			$message = sprintf( 'The called constructor method for %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', $class, $version, '<code>__construct()</code>' );
+			$message = sprintf( 'The called constructor method for %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', $class_name, $version, '<code>__construct()</code>' );
 		}
 
-		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'class', $message, compact( $class, $version, $parent_class ) );
+		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'class', $message, compact( $class_name, $version, $parent_class ) );
 	}
 
-	protected function log_deprecated_argument( $function, $message, $version ) {
+	protected function log_deprecated_argument( $function_name, $message, $version ) {
 		if ( ! $this->maybe_log_deprecated( 'argument' ) ) {
 			return;
 		}
 
 		if ( $message ) {
-			$message = sprintf( '%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s! %3$s', $function, $version, $message );
+			$message = sprintf( '%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s! %3$s', $function_name, $version, $message );
 		} else {
-			$message = sprintf( '%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s with no alternative available.', $function, $version );
+			$message = sprintf( '%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s with no alternative available.', $function_name, $version );
 		}
 
-		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'argument', $message, compact( $function, $version ) );
+		$this->log_activity( Activity_Monitor_Base::ITEM_DEPRECATED, 0, 'argument', $message, compact( $function_name, $version ) );
 	}
 
 	protected function log_deprecated_hook( $hook, $replacement, $version, $message ) {

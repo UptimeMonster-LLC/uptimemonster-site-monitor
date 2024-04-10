@@ -86,7 +86,6 @@ class Health_Check extends Controller_Base {
 			'site_info'   => $response['extra']['site_info'] ?? [],
 		] );
 	}
-
 }
 
 // End of file Health_Check.php.

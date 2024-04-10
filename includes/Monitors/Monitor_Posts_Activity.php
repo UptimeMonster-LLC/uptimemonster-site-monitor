@@ -102,7 +102,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 			Activity_Monitor_Base::ITEM_UPDATED,
 			$post_ID,
 			$post->post_type,
-			$this->get_name( $post ), // @phpstan-ignore-line
+			$this->get_name( $post ),
 			[ 'status' => $post->post_status ]
 		);
 	}
@@ -165,10 +165,10 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 	 * @return string
 	 */
 	protected function get_name( $post ) {
-		$post = get_post( $post ); // @phpstan-ignore-line
+		$post = get_post( $post );
 
 		/** @noinspection PhpTernaryExpressionCanBeReducedToShortVersionInspection */
-		return $post->post_title ? $post->post_title : 'no_title'; // @phpstan-ignore-line
+		return $post->post_title ? $post->post_title : 'no_title';
 	}
 }
 

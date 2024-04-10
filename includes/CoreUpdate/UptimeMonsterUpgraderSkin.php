@@ -47,7 +47,7 @@ class UptimeMonsterUpgraderSkin extends WP_Upgrader_Skin {
 		} elseif ( is_wp_error( $errors ) && $errors->has_errors() ) {
 			foreach ( $errors->get_error_messages() as $message ) {
 				if ( $errors->get_error_data() && is_string( $errors->get_error_data() ) ) {
-					$errors = $this->process_feedback( $message . ' ' . esc_html( strip_tags( $errors->get_error_data() ) ) );
+					$errors = $this->process_feedback( $message . ' ' . esc_html( wp_strip_all_tags( $errors->get_error_data() ) ) );
 				} else {
 					$errors = $this->process_feedback( $message );
 				}
@@ -80,14 +80,14 @@ class UptimeMonsterUpgraderSkin extends WP_Upgrader_Skin {
 	 * @param string $feedback Message data.
 	 * @param array $args Optional text replacements.
 	 */
-	public function process_feedback( $feedback, $args ) { // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ellipsisFound
+	public function process_feedback( $feedback, $args = [] ) { // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ellipsisFound
 		if ( isset( $this->upgrader->strings[ $feedback ] ) ) {
 			$feedback = $this->upgrader->strings[ $feedback ];
 		}
 
 		if ( str_contains( $feedback, '%' ) ) {
 			if ( $args ) {
-				$args     = array_map( 'strip_tags', $args );
+				$args     = array_map( 'wp_strip_all_tags', $args );
 				$args     = array_map( 'esc_html', $args );
 				$feedback = vsprintf( $feedback, $args );
 			}
@@ -100,7 +100,7 @@ class UptimeMonsterUpgraderSkin extends WP_Upgrader_Skin {
 	public function get_feedbacks(): array {
 		return [
 			'messages' => $this->messages,
-			'errors' => $this->errors,
+			'errors'   => $this->errors,
 		];
 	}
 }

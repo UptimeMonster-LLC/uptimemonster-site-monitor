@@ -77,8 +77,8 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 		uptimemonster_switch_to_english();
 		/* translators: %1$s New Theme Name, %2$s: Old Theme Name */
 		$name = sprintf( esc_html__( 'Switched to %1$s theme from %2$s', 'uptimemonster-site-monitor' ),
-			$new_theme->get( 'Name' ), // @phpstan-ignore-line
-			$old_theme->get( 'Name' ) // @phpstan-ignore-line
+			$new_theme->get( 'Name' ),
+			$old_theme->get( 'Name' )
 		);
 		uptimemonster_restore_locale();
 
@@ -241,7 +241,7 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 			if ( isset( $extra['bulk'] ) && true == $extra['bulk'] ) {
 				$slugs = $extra['themes'];
 			} else {
-				$slugs = array( $upgrader->skin->theme ); // @phpstan-ignore-line
+				$slugs = array( $upgrader->skin->theme );
 			}
 
 			foreach ( $slugs as $slug ) {
@@ -285,16 +285,17 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 		// phpcs:enable
 		if (
 			! empty( $_POST['action'] ) &&
+			! empty( $_POST['nonce'] ) &&
 			(
-				( 'wp_redirect' === current_filter() && $location && false !== strpos( $location, 'theme-editor.php' ) && 'update' === $_REQUEST['action'] )
+				( 'wp_redirect' === current_filter() && $location && false !== strpos( $location, 'theme-editor.php' ) && 'update' === $_REQUEST['action'] ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 				||
 				( 'edit-theme-plugin-file' === $_POST['action'] && ! empty( $_POST['theme'] ) && ! empty( $_POST['file'] ) )
 			)
 		) {
 			$stylesheet = sanitize_text_field( wp_unslash( $_POST['theme'] ) );
-			$file  = sanitize_text_field( wp_unslash( $_POST['file'] ) );
+			$file       = sanitize_text_field( wp_unslash( $_POST['file'] ) );
 			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'edit-theme_' . $stylesheet . '_' . $file ) ) {
-				$_file = WP_PLUGIN_DIR . $stylesheet; // @phpstan-ignore-line
+				$_file = WP_PLUGIN_DIR . $stylesheet;
 				if ( $this->maybe_log_theme( Activity_Monitor_Base::ITEM_UPDATED, $stylesheet, $file ) && file_exists( $_file ) ) {
 					uptimemonster_switch_to_english();
 					/* translators: %1$s. Theme Name, %2$s. File path. */

@@ -35,10 +35,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
  */
 
-use UptimeMonster\SiteMonitor\CoreUpdate\UptimeMonsterCoreUpgrader;
 use UptimeMonster\SiteMonitor\UptimeMonster_Site_Monitor;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -102,7 +100,7 @@ if ( ! file_exists( UPTIMEMONSTER_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
  * @return void
  * @since 1.2.0
  */
-function uptimemonster_declare_WC_HPOS_compatibility() {
+function uptimemonster_declare_wc_hpos_compatibility() {
 	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
 		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 	}
@@ -111,10 +109,11 @@ function uptimemonster_declare_WC_HPOS_compatibility() {
 require_once UPTIMEMONSTER_PLUGIN_PATH . 'vendor/autoload.php';
 require_once UPTIMEMONSTER_PLUGIN_PATH . 'includes/helpers.php';
 
-add_action( 'before_woocommerce_init', 'uptimemonster_declare_WC_HPOS_compatibility' );
+add_action( 'before_woocommerce_init', 'uptimemonster_declare_wc_hpos_compatibility' );
 
 /**
  * Plugin Initializer.
+ *
  * @return UptimeMonster_Site_Monitor
  */
 function uptimemonster_site_monitor() {
