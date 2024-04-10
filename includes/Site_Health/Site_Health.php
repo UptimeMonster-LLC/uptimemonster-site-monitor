@@ -33,6 +33,7 @@ class Site_Health {
 		}
 
 		foreach ( $tests['direct'] as $key => $test ) {
+			$result = false;
 			if ( is_string( $test['test'] ) ) {
 				$test_function = sprintf( 'get_test_%s', $test['test'] );
 
@@ -48,10 +49,6 @@ class Site_Health {
 		}
 
 		foreach ( $tests['async'] as $key => $test ) {
-			if ( ! empty( $test['skip_cron'] ) ) {
-				continue;
-			}
-
 			// Local endpoints may require authentication, so asynchronous tests can pass a direct test runner as well.
 			if ( ! empty( $test['async_direct_test'] ) && is_callable( $test['async_direct_test'] ) ) {
 				// This test is callable, do so and continue to the next asynchronous check.
@@ -95,8 +92,8 @@ class Site_Health {
 						'status' => 'recommended',
 						'label'  => sprintf(
 							/* translators: %s WP-Health test item label. */
-							esc_html__( '%s test is unavailable', 'uptimemonster-site-monitor' ),
-							$test['label']
+							esc_html__( 'Unable to perform “%s” test', 'uptimemonster-site-monitor' ),
+							esc_html( $test['label'] )
 						),
 					);
 				}

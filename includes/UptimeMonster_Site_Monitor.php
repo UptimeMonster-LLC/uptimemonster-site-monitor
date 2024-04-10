@@ -125,11 +125,13 @@ final class UptimeMonster_Site_Monitor {
 	}
 
 	public static function is_wp_content_writable() {
-		return is_writable( WP_CONTENT_DIR ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_is_writable @phpstan-ignore-line,WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_is_writable
+		$fs = uptimemonster_get_file_systeam();
+		return $fs->is_writable( WP_CONTENT_DIR );
 	}
 
 	public static function is_drop_in_writable() {
-		return is_writable( self::$error_handler ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_is_writable
+		$fs = uptimemonster_get_file_systeam();
+		return $fs->is_writable( self::$error_handler );
 	}
 
 	public static function drop_in_need_update() {
@@ -144,25 +146,22 @@ final class UptimeMonster_Site_Monitor {
 		$old_version = self::drop_in_version();
 
 		if ( self::drop_in_need_update() ) {
+			$fs = uptimemonster_get_file_systeam();
 			// reset cache.
 			self::$error_handler_data = array();
 
 			self::remove_drop_in();
 
-			$file = file_get_contents( self::$error_handler_dist ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
-			$fp   = @fopen( self::$error_handler, 'w' ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged,WordPress.WP.AlternativeFunctions.file_system_read_fopen
-			if ( $fp ) {
-				fputs( $fp, (string) $file ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_fputs
-				fclose( $fp );
-			}
+			$fs->put_contents( self::$error_handler, $fs->get_contents( self::$error_handler_dist ) );
 
 			do_action( 'uptimemonster_error_logger_installed', $old_version, self::is_drop_in_installed() );
 		}
 	}
 
 	protected static function remove_drop_in() {
-		if ( file_exists( self::$error_handler ) ) {
-			@unlink( self::$error_handler ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+		$fs = uptimemonster_get_file_systeam();
+		if ( $fs->exists( self::$error_handler ) ) {
+			$fs->delete( self::$error_handler, false, 'f' );
 		}
 	}
 
@@ -172,8 +171,8 @@ final class UptimeMonster_Site_Monitor {
 	 * Note: the first-loaded translation file overrides any following ones if the same translation is present.
 	 *
 	 * Locales found in:
-	 *      - WP_LANG_DIR/woocommerce/woocommerce-LOCALE.mo
-	 *      - WP_LANG_DIR/plugins/woocommerce-LOCALE.mo
+	 *      - WP_LANG_DIR/uptimemonster-site-monitor/uptimemonster-site-monitor-LOCALE.mo
+	 *      - WP_LANG_DIR/plugins/uptimemonster-site-monitor-LOCALE.mo
 	 */
 	public function load_plugin_textdomain() {
 		if ( ! function_exists('determine_locale') ) {

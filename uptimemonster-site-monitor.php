@@ -38,6 +38,7 @@
  *
  */
 
+use UptimeMonster\SiteMonitor\CoreUpdate\UptimeMonsterCoreUpgrader;
 use UptimeMonster\SiteMonitor\UptimeMonster_Site_Monitor;
 
 if ( ! defined( 'ABSPATH' ) ) {

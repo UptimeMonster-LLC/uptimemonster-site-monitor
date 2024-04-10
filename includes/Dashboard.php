@@ -100,7 +100,7 @@ class Dashboard {
 		}
 
 		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && self::DROP_IN_ACTION === $_GET['action'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), self::DROP_IN_ACTION ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), self::DROP_IN_ACTION ) ) {
 				UptimeMonster_Site_Monitor::maybe_install_drop_in();
 
 				$this->add_settings_status( esc_html__( 'Error Logger Drop-In Updated.', 'uptimemonster-site-monitor' ) );
@@ -112,7 +112,7 @@ class Dashboard {
 
 		// Disconnect api.
 		if ( isset( $_GET['action'], $_GET['_wpnonce'] ) && 'disconnect-api' === $_GET['action'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'umon-disconnect-api' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'umon-disconnect-api' ) ) {
 
 				$client = UptimeMonster_Client::get_instance();
 				if ( $client->has_keys() ) {
@@ -298,7 +298,7 @@ class Dashboard {
 											if ( UptimeMonster_Site_Monitor::drop_in_need_update() ) {
 												printf(
 												/* translators: 1. New Version Number, 2. Update URL */
-													esc_html__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													esc_html__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'uptimemonster-site-monitor' ),
 													esc_html( UptimeMonster_Site_Monitor::drop_in_version( false ) ),
 													esc_url( $install_url )
 												);
@@ -315,15 +315,17 @@ class Dashboard {
 											if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
 												printf(
 												/* translators: 1. Installation URL */
-													esc_html__( 'Click <a href="%s">here</a> to install the drop-in.', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													esc_html__( 'Click <a href="%s">here</a> to install the drop-in.', 'uptimemonster-site-monitor' ),
 													esc_url( $install_url )
 												);
 											} else {
 												printf(
-												/* translators: 1. Source file path. 2. Destination file path. */
-													esc_html__( 'Please copy <code>%1$s</code> into <code>%2$s</code> for enabling error monitoring', 'uptimemonster-site-monitor' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+												/* translators: 1: Source file path. 2: Destination file path. 3: Code tag opening. 4: Code tag closing. */
+													esc_html__( 'Please copy %3$s%1$s%4$s into %3$s%2$s%4$s for enabling error monitoring', 'uptimemonster-site-monitor' ),
 													esc_html( UptimeMonster_Site_Monitor::get_drop_in_dist_file() ),
-													esc_html( UptimeMonster_Site_Monitor::get_drop_in_file() )
+													esc_html( UptimeMonster_Site_Monitor::get_drop_in_file() ),
+													'<code>',
+													'</code>'
 												);
 											}
 											?></p>

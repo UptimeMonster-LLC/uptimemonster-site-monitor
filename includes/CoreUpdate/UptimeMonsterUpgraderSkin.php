@@ -7,6 +7,7 @@
 
 namespace UptimeMonster\SiteMonitor\CoreUpdate;
 
+use WP_Error;
 use WP_Upgrader_Skin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,63 +19,88 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * An Upgrader Skin for WordPress that only generates plain-text
  */
+#[AllowDynamicProperties]
 class UptimeMonsterUpgraderSkin extends WP_Upgrader_Skin {
 
-	public $api;
+	protected $messages = [];
+
+	protected $errors = [];
 
 	/**
 	 * Show error message.
 	 *
-	 * @param string $error Error message.
+	 * @param string|WP_Error $errors Error message.
 	 *
 	 * @return void
 	 */
-	public function error( $error ) {
-		if ( ! $error ) {
+	public function error( $errors ) {
+		if ( ! $errors ) {
 			return;
 		}
 
-		if ( is_string( $error ) && isset( $this->upgrader->strings[ $error ] ) ) {
-			$error = $this->upgrader->strings[ $error ];
-		}
+		if ( is_string( $errors ) ) {
+			$errors = $this->process_feedback( $errors );
+			if ( ! $errors ) {
+				return;
+			}
+			$this->errors[] = $errors;
+		} elseif ( is_wp_error( $errors ) && $errors->has_errors() ) {
+			foreach ( $errors->get_error_messages() as $message ) {
+				if ( $errors->get_error_data() && is_string( $errors->get_error_data() ) ) {
+					$errors = $this->process_feedback( $message . ' ' . esc_html( strip_tags( $errors->get_error_data() ) ) );
+				} else {
+					$errors = $this->process_feedback( $message );
+				}
 
-		// TODO: show all errors, not just the first one
-		//WP_CLI::warning( $error );
+				if ( ! $errors ) {
+					continue;
+				}
+
+				$this->errors[] = $errors;
+			}
+		}
 	}
 
 	/**
-	 * @param string $string
-	 * @param mixed  ...$args Optional text replacements.
+	 * @param string $feedback Message data.
+	 * @param mixed ...$args Optional text replacements.
 	 */
-	public function feedback( $string, ...$args ) { // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ellipsisFound
-		$args_array = [];
-		foreach ( $args as $arg ) {
-			$args_array[] = $args;
+	public function feedback( $feedback, ...$args ) { // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ellipsisFound
+		$feedback = $this->process_feedback( $feedback, $args );
+		if ( ! $feedback ) {
+			return;
 		}
 
-		$this->process_feedback( $string, $args );
+		$this->messages[] = $feedback;
 	}
 
 	/**
 	 * Process the feedback collected through the compat indirection.
 	 *
-	 * @param string $string String to use as feedback message.
-	 * @param array $args Array of additional arguments to process.
+	 * @param string $feedback Message data.
+	 * @param array $args Optional text replacements.
 	 */
-	public function process_feedback( $string, $args ) {
-		if ( isset( $this->upgrader->strings[ $string ] ) ) {
-			$string = $this->upgrader->strings[ $string ];
+	public function process_feedback( $feedback, $args ) { // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ellipsisFound
+		if ( isset( $this->upgrader->strings[ $feedback ] ) ) {
+			$feedback = $this->upgrader->strings[ $feedback ];
 		}
 
-		if ( ! empty( $args ) && strpos( $string, '%' ) !== false ) {
-			$string = vsprintf( $string, $args );
+		if ( str_contains( $feedback, '%' ) ) {
+			if ( $args ) {
+				$args     = array_map( 'strip_tags', $args );
+				$args     = array_map( 'esc_html', $args );
+				$feedback = vsprintf( $feedback, $args );
+			}
 		}
 
-		if ( empty( $string ) ) {
-			return;
-		}
+		$feedback = str_replace( '&#8230;', '...', wp_strip_all_tags( $feedback ) );
+		return html_entity_decode( $feedback, ENT_QUOTES, get_bloginfo( 'charset' ) );
+	}
 
-		$string = str_replace( '&#8230;', '...', wp_strip_all_tags( $string ) );
-		$string = html_entity_decode( $string, ENT_QUOTES, get_bloginfo( 'charset' ) );
+	public function get_feedbacks(): array {
+		return [
+			'messages' => $this->messages,
+			'errors' => $this->errors,
+		];
 	}
 }

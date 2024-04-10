@@ -9,6 +9,7 @@
 namespace UptimeMonster\SiteMonitor\Site_Health;
 
 use Imagick;
+use ImagickException;
 use WP_Debug_Data;
 use wpdb;
 
@@ -34,6 +35,32 @@ if ( ! class_exists( '\WP_Debug_Data' ) ) {
 }
 
 class Debug_Data extends WP_Debug_Data {
+
+	protected static function process_core_update_status( &$info ) {
+		$fields = $info['wp-core']['fields'];
+
+		unset( $info['wp-core']['fields'], $fields['version'] );
+
+		$core_version = get_bloginfo( 'version' );
+		$from_api     = get_site_transient( 'update_core' ); /* @see get_core_updates() */
+
+		$info['wp-core']['version']        = $core_version;
+		$info['wp-core']['latest_version'] = $core_version;
+		$info['wp-core']['update']         = false;
+		$info['wp-core']['fields']         = $fields;
+
+		if ( ! empty( $from_api->updates ) && is_array( $from_api->updates ) ) {
+			foreach ( $from_api->updates as $update ) {
+				if ( 'upgrade' === $update->response ) {
+					$info['wp-core']['latest_version'] = $update->version;
+					$info['wp-core']['update'] = version_compare( $core_version, $update->version, '<' );
+					break;
+				}
+			}
+		}
+
+		unset( $fields );
+	}
 
 	protected static function process_dropins_data( &$info ) {
 		$dropins = get_dropins();
@@ -376,32 +403,14 @@ class Debug_Data extends WP_Debug_Data {
 	 * Static function for generating site debug data when required.
 	 *
 	 * @return array The debug data for the site.
+	 * @throws ImagickException
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 */
 	public static function debug_data(): array {
 		$info   = parent::debug_data();
-		$fields = $info['wp-core']['fields'];
 
-		unset( $info['wp-core']['fields'], $fields['version'] );
-
-		$core_version = get_bloginfo( 'version' );
-		$core_updates = get_core_updates( [ 'available' => true, 'dismissed' => true ] );
-
-		$info['wp-core']['version']        = $core_version;
-		$info['wp-core']['latest_version'] = $core_version;
-		$info['wp-core']['update']         = false;
-		$info['wp-core']['fields']         = $fields;
-
-		if ( is_array( $core_updates ) ) {
-			$core_update = end( $core_updates );
-			if ( $core_update ) {
-				if ( 'upgrade' === $core_update->response ) {
-					$info['wp-core']['latest_version'] = $core_update->version;
-					$info['wp-core']['update'] = version_compare( $core_version, $core_update->version, '<' );
-				}
-			}
-		}
-
+		// WP Core Update.
+		self::process_core_update_status( $info );
 		// Dropins data.
 		self::process_dropins_data( $info );
 		// MustUse plugins data.

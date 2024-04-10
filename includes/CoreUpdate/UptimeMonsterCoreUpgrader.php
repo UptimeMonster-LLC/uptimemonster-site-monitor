@@ -8,9 +8,8 @@
 namespace UptimeMonster\SiteMonitor\CoreUpdate;
 
 use WP_Error;
-use Core_Upgrader as DefaultCoreUpgrader;
+use Core_Upgrader;
 use WP_Filesystem_Base;
-use WP_Upgrader_Skin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -18,14 +17,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class UptimeMonsterCoreUpgrader extends DefaultCoreUpgrader {
+if ( ! class_exists( '\WP_Upgrader', false ) ) {
+	require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+}
+
+/**
+ * @property UptimeMonsterUpgraderSkin $skin
+ */
+class UptimeMonsterCoreUpgrader extends Core_Upgrader {
 
 	public $insecure;
 
 	/**
 	 * CoreUpgrader constructor.
 	 *
-	 * @param UptimeMonsterUpgraderSkin|WP_Upgrader_Skin|null $skin
+	 * @param UptimeMonsterUpgraderSkin|null $skin
 	 */
 	public function __construct( $skin = null, $insecure = false ) {
 		$this->insecure = $insecure;

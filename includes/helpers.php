@@ -16,6 +16,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
+ * @return WP_Filesystem_Base
+ */
+function uptimemonster_get_file_systeam() {
+	/** @var WP_Filesystem_Base $wp_filesystem */
+	global $wp_filesystem;
+	if ( ! function_exists( 'WP_Filesystem' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+
+	if ( ! $wp_filesystem instanceof WP_Filesystem_Direct ) {
+		WP_Filesystem();
+	}
+
+	return $wp_filesystem;
+}
+
+function uptimemonster_need_filesystem_credentials( $redirect ) {
+	if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+	}
+
+	if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+
+	ob_start();
+	$credentials = request_filesystem_credentials( $redirect );
+	ob_end_clean();
+
+	// Check if credentials aren't provided or wrong credentials.
+	if ( false === $credentials || ! \WP_Filesystem( $credentials ) ) {
+		return new WP_Error( 'fs-readonly', esc_html__( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
+	}
+
+	return false;
+}
+
+/**
  * Switch to english language (en_US) so we can understand and analyse the data.
  *
  * Must restore language after uses.
@@ -46,11 +85,11 @@ function uptimemonster_restore_locale() {
 }
 
 /**
- * Get Gmt Time in mysql format.
+ * Get GMT Time in mysql format.
  *
  * @return string
  */
-function uptimemonster_get_current_time() {
+function uptimemonster_get_current_time(): string {
 	return (string) current_time( 'mysql', 1 );
 }
 
@@ -59,7 +98,7 @@ function uptimemonster_get_current_time() {
  *
  * @return array|string[]
  */
-function uptimemonster_get_current_actor() {
+function uptimemonster_get_current_actor(): array {
 	if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
 		$actor = [
 			'type' => 'cron',
@@ -81,7 +120,7 @@ function uptimemonster_get_current_actor() {
 		$actor     = [
 			'type'  => 'rest-api',
 			'extra' => [
-				'method'    => isset( $_SERVER['REQUEST_METHOD'] )? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD']  ) ) : 'N/A', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				'method'    => isset( $_SERVER['REQUEST_METHOD'] )? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD']  ) ) : 'N/A',
 				'namespace' => $namespace,
 				'route'     => $route,
 			],
@@ -152,11 +191,11 @@ function uptimemonster_get_user( $identity, $field = null ) {
 /**
  * Get user full name for display purpose.
  *
- * @param WP_User|false $user
+ * @param WP_User $user
  *
  * @return string
  */
-function uptimemonster_get_user_display_name( $user ) {
+function uptimemonster_get_user_display_name( WP_User $user ): string {
 	$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) ); // @phpstan-ignore-line
 
 	if ( ! empty( $name ) ) {
@@ -179,7 +218,7 @@ function uptimemonster_get_user_display_name( $user ) {
  *
  * @return string
  */
-function uptimemonster_get_user_role( $user ) {
+function uptimemonster_get_user_role( WP_User $user ): string {
 	return strtolower( (string) key( $user->caps ) );
 }
 
@@ -188,7 +227,7 @@ function uptimemonster_get_user_role( $user ) {
  *
  * @return string
  */
-function uptimemonster_get_ip_address() {
+function uptimemonster_get_ip_address(): string {
 	$ip     = '';
 	$lookup = [
 		'HTTP_X_REAL_IP',
@@ -224,7 +263,7 @@ function uptimemonster_get_ip_address() {
  *
  * @return array|false
  */
-function uptimemonster_get_plugin_data( $plugin_file ) {
+function uptimemonster_get_plugin_data( string $plugin_file ) {
 	if ( ! is_readable( $plugin_file ) ) {
 		return false;
 	}
@@ -428,27 +467,6 @@ function uptimemonster_get_named_sem_ver( $new_version, $original_version ) {
 	}
 
 	return 'major';
-}
-
-function uptimemonster_need_filesystem_credentials( $redirect ) {
-	if ( ! class_exists( 'WP_Filesystem_Base' ) ) {
-		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
-	}
-
-	if ( ! function_exists( 'request_filesystem_credentials' ) ) {
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-	}
-
-	ob_start();
-	$credentials = request_filesystem_credentials( $redirect );
-	ob_end_clean();
-
-	// Check if credentials aren't provided or wrong credentials.
-	if ( false === $credentials || ! \WP_Filesystem( $credentials ) ) {
-		return new WP_Error( 'fs-readonly', esc_html__( 'Unable to connect to the filesystem. Filesystem seems readonly or credentials are not provided in wp-config.php.', 'uptimemonster-site-monitor' ) );
-	}
-
-	return false;
 }
 
 // End of file helpers.php.
