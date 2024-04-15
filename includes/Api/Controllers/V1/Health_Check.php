@@ -34,21 +34,6 @@ class Health_Check extends Controller_Base {
 	protected $rest_base = '/site-health';
 
 	public function register_routes() {
-		// Register site health route.
-		register_rest_route(
-			$this->namespace,
-			$this->rest_base,
-			[
-				[
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'send_site_health_info' ],
-					'permission_callback' => [ $this, 'get_route_access' ],
-					'args'                => [],
-				],
-
-			]
-		);
-
 		// Register ping route.
 		register_rest_route(
 			$this->namespace,
@@ -57,6 +42,20 @@ class Health_Check extends Controller_Base {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_ping' ],
+					'permission_callback' => [ $this, 'get_route_access' ],
+					'args'                => [],
+				],
+			]
+		);
+
+		// Register site health route.
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base,
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'send_site_health_info' ],
 					'permission_callback' => [ $this, 'get_route_access' ],
 					'args'                => [],
 				],
