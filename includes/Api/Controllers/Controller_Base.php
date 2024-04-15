@@ -13,6 +13,7 @@ use UptimeMonster\SiteMonitor\Site_Health\Debug_Data;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
+use WP_REST_Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -20,7 +21,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+#[AllowDynamicProperties]
 abstract class Controller_Base extends WP_REST_Controller {
+
+	/**
+	 * Extra data.
+	 *
+	 * @var array
+	 */
+	protected static $extra_data;
 
 	/**
 	 * Endpoint namespace.
@@ -42,12 +51,18 @@ abstract class Controller_Base extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Full details about the request.
 	 *
 	 * @return WP_Error|boolean
+	 * @see WP_REST_Server::respond_to_request()
+	 *
 	 */
 	public function get_route_access( $request ) {
 		$api_keys = get_option( 'uptimemonster_api_keys', [] );
-
 		if ( empty( $api_keys['api_key'] ) || empty( $api_keys['api_secret'] ) ) {
-			return new WP_Error( 'invalid_api_keys', esc_html__( 'Invalid API Keys, Update Plugin Settings.', 'uptimemonster-site-monitor' ) );
+			// returning false or null results in default "Sorry, you are not allowed to do that." message.
+			return new WP_Error(
+				'empty_api_keys',
+				esc_html__( 'Update API Keys In Plugin Settings.', 'uptimemonster-site-monitor' ),
+				[ 'status' => rest_authorization_required_code() ]
+			);
 		}
 
 		$request_api_key = $request->get_header( 'X-Api-Key' ) ? $request->get_header( 'X-Api-Key' ) : '';
@@ -75,13 +90,6 @@ abstract class Controller_Base extends WP_REST_Controller {
 
 		return new WP_Error( 'invalid_signature', esc_html__( 'Invalid Signature', 'uptimemonster-site-monitor' ) );
 	}
-
-	/**
-	 * Extra data.
-	 *
-	 * @var array
-	 */
-	protected static $extra_data;
 
 	protected function add_extra_data( &$response ) {
 		// Check for update.
