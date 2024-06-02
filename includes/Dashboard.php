@@ -299,7 +299,7 @@ class Dashboard {
 											} else {
 												esc_html_e( 'Not Writable', 'uptimemonster-site-monitor' );
 											}
-											?><span class="separator" aria-hidden="true">|</span><?php
+											?> <span class="separator" aria-hidden="true">|</span> <?php
 											printf(
 											/* translators: 1. Error handler drop-in version. */
 												esc_html__( 'Installed (Version %s)', 'uptimemonster-site-monitor' ),
