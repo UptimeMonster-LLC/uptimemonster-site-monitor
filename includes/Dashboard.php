@@ -293,13 +293,13 @@ class Dashboard {
 									<td style="padding:0;">
 										<?php
 										$install_url = wp_nonce_url( add_query_arg( [ 'action' => self::DROP_IN_ACTION ], $this->get_page_url() ), self::DROP_IN_ACTION );
-										if ( UptimeMonster_Site_Monitor::is_drop_in_writable() ) {
-											esc_html_e( 'Writable', 'uptimemonster-site-monitor' );
-										} else {
-											esc_html_e( 'Not Writable', 'uptimemonster-site-monitor' );
-										}
-										?><span class="separator" aria-hidden="true">|</span><?php
 										if ( UptimeMonster_Site_Monitor::is_drop_in_installed() ) {
+											if ( UptimeMonster_Site_Monitor::is_drop_in_writable() ) {
+												esc_html_e( 'Writable', 'uptimemonster-site-monitor' );
+											} else {
+												esc_html_e( 'Not Writable', 'uptimemonster-site-monitor' );
+											}
+											?><span class="separator" aria-hidden="true">|</span><?php
 											printf(
 											/* translators: 1. Error handler drop-in version. */
 												esc_html__( 'Installed (Version %s)', 'uptimemonster-site-monitor' ),
