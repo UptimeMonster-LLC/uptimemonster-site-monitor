@@ -1,0 +1,63 @@
+name: Deploy
+on: [push]
+jobs:
+  deploy-dev:
+    if: github.ref == 'refs/heads/develop'
+    name: Deploy Development Branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Executing Git Pull On Remote Host.
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_SERVER_HOST }}
+          port: 22
+          username: root
+          key: ${{ secrets.PROD_SERVER_PRIVATE }}
+          script: |
+            cd /opt/www/staging.uptimemonster.com/public/
+            wp --allow-root flush-opcache flush
+            cd /opt/www/staging.uptimemonster.com/public/wp-content/plugins/uptimemonster-site-monitor/
+            git status
+            git checkout .
+            git pull
+            chown www-data:www-data -R *
+            chown www-data:www-data -R .
+            find . -type d -exec chmod 755 {} \;
+            find . -type f -exec chmod 644 {} \;
+            chown root:root .git
+            chown root:root -R .git/*
+            cd /opt/www/staging.uptimemonster.com/public/
+            rm -rf /opt/www/staging.uptimemonster.com/cache/*
+            wp --allow-root flush-opcache flush
+            wp --allow-root rocket clean --confirm
+            git status
+  deploy-prod:
+    if: github.ref == 'refs/heads/master'
+    name: Deploy Production Branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Executing Git Pull On Remote Host.
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_SERVER_HOST }}
+          port: 22
+          username: root
+          key: ${{ secrets.PROD_SERVER_PRIVATE }}
+          script: |
+            cd /opt/www/uptimemonster.com/public/
+            wp --allow-root flush-opcache flush
+            cd /opt/www/uptimemonster.com/public/wp-content/plugins/uptimemonster-site-monitor/
+            git status
+            git checkout .
+            git pull
+            chown www-data:www-data -R *
+            chown www-data:www-data -R .
+            find . -type d -exec chmod 755 {} \;
+            find . -type f -exec chmod 644 {} \;
+            chown root:root .git
+            chown root:root -R .git/*
+            cd /opt/www/uptimemonster.com/public/
+            rm -rf /opt/www/uptimemonster.com/cache/*
+            wp --allow-root flush-opcache flush
+            wp --allow-root rocket clean --confirm
+            git status
