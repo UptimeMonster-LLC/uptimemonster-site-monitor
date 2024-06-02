@@ -298,18 +298,14 @@ class Dashboard {
 										} else {
 											esc_html_e( 'Not Writable', 'uptimemonster-site-monitor' );
 										}
-										?>
-										<span class="separator"></span>
-										<?php
+										?><span class="separator" aria-hidden="true">|</span><?php
 										if ( UptimeMonster_Site_Monitor::is_drop_in_installed() ) {
 											printf(
 											/* translators: 1. Error handler drop-in version. */
 												esc_html__( 'Installed (Version %s)', 'uptimemonster-site-monitor' ),
 												esc_html( UptimeMonster_Site_Monitor::drop_in_version() )
 											);
-										?>
-										<br>
-										<?php
+										?><br><?php
 											if ( UptimeMonster_Site_Monitor::drop_in_need_update() ) {
 												printf(
 												/* translators: 1. New Version Number, 2. Update URL tag (anchor) opening, 3. Anchor tag closing */
@@ -320,6 +316,7 @@ class Dashboard {
 												);
 											}
 										} else {
+											?><br><?php
 											if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
 												printf(
 												/* translators: 1. Installation URL tag (anchor) opening, 2. Anchor tag closing */
