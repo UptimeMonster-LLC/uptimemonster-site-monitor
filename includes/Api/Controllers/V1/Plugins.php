@@ -666,15 +666,15 @@ class Plugins extends Controller_Base {
 		$plugins_data = $this->get_plugins();
 		$plugins      = array_filter( $plugins ); // clean up.
 
-		if ( in_array( UPTIMEMONSTER_PLUGIN_BASENAME, $plugins, true ) ) {
+		if ( in_array( UPTIMEMONSTER_SITE_PLUGIN_BASENAME, $plugins, true ) ) {
 			$plugins = array_flip( $plugins );
 
-			unset( $plugins[ UPTIMEMONSTER_PLUGIN_BASENAME ] );
+			unset( $plugins[ UPTIMEMONSTER_SITE_PLUGIN_BASENAME ] );
 
-			$response[ UPTIMEMONSTER_PLUGIN_BASENAME ] = [
+			$response[ UPTIMEMONSTER_SITE_PLUGIN_BASENAME ] = [
 				'status'  => false,
 				// translators: Plugin name
-				'message' => sprintf( esc_html__( 'Self (%s) destruction is prohibited', 'uptimemonster-site-monitor' ), $plugins_data[ UPTIMEMONSTER_PLUGIN_BASENAME ]['Name'] ?? UPTIMEMONSTER_PLUGIN_BASENAME ),
+				'message' => sprintf( esc_html__( 'Self (%s) destruction is prohibited', 'uptimemonster-site-monitor' ), $plugins_data[ UPTIMEMONSTER_SITE_PLUGIN_BASENAME ]['Name'] ?? UPTIMEMONSTER_SITE_PLUGIN_BASENAME ),
 			];
 
 			$plugins = array_flip( $plugins );

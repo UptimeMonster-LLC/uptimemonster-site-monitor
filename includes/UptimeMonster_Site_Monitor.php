@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-/** @define "UPTIMEMONSTER_PLUGIN_PATH" "./" */
+/** @define "UPTIMEMONSTER_SITE_PLUGIN_PATH" "./" */
 
 /**
  * Site Monitor.
@@ -40,11 +40,11 @@ final class UptimeMonster_Site_Monitor {
 		// Check if autoloader exists, include it or show error with admin notice ui.
 
 		// DropIns
-		self::$error_handler_dist = UPTIMEMONSTER_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl';
+		self::$error_handler_dist = UPTIMEMONSTER_SITE_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl';
 		self::$error_handler      = WP_CONTENT_DIR . '/fatal-error-handler.php';
 
-		register_activation_hook( UPTIMEMONSTER_PLUGIN_FILE, array( __CLASS__, 'install' ) );
-		register_deactivation_hook( UPTIMEMONSTER_PLUGIN_FILE, array( __CLASS__, 'uninstall' ) );
+		register_activation_hook( UPTIMEMONSTER_SITE_PLUGIN_FILE, array( __CLASS__, 'install' ) );
+		register_deactivation_hook( UPTIMEMONSTER_SITE_PLUGIN_FILE, array( __CLASS__, 'uninstall' ) );
 
 		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
@@ -74,7 +74,7 @@ final class UptimeMonster_Site_Monitor {
 			update_option( 'uptimemonster_first_installed', uptimemonster_get_current_time() );
 		}
 
-		update_option( 'uptimemonster_site_monitor_version', UPTIMEMONSTER_PLUGIN_VERSION );
+		update_option( 'uptimemonster_site_monitor_version', UPTIMEMONSTER_SITE_PLUGIN_VERSION );
 
 		do_action( 'uptimemonster_site_monitor_activation' );
 	}
@@ -185,7 +185,7 @@ final class UptimeMonster_Site_Monitor {
 		unload_textdomain( 'uptimemonster-site-monitor' );
 
 		load_textdomain( 'uptimemonster-site-monitor', WP_LANG_DIR . '/uptimemonster-site-monitor/uptimemonster-site-monitor-' . $locale . '.mo' );
-		load_plugin_textdomain( 'uptimemonster-site-monitor', false, plugin_basename( dirname( UPTIMEMONSTER_PLUGIN_FILE ) ) . '/languages' );
+		load_plugin_textdomain( 'uptimemonster-site-monitor', false, plugin_basename( dirname( UPTIMEMONSTER_SITE_PLUGIN_FILE ) ) . '/languages' );
 	}
 }
 

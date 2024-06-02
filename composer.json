@@ -21,8 +21,9 @@
         "ext-iconv": "*",
         "ext-mysqli": "*",
         "ext-imagick": "*",
-        "composer/semver": "^3.3"
-    },
+        "composer/semver": "^3.3",
+		"ext-soap": "*"
+	},
     "require-dev": {
         "phpstan/phpstan": "^1.8",
         "phpstan/extension-installer": "^1.1",

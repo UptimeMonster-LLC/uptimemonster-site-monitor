@@ -45,35 +45,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! defined( 'UPTIMEMONSTER_PLUGIN_VERSION' ) ) {
-	define( 'UPTIMEMONSTER_PLUGIN_VERSION', '1.0.0' );
+if ( ! defined( 'UPTIMEMONSTER_SITE_PLUGIN_VERSION' ) ) {
+	define( 'UPTIMEMONSTER_SITE_PLUGIN_VERSION', '1.0.0' );
 }
 
-if ( ! defined( 'UPTIMEMONSTER_PLUGIN_FILE' ) ) {
-	define( 'UPTIMEMONSTER_PLUGIN_FILE', __FILE__ );
+if ( ! defined( 'UPTIMEMONSTER_SITE_PLUGIN_FILE' ) ) {
+	define( 'UPTIMEMONSTER_SITE_PLUGIN_FILE', __FILE__ );
 }
 
-if ( ! defined( 'UPTIMEMONSTER_PLUGIN_BASENAME' ) ) {
-	define( 'UPTIMEMONSTER_PLUGIN_BASENAME', plugin_basename( UPTIMEMONSTER_PLUGIN_FILE ) );
+if ( ! defined( 'UPTIMEMONSTER_SITE_PLUGIN_BASENAME' ) ) {
+	define( 'UPTIMEMONSTER_SITE_PLUGIN_BASENAME', plugin_basename( UPTIMEMONSTER_SITE_PLUGIN_FILE ) );
 }
 
-if ( ! defined( 'UPTIMEMONSTER_PLUGIN_PATH' ) ) {
-	/** @define "UPTIMEMONSTER_PLUGIN_PATH" "./" */
-	define( 'UPTIMEMONSTER_PLUGIN_PATH', plugin_dir_path( UPTIMEMONSTER_PLUGIN_FILE ) );
+if ( ! defined( 'UPTIMEMONSTER_SITE_PLUGIN_PATH' ) ) {
+	/** @define "UPTIMEMONSTER_SITE_PLUGIN_PATH" "./" */
+	define( 'UPTIMEMONSTER_SITE_PLUGIN_PATH', plugin_dir_path( UPTIMEMONSTER_SITE_PLUGIN_FILE ) );
 }
 
-if ( ! defined( 'UPTIMEMONSTER_PLUGIN_URL' ) ) {
-	define( 'UPTIMEMONSTER_PLUGIN_URL', plugin_dir_url( UPTIMEMONSTER_PLUGIN_FILE ) );
+if ( ! defined( 'UPTIMEMONSTER_SITE_PLUGIN_URL' ) ) {
+	define( 'UPTIMEMONSTER_SITE_PLUGIN_URL', plugin_dir_url( UPTIMEMONSTER_SITE_PLUGIN_FILE ) );
 }
 
-if ( ! file_exists( UPTIMEMONSTER_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
+if ( ! file_exists( UPTIMEMONSTER_SITE_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
 	/**
 	 * Get Dependencies Notice.
 	 *
 	 * @return void
 	 */
 	function uptimemonster_dependency_notice() {
-		$install_dir = str_replace( ABSPATH, '', dirname( UPTIMEMONSTER_PLUGIN_FILE ) );
+		$install_dir = str_replace( ABSPATH, '', dirname( UPTIMEMONSTER_SITE_PLUGIN_FILE ) );
 		?>
 		<div class="notice notice-warning notice-alt">
 			<p>
@@ -106,8 +106,8 @@ function uptimemonster_declare_wc_hpos_compatibility() {
 	}
 }
 
-require_once UPTIMEMONSTER_PLUGIN_PATH . 'vendor/autoload.php';
-require_once UPTIMEMONSTER_PLUGIN_PATH . 'includes/helpers.php';
+require_once UPTIMEMONSTER_SITE_PLUGIN_PATH . 'vendor/autoload.php';
+require_once UPTIMEMONSTER_SITE_PLUGIN_PATH . 'includes/helpers.php';
 
 add_action( 'before_woocommerce_init', 'uptimemonster_declare_wc_hpos_compatibility' );
 

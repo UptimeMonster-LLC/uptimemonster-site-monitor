@@ -30,7 +30,7 @@ class Dashboard {
 		add_action( 'admin_menu', [ $this, 'register_menu' ] );
 		add_action( 'admin_init', [ $this, 'handle_post' ] );
 
-		add_filter( 'plugin_action_links_' . UPTIMEMONSTER_PLUGIN_BASENAME, [ $this, 'plugin_action_links' ] );
+		add_filter( 'plugin_action_links_' . UPTIMEMONSTER_SITE_PLUGIN_BASENAME, [ $this, 'plugin_action_links' ] );
 	}
 
 	public function admin_notice() {

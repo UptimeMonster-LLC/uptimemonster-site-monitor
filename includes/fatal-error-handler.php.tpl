@@ -34,7 +34,7 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 	 * @since 5.2.0
 	 */
 	public function handle() {
-		if ( ! defined( 'UPTIMEMONSTER_PLUGIN_VERSION' ) ) {
+		if ( ! defined( 'UPTIMEMONSTER_SITE_PLUGIN_VERSION' ) ) {
 			parent::handle();
 			return;
 		}
@@ -58,7 +58,7 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 
 			$this->send_log( $error );
 
-			// Default WP Error Bail
+			// Let WP trigger recovery mode if necessary.
 			$error = $this->_detect_error( $error );
 
 			if ( ! $error ) {
@@ -79,7 +79,7 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 			if ( is_admin() || ! headers_sent() ) {
 				$this->display_error_template( $error, $handled );
 			}
-		} catch ( Exception $e ) {
+		} catch ( Exception ) {
 			// Catch exceptions and remain silent.
 		}
 	}
@@ -94,13 +94,12 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 			return;
 		}
 
-		if ( ! function_exists( 'uptimemonster_get_current_actor' ) ) {
-			require_once WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/includes/helpers.php';
+		if ( ! file_exists( WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/vendor/autoload.php' ) ) {
+			return;
 		}
 
-		if ( ! class_exists( '\UptimeMonster\SiteMonitor\UptimeMonster_Client', false ) ) {
-			require_once WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/includes/UptimeMonster_Client.php';
-		}
+		require_once WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/vendor/autoload.php';
+		require_once WP_CONTENT_DIR . '/plugins/uptimemonster-site-monitor/includes/helpers.php';
 
 		$client = UptimeMonster\SiteMonitor\UptimeMonster_Client::get_instance();
 		$client->send_log( [
