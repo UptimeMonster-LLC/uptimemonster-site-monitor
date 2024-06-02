@@ -30,6 +30,7 @@ jobs:
             rm -rf /opt/www/staging.uptimemonster.com/cache/*
             wp --allow-root flush-opcache flush
             wp --allow-root rocket clean --confirm
+            cd /opt/www/staging.uptimemonster.com/public/wp-content/plugins/uptimemonster-site-monitor/
             git status
   deploy-prod:
     if: github.ref == 'refs/heads/master'
@@ -60,4 +61,5 @@ jobs:
             rm -rf /opt/www/uptimemonster.com/cache/*
             wp --allow-root flush-opcache flush
             wp --allow-root rocket clean --confirm
+            cd /opt/www/staging.uptimemonster.com/public/wp-content/plugins/uptimemonster-site-monitor/
             git status
