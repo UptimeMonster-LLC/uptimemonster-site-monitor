@@ -296,10 +296,11 @@ class Dashboard {
 										if ( UptimeMonster_Site_Monitor::is_drop_in_installed() ) {
 											if ( UptimeMonster_Site_Monitor::drop_in_need_update() ) {
 												printf(
-												/* translators: 1. New Version Number, 2. Update URL */
-													esc_html__( 'A newer version (Version %1$s) of the drop-in available. Click <a href="%2$s">here</a> to update.', 'uptimemonster-site-monitor' ),
+												/* translators: 1. New Version Number, 2. Update URL tag (anchor) opening, 3. Anchor tag closing */
+													esc_html__( 'A newer version (Version %1$s) of the drop-in available. Click %2$shere%3$s to update.', 'uptimemonster-site-monitor' ),
 													esc_html( UptimeMonster_Site_Monitor::drop_in_version( false ) ),
-													esc_url( $install_url )
+													'<a href="' . esc_url( $install_url ) . '">',
+													'</a>'
 												);
 											} else {
 												printf(
@@ -313,9 +314,10 @@ class Dashboard {
 											<p class="help"><?php
 											if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
 												printf(
-												/* translators: 1. Installation URL */
-													esc_html__( 'Click <a href="%s">here</a> to install the drop-in.', 'uptimemonster-site-monitor' ),
-													esc_url( $install_url )
+												/* translators: 1. Installation URL tag (anchor) opening, 2. Anchor tag closing */
+													esc_html__( 'Click %1$shere%2$s to install the drop-in.', 'uptimemonster-site-monitor' ),
+													'<a href="' . esc_url( $install_url ) . '">',
+													'</a>'
 												);
 											} else {
 												printf(
