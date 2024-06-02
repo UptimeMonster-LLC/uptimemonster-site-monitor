@@ -316,7 +316,6 @@ class Dashboard {
 												);
 											}
 										} else {
-											?><br><?php
 											if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
 												printf(
 												/* translators: 1. Installation URL tag (anchor) opening, 2. Anchor tag closing */
@@ -327,7 +326,7 @@ class Dashboard {
 											} else {
 												printf(
 												/* translators: 1: Source file path. 2: Destination file path. 3: Code opening tag. 4: Code closing tag. */
-													esc_html__( 'Please copy %3$s%1$s%4$s into %3$s%2$s%4$s for enabling error monitoring', 'uptimemonster-site-monitor' ),
+													esc_html__( 'WP Content (wp-content) directory is not writable. Please copy %3$s%1$s%4$s into %3$s%2$s%4$s for enabling error monitoring', 'uptimemonster-site-monitor' ),
 													esc_html( UptimeMonster_Site_Monitor::get_drop_in_dist_file() ),
 													esc_html( UptimeMonster_Site_Monitor::get_drop_in_file() ),
 													'<code>',
