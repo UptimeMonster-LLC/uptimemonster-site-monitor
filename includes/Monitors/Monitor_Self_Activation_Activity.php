@@ -35,7 +35,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 	}
 
 	protected function maybe_log_activity( $action = '', $object_id = '' ) {
-		return get_option( 'uptimemonster_api_keys' );
+		return get_option( 'uptimemonster_site_monitor_api_keys' );
 	}
 
 	public function on_activation() {

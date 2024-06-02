@@ -55,7 +55,7 @@ abstract class Controller_Base extends WP_REST_Controller {
 	 *
 	 */
 	public function get_route_access( $request ) {
-		$api_keys = get_option( 'uptimemonster_api_keys', [] );
+		$api_keys = get_option( 'uptimemonster_site_monitor_api_keys', [] );
 		if ( empty( $api_keys['api_key'] ) || empty( $api_keys['api_secret'] ) ) {
 			// returning false or null results in default "Sorry, you are not allowed to do that." message.
 			return new WP_Error(

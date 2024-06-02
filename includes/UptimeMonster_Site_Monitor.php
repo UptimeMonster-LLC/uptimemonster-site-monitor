@@ -65,7 +65,7 @@ final class UptimeMonster_Site_Monitor {
 		// @TODO move installation to another file.
 		self::maybe_install_drop_in();
 
-		$api_keys = get_option( 'uptimemonster_api_keys', array() );
+		$api_keys = get_option( 'uptimemonster_site_monitor_api_keys', array() );
 		if ( empty( $api_keys ) ) {
 			update_option( 'uptimemonster_need_setup', 'yes' );
 		}

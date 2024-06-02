@@ -129,7 +129,7 @@ class Dashboard {
 
 				delete_transient( 'umon-is-connected' );
 
-				update_option( 'uptimemonster_api_keys', [] );
+				update_option( 'uptimemonster_site_monitor_api_keys', [] );
 
 				wp_safe_redirect( $this->get_page_url() );
 				die();
@@ -142,7 +142,7 @@ class Dashboard {
 			do_action( 'uptimemonster_site_monitor_api_deactivating' );
 
 			$this->is_connected( false );
-			delete_option( 'uptimemonster_api_keys' );
+			delete_option( 'uptimemonster_site_monitor_api_keys' );
 			$this->add_settings_status( esc_html__( 'UptimeMonster API Disconnected.', 'uptimemonster-site-monitor' ), 'warning' );
 
 			do_action( 'uptimemonster_site_monitor_api_deactivated' );
@@ -171,7 +171,7 @@ class Dashboard {
 
 					$this->is_connected( false );
 
-					update_option( 'uptimemonster_api_keys', $new_keys );
+					update_option( 'uptimemonster_site_monitor_api_keys', $new_keys );
 
 					$this->add_settings_status( esc_html__( 'Api connected.', 'uptimemonster-site-monitor' ) );
 
@@ -222,7 +222,7 @@ class Dashboard {
 		$api_key    = '';
 		$api_secret = '';
 		if ( $this->is_connected() ) {
-			$api_keys = get_option( 'uptimemonster_api_keys', [] );
+			$api_keys = get_option( 'uptimemonster_site_monitor_api_keys', [] );
 			if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
 				$api_key    = $api_keys['api_key'];
 				$api_secret = $api_keys['api_secret'];

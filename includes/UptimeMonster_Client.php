@@ -43,7 +43,7 @@ class UptimeMonster_Client {
 	 * @return $this
 	 */
 	public function reload_api_keys() {
-		$api_keys = (array) get_option( 'uptimemonster_api_keys', [] );
+		$api_keys = (array) get_option( 'uptimemonster_site_monitor_api_keys', [] );
 
 		if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
 			$this->api_key    = $api_keys['api_key'];
