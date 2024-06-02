@@ -284,16 +284,28 @@ class Dashboard {
 					</tr>
 					<?php } ?>
 					<tr>
-						<th scope="row"><label><?php esc_html_e( 'Error Logging', 'uptimemonster-site-monitor' ); ?></label></th>
+						<th scope="row"><label><?php esc_html_e( 'Status', 'uptimemonster-site-monitor' ); ?></label></th>
 						<td>
 							<table>
 								<tbody>
 								<tr>
-									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Status:', 'uptimemonster-site-monitor' ); ?></strong></th>
+									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Drop-In:', 'uptimemonster-site-monitor' ); ?></strong></th>
 									<td style="padding:0;">
 										<?php
 										$install_url = wp_nonce_url( add_query_arg( [ 'action' => self::DROP_IN_ACTION ], $this->get_page_url() ), self::DROP_IN_ACTION );
 										if ( UptimeMonster_Site_Monitor::is_drop_in_installed() ) {
+											if ( UptimeMonster_Site_Monitor::is_drop_in_writable() ) {
+												esc_html_e( 'Writable', 'uptimemonster-site-monitor' );
+											} else {
+												esc_html_e( 'Not Writable', 'uptimemonster-site-monitor' );
+											}
+											?> <span class="separator" aria-hidden="true">|</span> <?php
+											printf(
+											/* translators: 1. Error handler drop-in version. */
+												esc_html__( 'Installed (Version %s)', 'uptimemonster-site-monitor' ),
+												esc_html( UptimeMonster_Site_Monitor::drop_in_version() )
+											);
+										?><br><?php
 											if ( UptimeMonster_Site_Monitor::drop_in_need_update() ) {
 												printf(
 												/* translators: 1. New Version Number, 2. Update URL tag (anchor) opening, 3. Anchor tag closing */
@@ -302,16 +314,8 @@ class Dashboard {
 													'<a href="' . esc_url( $install_url ) . '">',
 													'</a>'
 												);
-											} else {
-												printf(
-												/* translators: 1. Error handler drop-in version. */
-													esc_html__( 'Installed (Version %s)', 'uptimemonster-site-monitor' ),
-													esc_html( UptimeMonster_Site_Monitor::drop_in_version() )
-												);
 											}
 										} else {
-											?>
-											<p class="help"><?php
 											if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
 												printf(
 												/* translators: 1. Installation URL tag (anchor) opening, 2. Anchor tag closing */
@@ -321,16 +325,14 @@ class Dashboard {
 												);
 											} else {
 												printf(
-												/* translators: 1: Source file path. 2: Destination file path. 3: Code tag opening. 4: Code tag closing. */
-													esc_html__( 'Please copy %3$s%1$s%4$s into %3$s%2$s%4$s for enabling error monitoring', 'uptimemonster-site-monitor' ),
+												/* translators: 1: Source file path. 2: Destination file path. 3: Code opening tag. 4: Code closing tag. */
+													esc_html__( 'WP Content (wp-content) directory is not writable. Please copy %3$s%1$s%4$s into %3$s%2$s%4$s for enabling error monitoring', 'uptimemonster-site-monitor' ),
 													esc_html( UptimeMonster_Site_Monitor::get_drop_in_dist_file() ),
 													esc_html( UptimeMonster_Site_Monitor::get_drop_in_file() ),
 													'<code>',
 													'</code>'
 												);
 											}
-											?></p>
-											<?php
 										}
 										?>
 									</td>
@@ -347,20 +349,6 @@ class Dashboard {
 										?>
 									</td>
 								</tr>
-								<?php if ( UptimeMonster_Site_Monitor::is_drop_in_installed() ) { ?>
-								<tr>
-										<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Drop-In', 'uptimemonster-site-monitor' ); ?></strong></th>
-										<td style="padding:0;">
-											<?php
-											if ( UptimeMonster_Site_Monitor::is_drop_in_writable() ) {
-												esc_html_e( 'Writable', 'uptimemonster-site-monitor' );
-											} else {
-												esc_html_e( 'Not Writable', 'uptimemonster-site-monitor' );
-											}
-											?>
-										</td>
-									</tr>
-								<?php } ?>
 								</tbody>
 							</table>
 						</td>
