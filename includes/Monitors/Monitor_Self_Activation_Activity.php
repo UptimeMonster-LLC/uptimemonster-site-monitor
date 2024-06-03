@@ -33,7 +33,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 	}
 
 	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
-		return get_option( 'uptimemonster_site_monitor_api_keys' );
+		return ! empty( get_option( 'uptimemonster_site_monitor_api_keys' ) );
 	}
 
 	public function on_activation() {
