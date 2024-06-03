@@ -183,7 +183,7 @@ class Dashboard {
 					do_action( 'uptimemonster_site_monitor_api_updated' );
 				} else {
 					$this->add_settings_status( sprintf(
-						/* translators: 1. Error Details. */
+					/* translators: 1. Error Details. */
 						esc_html__( 'Error connecting UptimeMonster API with following error: %s.', 'uptimemonster-site-monitor' ),
 						$response->get_error_message()
 					), 'error' );
@@ -251,62 +251,74 @@ class Dashboard {
 				<table class="form-table" role="presentation">
 					<tbody>
 					<?php if ( $this->is_connected() ) { ?>
-					<tr>
-						<th scope="row"><label for="uptimemonster-api-key"><?php esc_html_e( 'API Key', 'uptimemonster-site-monitor' ); ?></label></th>
-						<td><input type="text" id="uptimemonster-api-key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="none" readonly></td>
-					</tr>
-					<tr>
-						<th scope="row"><label for="uptimemonster-api-secret"><?php esc_html_e( 'API Secret', 'uptimemonster-site-monitor' ); ?></label></th>
-						<td><input type="password" id="uptimemonster-api-secret" value="<?php echo esc_attr( $api_secret ); ?>" class="regular-text" autocomplete="none" readonly></td>
-					</tr>
-					<tr>
-						<th scope="row"></th>
-						<td>
-							<div style="display:flex;align-items:center;gap:10px;">
-								<?php esc_html_e( 'Connected', 'uptimemonster-site-monitor' ); ?>
-								<button class="button button-secondary button-warning" type="submit" name="uptimemonster-disconnect-api" value="1"><?php esc_html_e( 'Disconnect', 'uptimemonster-site-monitor' ); ?></button>
-							</div>
-							<p><?php printf(
-								/* translators: %1$s: Manage Subscription link, %2$s: Dashboard link */
-									esc_html__( 'Manage your UptimeMonster %1$s or goto %2$s', 'uptimemonster-site-monitor' ),
-									'<a href="https://uptimemonster.com/my-account/" target="_blank" rel="noopener">' . esc_html__( 'Subscription', 'uptimemonster-site-monitor' ) . '</a>',
-									'<a href="https://uptimemonster.com/my-account/" target="_blank" rel="noopener">' . esc_html__( 'Dashboard', 'uptimemonster-site-monitor' ) . '</a>'
-								); ?></p>
-						</td>
-					</tr>
+						<tr>
+							<th scope="row"><label for="uptimemonster-api-key"><?php esc_html_e( 'API Key', 'uptimemonster-site-monitor' ); ?></label>
+							</th>
+							<td><input type="text" id="uptimemonster-api-key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="none" readonly></td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="uptimemonster-api-secret"><?php esc_html_e( 'API Secret', 'uptimemonster-site-monitor' ); ?></label>
+							</th>
+							<td><input type="password" id="uptimemonster-api-secret" value="<?php echo esc_attr( $api_secret ); ?>" class="regular-text" autocomplete="none" readonly></td>
+						</tr>
+						<tr>
+							<th scope="row"></th>
+							<td>
+								<div style="display:flex;align-items:center;gap:10px;">
+									<?php esc_html_e( 'Connected', 'uptimemonster-site-monitor' ); ?>
+									<button class="button button-secondary button-warning" type="submit"
+											name="uptimemonster-disconnect-api"
+											value="1"><?php esc_html_e( 'Disconnect', 'uptimemonster-site-monitor' ); ?></button>
+								</div>
+								<p><?php printf(
+									/* translators: %1$s: Manage Subscription link, %2$s: Dashboard link */
+										esc_html__( 'Manage your UptimeMonster %1$s or goto %2$s', 'uptimemonster-site-monitor' ),
+										'<a href="https://uptimemonster.com/my-account/" target="_blank" rel="noopener">' . esc_html__( 'Subscription', 'uptimemonster-site-monitor' ) . '</a>',
+										'<a href="https://uptimemonster.com/my-account/" target="_blank" rel="noopener">' . esc_html__( 'Dashboard', 'uptimemonster-site-monitor' ) . '</a>'
+									); ?></p>
+							</td>
+						</tr>
 					<?php } else { ?>
-					<tr>
-						<th scope="row"><label for="uptimemonster-api-key"><?php esc_html_e( 'Api Key', 'uptimemonster-site-monitor' ); ?></label></th>
-						<td><input name="uptimemonster[api_key]" type="text" id="uptimemonster-api-key" value="" class="regular-text" autocomplete="none"></td>
-					</tr>
-					<tr>
-						<th scope="row"><label for="uptimemonster-api-secret"><?php esc_html_e( 'Api Secret', 'uptimemonster-site-monitor' ); ?></label></th>
-						<td><input name="uptimemonster[api_secret]" type="password" id="uptimemonster-api-secret" value="" class="regular-text" autocomplete="none"></td>
-					</tr>
-					<tr>
-						<th></th>
-						<td>
-							<p><?php printf(
-								/* translators: %s: Signup link */
-									esc_html__( 'Signup now on %s for free and start monitoring your site.', 'uptimemonster-site-monitor' ),
-									'<a href="https://uptimemonster.com/pricing/" target="_blank" rel="noopener">' . esc_html__( 'UptimeMonster', 'uptimemonster-site-monitor' ) . '</a>'
-								); ?></p>
-						</td>
-					</tr>
+						<tr>
+							<th scope="row"><label for="uptimemonster-api-key"><?php esc_html_e( 'Api Key', 'uptimemonster-site-monitor' ); ?></label>
+							</th>
+							<td><input name="uptimemonster[api_key]" type="text" id="uptimemonster-api-key" value="" class="regular-text" autocomplete="none"></td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="uptimemonster-api-secret"><?php esc_html_e( 'Api Secret', 'uptimemonster-site-monitor' ); ?></label>
+							</th>
+							<td><input name="uptimemonster[api_secret]" type="password" id="uptimemonster-api-secret" value="" class="regular-text" autocomplete="none"></td>
+						</tr>
+						<tr>
+							<th></th>
+							<td>
+								<p><?php printf(
+									/* translators: %s: Signup link */
+										esc_html__( 'Signup now on %s for free and start monitoring your site.', 'uptimemonster-site-monitor' ),
+										'<a href="https://uptimemonster.com/pricing/" target="_blank" rel="noopener">' . esc_html__( 'UptimeMonster', 'uptimemonster-site-monitor' ) . '</a>'
+									); ?></p>
+							</td>
+						</tr>
 					<?php } ?>
 					<tr>
-						<th scope="row"><label><?php esc_html_e( 'Status', 'uptimemonster-site-monitor' ); ?></label></th>
+						<th scope="row"><label><?php esc_html_e( 'Status', 'uptimemonster-site-monitor' ); ?></label>
+						</th>
 						<td>
 							<table>
 								<tbody>
 								<tr>
-									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'Drop-In:', 'uptimemonster-site-monitor' ); ?></strong></th>
+									<th scope="row" style="padding:0;">
+										<strong><?php esc_html_e( 'Drop-In:', 'uptimemonster-site-monitor' ); ?></strong>
+									</th>
 									<td style="padding:0;">
 										<?php
 										if ( UptimeMonster_Site_Monitor::is_drop_in_installed() ) {
 											$uninstall_url = false;
 											if ( UptimeMonster_Site_Monitor::is_drop_in_writable() ) {
-												$uninstall_url = wp_nonce_url( add_query_arg( [ 'action' => self::DROP_IN_ACTION, 'uninstall' => true ], $this->get_page_url() ), self::DROP_IN_ACTION );
+												$uninstall_url = wp_nonce_url( add_query_arg( [
+													'action'    => self::DROP_IN_ACTION,
+													'uninstall' => true,
+												], $this->get_page_url() ), self::DROP_IN_ACTION );
 												esc_html_e( 'Writable', 'uptimemonster-site-monitor' );
 											} else {
 												esc_html_e( 'Not Writable', 'uptimemonster-site-monitor' );
@@ -317,7 +329,9 @@ class Dashboard {
 												esc_html__( 'Installed (Version %s)', 'uptimemonster-site-monitor' ),
 												esc_html( UptimeMonster_Site_Monitor::drop_in_version() )
 											);
-											?><br><?php
+											?>
+											<br>
+											<?php
 											if ( $uninstall_url ) {
 												printf(
 												/* translators: 1. Uninstallation URL tag (anchor) opening, 2. Anchor tag closing */
@@ -335,8 +349,14 @@ class Dashboard {
 												);
 											}
 											if ( UptimeMonster_Site_Monitor::drop_in_need_update() ) {
-												$update_url = wp_nonce_url( add_query_arg( [ 'action' => self::DROP_IN_ACTION, 'update' => true ], $this->get_page_url() ), self::DROP_IN_ACTION );
-												?><br><?php
+												$update_url = [
+													'action' => self::DROP_IN_ACTION,
+													'update' => true,
+												];
+												$update_url = wp_nonce_url( add_query_arg( $update_url, $this->get_page_url() ), self::DROP_IN_ACTION );
+												?>
+												<br>
+												<?php
 												printf(
 												/* translators: 1. New Version Number, 2. Update URL tag (anchor) opening, 3. Anchor tag closing */
 													esc_html__( 'A newer version (Version %1$s) of the drop-in available. Click %2$shere%3$s to update.', 'uptimemonster-site-monitor' ),
@@ -345,31 +365,31 @@ class Dashboard {
 													'</a>'
 												);
 											}
+										} elseif ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
+											$install_url = wp_nonce_url( add_query_arg( [ 'action' => self::DROP_IN_ACTION ], $this->get_page_url() ), self::DROP_IN_ACTION );
+											printf(
+											/* translators: 1. Installation URL tag (anchor) opening, 2. Anchor tag closing */
+												esc_html__( 'Click %1$shere%2$s to install the drop-in.', 'uptimemonster-site-monitor' ),
+												'<a href="' . esc_url( $install_url ) . '">',
+												'</a>'
+											);
 										} else {
-											if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {
-												$install_url = wp_nonce_url( add_query_arg( [ 'action' => self::DROP_IN_ACTION ], $this->get_page_url() ), self::DROP_IN_ACTION );
-												printf(
-												/* translators: 1. Installation URL tag (anchor) opening, 2. Anchor tag closing */
-													esc_html__( 'Click %1$shere%2$s to install the drop-in.', 'uptimemonster-site-monitor' ),
-													'<a href="' . esc_url( $install_url ) . '">',
-													'</a>'
-												);
-											} else {
-												printf(
-												/* translators: 1: Source file path. 2: Destination file path. 3: Code opening tag. 4: Code closing tag. */
-													esc_html__( 'WP Content (wp-content) directory is not writable. Please copy %3$s%1$s%4$s into %3$s%2$s%4$s for enabling error monitoring', 'uptimemonster-site-monitor' ),
-													esc_html( UptimeMonster_Site_Monitor::get_drop_in_dist_file() ),
-													esc_html( UptimeMonster_Site_Monitor::get_drop_in_file() ),
-													'<code>',
-													'</code>'
-												);
-											}
+											printf(
+											/* translators: 1: Source file path. 2: Destination file path. 3: Code opening tag. 4: Code closing tag. */
+												esc_html__( 'WP Content (wp-content) directory is not writable. Please copy %3$s%1$s%4$s into %3$s%2$s%4$s for enabling error monitoring', 'uptimemonster-site-monitor' ),
+												esc_html( UptimeMonster_Site_Monitor::get_drop_in_dist_file() ),
+												esc_html( UptimeMonster_Site_Monitor::get_drop_in_file() ),
+												'<code>',
+												'</code>'
+											);
 										}
 										?>
 									</td>
 								</tr>
 								<tr>
-									<th scope="row" style="padding:0;"><strong><?php esc_html_e( 'WP Content Directory', 'uptimemonster-site-monitor' ); ?></strong></th>
+									<th scope="row" style="padding:0;">
+										<strong><?php esc_html_e( 'WP Content Directory', 'uptimemonster-site-monitor' ); ?></strong>
+									</th>
 									<td style="padding:0;">
 										<?php
 										if ( UptimeMonster_Site_Monitor::is_wp_content_writable() ) {

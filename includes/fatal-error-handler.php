@@ -58,12 +58,14 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 
 			$this->send_log( $error );
 
-			// Let WP trigger recovery mode if necessary.
-			$error = $this->_detect_error( $error );
+			// Handle WP default Fatal Error Handler Behavior,
+			// And Let WP trigger recovery mode if necessary.
+			$error = $this->parent_detect_error( $error );
 
 			if ( ! $error ) {
 				return;
 			}
+
 
 			if ( ! isset( $GLOBALS['wp_locale'] ) && function_exists( 'load_default_textdomain' ) ) {
 				load_default_textdomain();
@@ -79,7 +81,7 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 			if ( is_admin() || ! headers_sent() ) {
 				$this->display_error_template( $error, $handled );
 			}
-		} catch ( Exception $e ) {
+		} catch ( Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 			// Catch exceptions and remain silent.
 		}
 	}
@@ -119,6 +121,11 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 		] );
 	}
 
+	/**
+	 * Detects the error causing the crash if it should be handled.
+	 *
+	 * @return array|null
+	 */
 	protected function detect_error() {
 		$error = error_get_last();
 
@@ -132,10 +139,21 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 		return $error;
 	}
 
-	protected function _detect_error( $error ) {
-		if ( ! $error ) {
+	/**
+	 * This original WP_Fatal_Error_Handler::detect_error method as we override it in
+	 * this class and also need to call it from the parent.
+	 *
+	 * @param $error
+	 *
+	 * @return array|null
+	 * @see WP_Fatal_Error_Handler::detect_error
+	 */
+	protected function parent_detect_error( $error ) {
+		// No error, just skip the error handling code.
+		if ( null === $error ) {
 			return null;
 		}
+
 		// Bail if this error should not be handled.
 		if ( ! $this->should_handle_error( $error ) ) {
 			return null;
@@ -145,6 +163,6 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 	}
 }
 
-return new UptimeMonster_Monitor_Errors;
+return new UptimeMonster_Monitor_Errors();
 
 // End of file fatal-error-handler.php.
