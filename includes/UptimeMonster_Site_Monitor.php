@@ -85,7 +85,7 @@ final class UptimeMonster_Site_Monitor {
 
 	public static function uninstall(): bool {
 		$old_version = self::drop_in_version();
-		$removed = self::remove_drop_in();
+		$removed     = self::remove_drop_in();
 		do_action( 'uptimemonster_error_logger_uninstalled', $removed, $old_version );
 		return $removed;
 	}

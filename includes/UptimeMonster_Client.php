@@ -22,24 +22,28 @@ class UptimeMonster_Client {
 
 	/**
 	 * API server host.
+	 *
 	 * @var string
 	 */
 	private $host = 'https://app.uptimemonster.com/';
 
 	/**
 	 * API version.
+	 *
 	 * @var string
 	 */
 	private $version = 'v1';
 
 	/**
 	 * API Key (Public Key).
+	 *
 	 * @var string
 	 */
 	private $api_key;
 
 	/**
 	 * API Secret (Private Key).
+	 *
 	 * @var string
 	 */
 	private $api_secret;
@@ -262,7 +266,7 @@ class UptimeMonster_Client {
 		}
 
 		$timestamp = time();
-		$payload = implode( '', [ $this->api_key, $method, $data, $timestamp ] );
+		$payload   = implode( '', [ $this->api_key, $method, $data, $timestamp ] );
 
 		return [ 'sha256', $timestamp, hash_hmac( 'sha256', $payload, $this->api_secret ) ];
 	}

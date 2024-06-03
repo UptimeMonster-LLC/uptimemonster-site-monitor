@@ -52,7 +52,6 @@ abstract class Controller_Base extends WP_REST_Controller {
 	 *
 	 * @return WP_Error|boolean
 	 * @see WP_REST_Server::respond_to_request()
-	 *
 	 */
 	public function get_route_access( $request ) {
 		$api_keys = get_option( 'uptimemonster_site_monitor_api_keys', [] );
