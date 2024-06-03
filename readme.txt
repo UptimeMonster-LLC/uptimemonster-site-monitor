@@ -1,6 +1,6 @@
 === UptimeMonster Site Monitor ===
 Contributors: uptimemonster, niamul, mhamudul_hk, shuvo586
-Tags: activity monitor, health check, watchdog, logging, issue tracker, error logging
+Tags: activity monitor, health check, issue tracker, uptime monitoring, error logging
 Requires at least: 5.2
 Tested up to: 6.4
 Stable tag: 1.0.0
@@ -8,7 +8,7 @@ Requires PHP: 5.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html#license-text
 
-Effortlessly monitor and optimize the performance, security, and activities of multiple WordPress websites with the UptimeMonster Site Monitor plugin – your all-in-one solution for streamlined website management.
+Monitor all activities and error logs of your WordPress site with UptimeMonster. Effortlessly simplify website management.
 
 == Description ==
 Track and analyze all activities on your WordPress website with the powerful and flexible UptimeMonster Site Monitor plugin.
