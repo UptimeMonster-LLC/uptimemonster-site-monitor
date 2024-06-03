@@ -31,7 +31,7 @@ class Monitor_Comment_Activity extends Monitor_Posts_Activity {
 		add_action( 'transition_comment_status', [ $this, 'log_on_status_change' ], 10, 3 );
 	}
 
-	protected function maybe_log_activity( $action, $object_id ) {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 		/**
 		 * Should report activity for comment?
 		 *

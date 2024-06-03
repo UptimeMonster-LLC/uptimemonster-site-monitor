@@ -116,7 +116,7 @@ add_action( 'before_woocommerce_init', 'uptimemonster_declare_wc_hpos_compatibil
  *
  * @return UptimeMonster_Site_Monitor
  */
-function uptimemonster_site_monitor() {
+function uptimemonster_site_monitor(): UptimeMonster_Site_Monitor {
 	return UptimeMonster_Site_Monitor::get_instance();
 }
 

@@ -25,7 +25,7 @@ class Monitor_WP_Export_Content_Activity extends Activity_Monitor_Base {
 		add_action( 'export_wp', [ $this, 'log_on_export' ] );
 	}
 
-	protected function maybe_log_activity( $action, $object_id ) {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 
 		/**
 		 * Should report activity?

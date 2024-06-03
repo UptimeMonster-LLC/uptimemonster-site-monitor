@@ -79,7 +79,7 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 			if ( is_admin() || ! headers_sent() ) {
 				$this->display_error_template( $error, $handled );
 			}
-		} catch ( Exception ) {
+		} catch ( Exception $e ) {
 			// Catch exceptions and remain silent.
 		}
 	}
@@ -106,8 +106,8 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 			'action'    => 'error_log',
 			'activity'  => 'WP_Error_Handler',
 			'subtype'   => 'error',
-			'object_id' => null,
-			'name'      => null,
+			'object_id' => 0,
+			'name'      => '',
 			'timestamp' => uptimemonster_get_current_time(),
 			'actor'     => uptimemonster_get_current_actor(),
 			'error'     => $error,

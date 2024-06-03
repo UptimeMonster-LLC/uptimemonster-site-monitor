@@ -34,7 +34,7 @@ class Monitor_Users_Activity extends Activity_Monitor_Base {
 		add_action( 'make_ham_user', [ $this, 'on_hammed' ] );
 	}
 
-	protected function maybe_log_activity( $action, $object_id ) {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 		$user = uptimemonster_get_user( $object_id );
 
 		/**

@@ -30,7 +30,7 @@ class Monitor_Nav_Menu_Activity extends Activity_Monitor_Base {
 		add_action( 'wp_delete_nav_menu', [ $this, 'log_on_delete' ] );
 	}
 
-	protected function maybe_log_activity( $action, $object_id ) {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 		$menu = wp_get_nav_menu_object( $object_id );
 
 		/**

@@ -25,7 +25,7 @@ class Monitor_Attachment_Activity extends Monitor_Posts_Activity {
 		add_action( 'delete_attachment', [ $this, 'log_on_deleted' ], 10, 1 );
 	}
 
-	protected function maybe_log_activity( $action, $object_id ) {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 		/**
 		 * Should report activity for attachment?
 		 *

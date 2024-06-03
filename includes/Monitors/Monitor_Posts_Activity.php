@@ -31,7 +31,7 @@ class Monitor_Posts_Activity extends Activity_Monitor_Base {
 		add_action( 'delete_post', [ $this, 'log_delete' ], 10, 2 );
 	}
 
-	protected function maybe_log_activity( $action, $object_id ) {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 		$post = get_post( $object_id );
 
 		if ( ! $post ) {

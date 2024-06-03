@@ -32,7 +32,7 @@ class Monitor_Taxonomy_Terms_Activity extends Activity_Monitor_Base {
 		add_action( 'delete_term', [ $this, 'log_on_change' ], 10, 5 );
 	}
 
-	protected function maybe_log_activity( $action, $object_id ) {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 		$term   = get_term( $object_id );
 		$status = ! is_wp_error( $term ) && isset( $term->taxonomy ) && 'nav_menu' !== $term->taxonomy;
 

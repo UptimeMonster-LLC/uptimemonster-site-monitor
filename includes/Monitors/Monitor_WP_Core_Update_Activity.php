@@ -29,7 +29,7 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 		// @TODO find way to log update failed.
 	}
 
-	protected function maybe_log_activity( $action, $object_id ) {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 
 		/**
 		 * Should report activity?

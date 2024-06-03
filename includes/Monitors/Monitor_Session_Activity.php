@@ -29,7 +29,7 @@ class Monitor_Session_Activity extends Activity_Monitor_Base {
 		add_action( 'clear_auth_cookie', [ $this, 'on_logout' ] );
 	}
 
-	protected function maybe_log_activity( $action, $object_id ) {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 		$user = uptimemonster_get_user( $object_id );
 
 		/**
