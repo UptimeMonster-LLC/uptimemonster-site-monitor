@@ -40,7 +40,7 @@ final class UptimeMonster_Site_Monitor {
 		// Check if autoloader exists, include it or show error with admin notice ui.
 
 		// DropIns
-		self::$error_handler_dist = UPTIMEMONSTER_SITE_PLUGIN_PATH . 'includes/fatal-error-handler.php.tpl';
+		self::$error_handler_dist = UPTIMEMONSTER_SITE_PLUGIN_PATH . 'includes/fatal-error-handler.php';
 		self::$error_handler      = WP_CONTENT_DIR . '/fatal-error-handler.php';
 
 		register_activation_hook( UPTIMEMONSTER_SITE_PLUGIN_FILE, array( __CLASS__, 'install' ) );
@@ -83,9 +83,11 @@ final class UptimeMonster_Site_Monitor {
 		self::install_drop_in();
 	}
 
-	public static function uninstall() {
-		self::remove_drop_in();
-		do_action( 'uptimemonster_site_monitor_deactivation' );
+	public static function uninstall(): bool {
+		$old_version = self::drop_in_version();
+		$removed = self::remove_drop_in();
+		do_action( 'uptimemonster_error_logger_uninstalled', $removed, $old_version );
+		return $removed;
 	}
 
 	public static function get_drop_in_data( $installed = true ) {
@@ -97,15 +99,15 @@ final class UptimeMonster_Site_Monitor {
 		return self::$error_handler_data[ $which ];
 	}
 
-	public static function get_drop_in_file() {
+	public static function get_drop_in_file(): string {
 		return self::$error_handler;
 	}
 
-	public static function get_drop_in_dist_file() {
+	public static function get_drop_in_dist_file(): string {
 		return self::$error_handler_dist;
 	}
 
-	public static function is_drop_in_installed() {
+	public static function is_drop_in_installed(): bool {
 		$data = self::get_drop_in_data();
 
 		return isset( $data['Name'] ) && 'UptimeMonster WordPress Error Monitor' === trim( $data['Name'] );
@@ -114,22 +116,19 @@ final class UptimeMonster_Site_Monitor {
 	/**
 	 * @param bool $installed
 	 *
-	 * @return string
+	 * @return string|false
 	 */
-	public static function drop_in_version( $installed = true ) {
-		if ( $installed && self::is_drop_in_installed() ) {
-			return self::get_drop_in_data()['Version'];
-		}
-
-		return self::get_drop_in_data( false )['Version'];
+	public static function drop_in_version( bool $installed = true ) {
+		$data = self::get_drop_in_data( $installed );
+		return isset( $data['Version'] ) ? $data['Version'] : false;
 	}
 
-	public static function is_wp_content_writable() {
+	public static function is_wp_content_writable(): bool {
 		$fs = uptimemonster_get_file_systeam();
 		return $fs->is_writable( WP_CONTENT_DIR );
 	}
 
-	public static function is_drop_in_writable() {
+	public static function is_drop_in_writable(): bool {
 		$fs = uptimemonster_get_file_systeam();
 		return $fs->is_writable( self::$error_handler );
 	}
@@ -142,27 +141,32 @@ final class UptimeMonster_Site_Monitor {
 		return version_compare( self::drop_in_version(), self::drop_in_version( false ), '<' );
 	}
 
-	protected static function install_drop_in() {
-		$old_version = self::drop_in_version();
-
+	protected static function install_drop_in(): bool {
 		if ( self::drop_in_need_update() ) {
-			$fs = uptimemonster_get_file_systeam();
-			// reset cache.
+			$old_version = self::drop_in_version();
+			$fs          = uptimemonster_get_file_systeam();
+			// Reset cache.
 			self::$error_handler_data = array();
 
 			self::remove_drop_in();
 
-			$fs->put_contents( self::$error_handler, $fs->get_contents( self::$error_handler_dist ) );
+			$status = $fs->put_contents( self::$error_handler, $fs->get_contents( self::$error_handler_dist ) );
 
-			do_action( 'uptimemonster_error_logger_installed', $old_version, self::is_drop_in_installed() );
+			do_action( 'uptimemonster_error_logger_installed', $status, $old_version );
+
+			return $status;
 		}
+
+		return self::is_drop_in_installed();
 	}
 
-	protected static function remove_drop_in() {
+	protected static function remove_drop_in(): bool {
 		$fs = uptimemonster_get_file_systeam();
 		if ( $fs->exists( self::$error_handler ) ) {
-			$fs->delete( self::$error_handler, false, 'f' );
+			return $fs->delete( self::$error_handler, false, 'f' );
 		}
+
+		return true;
 	}
 
 	/**

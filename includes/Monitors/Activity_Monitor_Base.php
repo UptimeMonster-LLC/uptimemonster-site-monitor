@@ -9,6 +9,7 @@
 
 namespace UptimeMonster\SiteMonitor\Monitors;
 
+use stdClass;
 use UptimeMonster\SiteMonitor\UptimeMonster_Client;
 use Exception;
 use InvalidArgumentException;
@@ -74,14 +75,14 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 * @param string $action Log Type
 	 * @param int|string $object_id Object ID
 	 * @param string $subtype Object Type
-	 * @param array|string|false $name Object Name.
-	 * @param array|object $data [Optional] Extra data.
+	 * @param string $name Object Name.
+	 * @param array|stdClass $data [Optional] Extra data.
 	 *
 	 * @return void
 	 *
 	 * @throws Exception
 	 */
-	protected function log_activity( $action, $object_id, $subtype, $name, $data = null ) {
+	protected function log_activity( string $action, $object_id, string $subtype, string $name, $data = null ) {
 		if ( false !== strpos( $subtype, '_transient_' ) || false !== strpos( $subtype, 'action_scheduler_lock_async' ) ) {
 			return;
 		}
@@ -179,13 +180,12 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 * This should be overridden by the subClass.
 	 *
 	 * @param string $action
-	 * @param mixed $object_id
+	 * @param int|string $object_id
 	 *
 	 * @return bool
-	 *
-	 * @throws Exception
 	 */
-	protected function maybe_log_activity( $action, $object_id ) {
+	protected function maybe_log_activity( string $action, $object_id ): bool {
+		/** @noinspection PhpUnhandledExceptionInspection */
 		throw new Exception(
 			sprintf(
 			/* translators: 1. Method Name. */
