@@ -28,10 +28,8 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 		add_action( 'uptimemonster_site_monitor_api_updated', [ $this, 'on_activation' ] );
 		add_action( 'uptimemonster_site_monitor_activation', [ $this, 'on_activation' ] );
 
-		add_action( 'uptimemonster_site_monitor_api_deactivating', [ $this, 'on_deactivation' ] );
-		add_action( 'uptimemonster_site_monitor_api_deactivated', [ $this, 'on_deactivation' ] );
-
 		add_action( 'uptimemonster_error_logger_installed', [ $this, 'on_error_logger_installed' ], 10, 2 );
+		add_action( 'uptimemonster_error_logger_uninstalled', [ $this, 'on_error_logger_uninstalled' ], 10, 2 );
 	}
 
 	protected function maybe_log_activity( $action = '', $object_id = '' ) {
@@ -54,22 +52,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 		uptimemonster_restore_locale();
 	}
 
-	public function on_deactivation() {
-		if ( ! $this->maybe_log_activity() ) {
-			return;
-		}
-
-		uptimemonster_switch_to_english();
-		$this->log_activity(
-			Activity_Monitor_Base::ITEM_DEACTIVATED,
-			0,
-			'monitor',
-			esc_html__( 'Site Monitor Deactivated', 'uptimemonster-site-monitor' )
-		);
-		uptimemonster_restore_locale();
-	}
-
-	public function on_error_logger_installed( $old = null, $installed = false ) {
+	public function on_error_logger_installed( $installed, $old_version = null ) {
 		if ( ! $this->maybe_log_activity() ) {
 			return;
 		}
@@ -77,7 +60,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 		uptimemonster_switch_to_english();
 
 		if ( $installed ) {
-			$name = $old ? esc_html__( '“Error Logger” Drop-In Updated', 'uptimemonster-site-monitor' ) : esc_html__( '“Error Logger” Drop-In Installed', 'uptimemonster-site-monitor' );
+			$name = $old_version ? esc_html__( '“Error Logger” Drop-In Updated', 'uptimemonster-site-monitor' ) : esc_html__( '“Error Logger” Drop-In Installed', 'uptimemonster-site-monitor' );
 		} else {
 			$name = esc_html__( 'Failed To Install “Error Logger” Drop-In.', 'uptimemonster-site-monitor' );
 		}
@@ -86,11 +69,30 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 
 		$data = [ 'version' => UptimeMonster_Site_Monitor::drop_in_version() ];
 
-		if ( $old ) {
-			$data['previous'] = $old;
+		if ( $old_version ) {
+			$data['previous'] = $old_version;
 		}
 
-		$this->log_activity( $old ? Activity_Monitor_Base::ITEM_UPDATED : Activity_Monitor_Base::ITEM_INSTALLED, 0, 'monitor', $name, $data );
+		$this->log_activity( $old_version ? Activity_Monitor_Base::ITEM_UPDATED : Activity_Monitor_Base::ITEM_INSTALLED, 0, 'monitor', $name, $data );
+	}
+	public function on_error_logger_uninstalled( $removed, $version = null ) {
+		if ( ! $this->maybe_log_activity() ) {
+			return;
+		}
+
+		uptimemonster_switch_to_english();
+
+		if ( $removed ) {
+			$name = esc_html__( '“Error Logger” Drop-In Uninstalled', 'uptimemonster-site-monitor' );
+		} else {
+			$name = esc_html__( 'Failed To Uninstall “Error Logger” Drop-In.', 'uptimemonster-site-monitor' );
+		}
+
+		uptimemonster_restore_locale();
+
+		$data = [ 'version' => $version ];
+
+		$this->log_activity( Activity_Monitor_Base::ITEM_UNINSTALLED, 0, 'monitor', $name, $data );
 	}
 }
 

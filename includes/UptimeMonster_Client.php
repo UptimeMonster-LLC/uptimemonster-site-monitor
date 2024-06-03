@@ -69,7 +69,7 @@ class UptimeMonster_Client {
 	 *
 	 * @return $this
 	 */
-	public function set_api_key( $api_key ) {
+	public function set_api_key( string $api_key ): UptimeMonster_Client {
 		$this->api_key = $api_key;
 
 		return $this;
@@ -82,7 +82,7 @@ class UptimeMonster_Client {
 	 *
 	 * @return $this
 	 */
-	public function set_api_secret( $api_secret ) {
+	public function set_api_secret( string $api_secret ): UptimeMonster_Client {
 		$this->api_secret = $api_secret;
 
 		return $this;
@@ -93,7 +93,7 @@ class UptimeMonster_Client {
 	 *
 	 * @return bool
 	 */
-	public function has_keys() {
+	public function has_keys(): bool {
 		return $this->api_key && $this->api_secret;
 	}
 
