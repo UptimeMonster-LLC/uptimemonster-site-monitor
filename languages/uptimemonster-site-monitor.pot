@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-06-03T06:41:04+00:00\n"
+"POT-Creation-Date: 2024-06-03T11:10:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: uptimemonster-site-monitor\n"
@@ -32,7 +32,7 @@ msgstr ""
 #. Author of the plugin
 #: uptimemonster-site-monitor.php
 #: includes/Dashboard.php:61
-#: includes/Dashboard.php:292
+#: includes/Dashboard.php:298
 msgid "UptimeMonster"
 msgstr ""
 
@@ -41,11 +41,11 @@ msgstr ""
 msgid "https://uptimemonster.com/"
 msgstr ""
 
-#: includes/Api/Controllers/Controller_Base.php:63
+#: includes/Api/Controllers/Controller_Base.php:62
 msgid "Update API Keys In Plugin Settings."
 msgstr ""
 
-#: includes/Api/Controllers/Controller_Base.php:91
+#: includes/Api/Controllers/Controller_Base.php:90
 msgid "Invalid Signature"
 msgstr ""
 
@@ -78,7 +78,7 @@ msgid "WordPress is up to date."
 msgstr ""
 
 #. translators: %s: Argument type string.
-#: includes/Api/Controllers/V1/Core_Update.php:465
+#: includes/Api/Controllers/V1/Core_Update.php:468
 msgid "Unsupported argument type passed. Argument 1 must be one of string, WP_Error, Exception (or any Throwable), %s given."
 msgstr ""
 
@@ -330,97 +330,97 @@ msgstr ""
 msgid "API Key"
 msgstr ""
 
-#: includes/Dashboard.php:259
+#: includes/Dashboard.php:260
 msgid "API Secret"
 msgstr ""
 
-#: includes/Dashboard.php:266
+#: includes/Dashboard.php:268
 msgid "Connected"
 msgstr ""
 
-#: includes/Dashboard.php:267
+#: includes/Dashboard.php:271
 msgid "Disconnect"
 msgstr ""
 
 #. translators: %1$s: Manage Subscription link, %2$s: Dashboard link
-#: includes/Dashboard.php:271
+#: includes/Dashboard.php:275
 msgid "Manage your UptimeMonster %1$s or goto %2$s"
 msgstr ""
 
-#: includes/Dashboard.php:272
+#: includes/Dashboard.php:276
 msgid "Subscription"
 msgstr ""
 
-#: includes/Dashboard.php:273
+#: includes/Dashboard.php:277
 msgid "Dashboard"
 msgstr ""
 
-#: includes/Dashboard.php:279
+#: includes/Dashboard.php:283
 msgid "Api Key"
 msgstr ""
 
-#: includes/Dashboard.php:283
+#: includes/Dashboard.php:288
 msgid "Api Secret"
 msgstr ""
 
 #. translators: %s: Signup link
-#: includes/Dashboard.php:291
+#: includes/Dashboard.php:297
 msgid "Signup now on %s for free and start monitoring your site."
 msgstr ""
 
-#: includes/Dashboard.php:298
+#: includes/Dashboard.php:304
 msgid "Status"
 msgstr ""
 
-#: includes/Dashboard.php:303
+#: includes/Dashboard.php:311
 msgid "Drop-In:"
 msgstr ""
 
-#: includes/Dashboard.php:310
-#: includes/Dashboard.php:376
+#: includes/Dashboard.php:322
+#: includes/Dashboard.php:396
 msgid "Writable"
 msgstr ""
 
-#: includes/Dashboard.php:312
-#: includes/Dashboard.php:378
+#: includes/Dashboard.php:324
+#: includes/Dashboard.php:398
 msgid "Not Writable"
 msgstr ""
 
 #. translators: 1. Error handler drop-in version.
-#: includes/Dashboard.php:317
+#: includes/Dashboard.php:329
 msgid "Installed (Version %s)"
 msgstr ""
 
 #. translators: 1. Uninstallation URL tag (anchor) opening, 2. Anchor tag closing
-#: includes/Dashboard.php:324
+#: includes/Dashboard.php:338
 msgid "Click %1$shere%2$s to uninstall (disable) the Drop-In."
 msgstr ""
 
 #. translators: 1: Source file path. 2: Destination file path. 3: Code opening tag. 4: Code closing tag.
-#: includes/Dashboard.php:331
+#: includes/Dashboard.php:345
 msgid "WP Content (wp-content) directory is not writable. Please remove %2$s%1$s%3$s manually to disable error log monitoring."
 msgstr ""
 
 #. translators: 1. New Version Number, 2. Update URL tag (anchor) opening, 3. Anchor tag closing
-#: includes/Dashboard.php:342
+#: includes/Dashboard.php:362
 msgid "A newer version (Version %1$s) of the drop-in available. Click %2$shere%3$s to update."
 msgstr ""
 
 #. translators: 1. Installation URL tag (anchor) opening, 2. Anchor tag closing
-#: includes/Dashboard.php:353
+#: includes/Dashboard.php:372
 msgid "Click %1$shere%2$s to install the drop-in."
 msgstr ""
 
 #. translators: 1: Source file path. 2: Destination file path. 3: Code opening tag. 4: Code closing tag.
-#: includes/Dashboard.php:360
+#: includes/Dashboard.php:379
 msgid "WP Content (wp-content) directory is not writable. Please copy %3$s%1$s%4$s into %3$s%2$s%4$s for enabling error monitoring"
 msgstr ""
 
-#: includes/Dashboard.php:372
+#: includes/Dashboard.php:391
 msgid "WP Content Directory"
 msgstr ""
 
-#: includes/Dashboard.php:391
+#: includes/Dashboard.php:411
 msgid "Save Changes"
 msgstr ""
 
@@ -537,11 +537,11 @@ msgstr ""
 msgid "Cloning is forbidden."
 msgstr ""
 
-#: includes/UptimeMonster_Client.php:157
+#: includes/UptimeMonster_Client.php:161
 msgid "Missing API Keys."
 msgstr ""
 
-#: includes/UptimeMonster_Client.php:236
+#: includes/UptimeMonster_Client.php:240
 msgid "Something went wrong"
 msgstr ""
 

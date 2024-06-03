@@ -281,6 +281,9 @@ class Core_Update extends Controller_Base {
 
 		$old_file_paths_to_check = array_diff( $old_file_paths, $new_file_paths );
 
+		// Initialize file system.
+		$fs = uptimemonster_get_file_systeam();
+
 		foreach ( $old_file_paths_to_check as $old_filepath_to_check ) {
 			$old_realpath = realpath( ABSPATH . $old_filepath_to_check );
 
@@ -306,8 +309,8 @@ class Core_Update extends Controller_Base {
 
 			// On Windows or Unix with only the incorrectly cased file.
 			if ( $new_basename !== $expected_basename ) {
-				rename( ABSPATH . $old_filepath_to_check, ABSPATH . $old_filepath_to_check . '.tmp' ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_rename
-				rename( ABSPATH . $old_filepath_to_check . '.tmp', ABSPATH . $new_filepath ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_rename
+				$fs->move( ABSPATH . $old_filepath_to_check, ABSPATH . $old_filepath_to_check . '.tmp', true );
+				$fs->move( ABSPATH . $old_filepath_to_check . '.tmp', ABSPATH . $new_filepath, true );
 
 				continue;
 			}
@@ -318,8 +321,8 @@ class Core_Update extends Controller_Base {
 				if ( fileinode( $old_realpath ) === fileinode( $new_realpath ) ) {
 					// Check deeper because even realpath or glob might not return the actual case.
 					if ( ! in_array( $expected_basename, scandir( dirname( $new_realpath ) ), true ) ) {
-						rename( ABSPATH . $old_filepath_to_check, ABSPATH . $old_filepath_to_check . '.tmp' ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_rename
-						rename( ABSPATH . $old_filepath_to_check . '.tmp', ABSPATH . $new_filepath ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_rename
+						$fs->move( ABSPATH . $old_filepath_to_check, ABSPATH . $old_filepath_to_check . '.tmp', true );
+						$fs->move( ABSPATH . $old_filepath_to_check . '.tmp', ABSPATH . $new_filepath, true );
 					}
 				} else {
 					// On Unix with both files: Delete the incorrectly cased file.
@@ -339,7 +342,7 @@ class Core_Update extends Controller_Base {
 				}
 
 				if ( file_exists( ABSPATH . $file ) ) {
-					unlink( ABSPATH . $file ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_unlink
+					wp_delete_file( ABSPATH . $file );
 					++$count;
 				}
 			}
