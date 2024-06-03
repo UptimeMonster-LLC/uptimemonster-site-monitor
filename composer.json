@@ -22,8 +22,8 @@
         "ext-mysqli": "*",
         "ext-imagick": "*",
         "composer/semver": "^3.3",
-		"ext-soap": "*"
-	},
+        "ext-soap": "*"
+    },
     "require-dev": {
         "phpstan/phpstan": "^1.8",
         "phpstan/extension-installer": "^1.1",
@@ -49,6 +49,13 @@
         "phpcs:log": "@php ./vendor/bin/phpcs --colors --extensions=php --report-file=./logs/phpcs.log .",
         "phpcbf": "@php ./vendor/bin/phpcbf --colors --extensions=php .",
         "analyze": "@php ./vendor/bin/phpstan analyze .",
-        "build": "@composer install --no-dev"
+        "dev": [
+            "@composer install",
+            "@composer dump-autoload"
+        ],
+        "build": [
+            "@composer install --no-dev",
+            "@composer dump-autoload -o"
+        ]
     }
 }
