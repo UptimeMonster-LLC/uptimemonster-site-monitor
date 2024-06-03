@@ -20,12 +20,28 @@ class UptimeMonster_Client {
 
 	use Singleton;
 
+	/**
+	 * API server host.
+	 * @var string
+	 */
 	private $host = 'https://app.uptimemonster.com/';
 
+	/**
+	 * API version.
+	 * @var string
+	 */
 	private $version = 'v1';
 
+	/**
+	 * API Key (Public Key).
+	 * @var string
+	 */
 	private $api_key;
 
+	/**
+	 * API Secret (Private Key).
+	 * @var string
+	 */
 	private $api_secret;
 
 	/**
@@ -42,7 +58,7 @@ class UptimeMonster_Client {
 	 *
 	 * @return $this
 	 */
-	public function reload_api_keys() {
+	public function reload_api_keys(): UptimeMonster_Client {
 		$api_keys = (array) get_option( 'uptimemonster_site_monitor_api_keys', [] );
 
 		if ( isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
@@ -58,7 +74,7 @@ class UptimeMonster_Client {
 	 *
 	 * @return string
 	 */
-	public function get_host() {
+	public function get_host(): string {
 		return trailingslashit( apply_filters( 'uptimemonster_client_app_host', $this->host ) );
 	}
 
@@ -114,7 +130,7 @@ class UptimeMonster_Client {
 	 *
 	 * @return array|mixed|string|WP_Error
 	 */
-	public function send_log( $log ) {
+	public function send_log( array $log ) {
 		return $this->request(
 			'site/activity/log',
 			$log,
@@ -136,7 +152,7 @@ class UptimeMonster_Client {
 	 *
 	 * @return array|mixed|string|WP_Error
 	 */
-	public function request( $route, $data = [], $method = 'get', $args = [] ) {
+	public function request( string $route, array $data = [], string $method = 'get', array $args = [] ) {
 		if ( ! $this->has_keys() ) {
 			return new WP_Error( 'missing-api-keys', esc_html__( 'Missing API Keys.', 'uptimemonster-site-monitor' ) );
 		}
@@ -197,15 +213,17 @@ class UptimeMonster_Client {
 			return $response;
 		}
 
-		$status = wp_remote_retrieve_response_code( $response );
-		$_body  = trim( wp_remote_retrieve_body( $response ) );
-		$body   = json_decode( $_body, true );
+		$status   = wp_remote_retrieve_response_code( $response );
+		$res_body = trim( wp_remote_retrieve_body( $response ) );
+		$body     = json_decode( $res_body, true );
+
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			$body = $_body;
-			unset( $_body );
+			$body = $res_body;
+			unset( $res_body );
 		}
+
 		if ( 200 !== $status ) {
-			$code = isset( $body['code'] ) ? $body['code'] : $status;
+			$code = $body['code'] ?? $status;
 			if ( ! is_array( $body ) ) {
 				$message = $body;
 			} elseif ( isset( $body['message'] ) ) {
@@ -232,7 +250,7 @@ class UptimeMonster_Client {
 	 *
 	 * @return array
 	 */
-	protected function signature( $data, $method ) {
+	protected function signature( $data, string $method ): array {
 		$method = strtolower( $method );
 
 		if ( empty( $data ) ) {
@@ -243,13 +261,10 @@ class UptimeMonster_Client {
 			$data = wp_json_encode( $data, JSON_UNESCAPED_SLASHES );
 		}
 
-		// Signature Timestamp.
 		$timestamp = time();
+		$payload = implode( '', [ $this->api_key, $method, $data, $timestamp ] );
 
-		// Signature Hash.
-		$hash = hash_hmac( 'sha256', "{$this->api_key}{$method}{$data}{$timestamp}", $this->api_secret );
-
-		return [ 'sha256', $timestamp, $hash ];
+		return [ 'sha256', $timestamp, hash_hmac( 'sha256', $payload, $this->api_secret ) ];
 	}
 }
 

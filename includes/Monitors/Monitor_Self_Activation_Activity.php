@@ -32,7 +32,7 @@ class Monitor_Self_Activation_Activity extends Activity_Monitor_Base {
 		add_action( 'uptimemonster_error_logger_uninstalled', [ $this, 'on_error_logger_uninstalled' ], 10, 2 );
 	}
 
-	protected function maybe_log_activity( $action = '', $object_id = '' ) {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 		return get_option( 'uptimemonster_site_monitor_api_keys' );
 	}
 

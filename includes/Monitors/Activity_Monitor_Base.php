@@ -65,7 +65,7 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 *
 	 * @return string
 	 */
-	protected function strip_activity_name( $name ) {
+	protected function strip_activity_name( $name ): string {
 		return wp_strip_all_tags( $name, true );
 	}
 
@@ -183,8 +183,9 @@ abstract class Activity_Monitor_Base implements Activity_Monitor_Interface {
 	 * @param int|string $object_id
 	 *
 	 * @return bool
+	 * @noinspection PhpDocMissingThrowsInspection
 	 */
-	protected function maybe_log_activity( string $action, $object_id ): bool {
+	protected function maybe_log_activity( string $action = null, $object_id = null ): bool {
 		/** @noinspection PhpUnhandledExceptionInspection */
 		throw new Exception(
 			sprintf(
