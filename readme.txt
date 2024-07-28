@@ -84,6 +84,9 @@ Please subscribe to our [YouTube Channel](https://www.youtube.com/@uptimemonster
 
 Start your journey by signing up for a [free starter account](https://uptimemonster.com/product/uptimemonster-yearly-pricing?attribute_pa_packages=starter&variation_id=1171&add-to-cart=1170) with [UptimeMonster](https://uptimemonster.com/product/uptimemonster-yearly-pricing?attribute_pa_packages=starter&variation_id=1171&add-to-cart=1170) today!
 
+### Manage WordPress Themes and Plugins with UptimeMonster
+The Uptime Monster Monitor plugin is based on UptimeMonster app service. Our monitoring service provides features such as installing, activating, deactivating, and uninstalling any themes or plugins for specific WordPress site. Therefore, users will perform these actions from the app instead of the WordPress dashboard.
+
 == Installation ==
 
 = Automatic installation =

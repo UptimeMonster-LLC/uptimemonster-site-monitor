@@ -399,7 +399,7 @@ class Debug_Data extends WP_Debug_Data {
 		foreach ( $info['wp-paths-sizes']['fields'] as $key => &$data ) {
 			if ( ! empty( $sizes[ $key ] ) ) {
 				$data['path']  = $sizes[ $key ]['path'] ?? null;
-				$data['raw']   = $sizes[ $key ]['raw'];
+				$data['raw']   = $sizes[ $key ]['raw'] ?? null;
 				$data['value'] = $sizes[ $key ]['size'];
 				$data['debug'] = $sizes[ $key ]['debug'];
 			}
