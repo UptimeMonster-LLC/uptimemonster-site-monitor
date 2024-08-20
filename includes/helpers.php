@@ -117,15 +117,22 @@ function uptimemonster_get_current_actor(): array {
 		$route     = trim( $GLOBALS['wp']->query_vars['rest_route'], '/' );
 		$parts     = explode( '/', $route );
 		$namespace = reset( $parts );
+		$extra = [
+			'method'    => isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( filter_var( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) : null,
+			'namespace' => $namespace,
+			'route'     => $route,
+		];
+		if ( ! empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			$extra['ua'] = sanitize_text_field(filter_var( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ));
+		}
+		if ( ! empty( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
+			$extra['ul'] = sanitize_text_field(filter_var( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ));
+		}
+
 		$actor     = [
 			'type'  => 'rest-api',
-			'extra' => [
-				'method'    => isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'N/A',
-				'namespace' => $namespace,
-				'route'     => $route,
-			],
+			'extra' => $extra,
 		];
-
 		if ( is_user_logged_in() ) {
 			$user           = wp_get_current_user();
 			$actor['id']    = $user->ID;
@@ -196,18 +203,17 @@ function uptimemonster_get_user( $identity, $field = null ) {
  * @return string
  */
 function uptimemonster_get_user_display_name( WP_User $user ): string {
-	$name = trim( implode( ' ', [ $user->first_name, $user->last_name ] ) );
-
-	if ( ! empty( $name ) ) {
-		return $name;
+	if ( $user->first_name || $user->last_name ) {
+		/* translators: 1. Firstname, 2. Lastname */
+		$name = sprintf( '%s %s', $user->display_name, $user->user_login );
+		$name = trim( $name );
+		if ( ! empty( $name ) ) {
+			return $name;
+		}
 	}
 
 	if ( ! empty( $user->display_name ) ) {
 		return $user->display_name;
-	}
-
-	if ( ! empty( $user->user_nicename ) ) {
-		return $user->user_nicename;
 	}
 
 	return $user->user_login;
