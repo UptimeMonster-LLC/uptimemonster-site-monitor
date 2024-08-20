@@ -2,9 +2,9 @@
 Contributors: uptimemonster, niamul, mhamudul_hk, shuvo586
 Tags: activity monitor, health check, issue tracker, uptime monitoring, error logging
 Requires at least: 5.2
-Tested up to: 6.4
+Tested up to: 6.6
 Stable tag: 1.0.0
-Requires PHP: 5.6
+Requires PHP: 7.0
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html#license-text
 
@@ -20,19 +20,34 @@ Choose from different monitoring interval mode, and receive a detailed report in
 
 https://www.youtube.com/watch?v=UTT14RCx84k&ab_channel=UptimeMonster&sub_confirmation=1
 
-### Monitor Website Activities
+### Monitor WordPress Website Activities
 
 Explore detailed information about any action by anyone on your WordPress site through the activity log.
 Monitor post changes, user actions, plugin and theme activation/deactivation, WordPress cron jobs, etc.
 
-- WordPress core updates, cron job actions.
+- WordPress core updates, cron job logs.
 - Pages, Posts, CPT (Custom Post Types): add, edit, delete.
 - Categories, Tags, Taxonomies: add, edit, delete.
 - Plugins: install, activate, deactivate, update, delete.
 - Themes: install, activate, change (switch), update, delete.
 - Errors Logs: show error type, message, stack-trace and time.
 - Users: register/add, edit, delete.
-- User Activity: login, logout, login failed.
+- User Activity: login, logout, login fails, etc.
+
+### Manage WordPress Plugin, Themes And Core Updates
+
+Manage your WordPress website's plugin and theme from a single dashboard, check installed versions, available updates, etc.
+including `mu-plugins` and `drop-ins`.
+
+- Manage Plugins: Install new plugins from WordPress repository, update, activate/deactivate, uninstall/delete plugins.
+- Manage Themes: Install new themes from WordPress repository, update, switch and delete themes including child-themes.
+- Manage Core Updates: Upgrade WordPress core.
+
+### WordPress error monitoring
+
+This plugin will log and report php errors for your WordPress site. You will be able to view the error easily without having
+to log into your server via ssh/ftp. This plugin will try to capture as much data as possible for the error, including error
+message, error severity, file and line number, timestamp, WordPress version, user details (if any user loggedin) etc.
 
 ### WordPress Health Check
 
@@ -151,6 +166,14 @@ You will get alert notification through email, push notifications (WhatsApp and 
 The plugin doesn't affect your website speed and performance.
 
 == Screenshots ==
+
+1. Site Overview
+2. WordPress Activity Log
+3. WordPress Health Check
+4. WordPress Plugin Management
+5. WordPress Theme Management
+6. WordPress Error Log
+7. Plugin Settings
 
 == Changelog ==
 

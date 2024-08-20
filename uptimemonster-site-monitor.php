@@ -14,10 +14,10 @@
  * Requires PHP: 7.0
  *
  * Requires at least: 5.6
- * Tested Upto: 6.4
+ * Tested Upto: 6.6
  *
  * WC requires at least: 5.6
- * WC tested up to: 8.7.0
+ * WC tested up to: 9.1
  *
  * @package UptimeMonster\SiteMonitor
  *

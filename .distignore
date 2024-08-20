@@ -2,6 +2,7 @@
 .babelrc
 .deployignore
 .distignore
+.wordpress-org
 .editorconfig
 .eslintignore
 .eslintrc
