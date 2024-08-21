@@ -136,34 +136,78 @@ Please follow this detailed instruction on [How to connect the plugin UptimeMons
 
 = Is UptimeMonster free? =
 
-UptimeMonster adopts a freemium model, offering a generous selection of [essential features at no cost](https://uptimemonster.com/product/uptimemonster-yearly-pricing?attribute_pa_packages=starter&variation_id=1171&add-to-cart=1170) for a restricted number of websites.
-For users seeking greater capabilities or managing additional web entities, UptimeMonster provides a suite of premium features tailored to meet these advanced requirements.
+UptimeMonster follows a freemium model, offering a generous set of essential [features at no cost](https://uptimemonster.com/product/uptimemonster-yearly-pricing?attribute_pa_packages=starter&variation_id=1171&add-to-cart=1170)
+for a limited number of websites. For users who need additional capabilities or want to manage more websites, UptimeMonster
+provides a range of [premium](https://uptimemonster.com/pricing/) features tailored to meet advanced needs.
 
 = Where can I view my website log? =
 
-You can view log using the UptimeMonster dashboard.
+You can view your website logs through the UptimeMonster Dashboard by navigating to *Websites » Website details » WordPress* tab.
+
+= Does this plugin interfere with WordPress core, plugin, or theme updates or installations? =
+
+No, this plugin does not interfere with WordPress core functionality or the installation, update, or uninstallation of plugins
+and themes. It allows you to manage plugins, themes, and core updates directly from the UptimeMonster dashboard. The plugin
+registers a REST API endpoint that enables these management features without disrupting standard WordPress operations.
+
+= How secure are the REST API endpoints? =
+
+Our REST API endpoints are secured using HMAC (Hash-based Message Authentication Code) with SHA-256 encryption. This method
+ensures that each request is authenticated with a unique, tamper-proof signature, providing robust protection against unauthorized access and data tampering.
+
+= What activities are logged by this plugin? =
+
+This plugin monitors and logs the following activities for review in the UptimeMonster dashboard:
+
+- Post operations (create, update, delete, restore) for all custom post types, including comments, menus, and taxonomies/terms
+- Options (create, update, delete)
+- Plugin actions (install, update, activation, deactivation, uninstall)
+- Theme actions (install, switch, delete)
+- User login/logout
+- User management (create, update, delete)
+- Widget management (add, delete)
+- WordPress core updates
+- Content exports
+- PHP errors
+
+= What data gets logged? =
+
+This plugin logs various activities ([see previous faq](#what%20activities%20are%20logged%20by%20this%20plugin%3F)) from
+your WordPress site and sends them as logs, including:
+
+- Activity/action type (e.g., create, update, delete, install, uninstall)
+- Object data (e.g., post/option/plugin/theme name, ID, status, post type)
+- Timestamp of the activity
+- Actor data (e.g., name/ID of the user, IP address, UserAgent, language)
+- Miscellaneous information (e.g., WordPress version, site language)
+
+= Does it logs errors? =
+
+Yes, this plugin logs PHP errors. It installs an error handler drop-in ([`fatal-error-handler.php`](https://developer.wordpress.org/reference/classes/wp_fatal_error_handler/))
+to capture and log errors. You can view these errors in the UptimeMonster Dashboard under *Websites > Website Details > WordPress*
+tab. The logs include detailed actor data ([see previous faq](what%20kind%20of%20data%20gets%20logged%3F)).
 
 = Can I export logs? =
 
-We're working on this feature. If you need logs for analysis before we roll out this feature, please reach-out our customer support and support staff will help.
+We are currently working on this feature. If you need to export logs for analysis before the feature is available, please
+contact our customer support team, and they will assist you.
 
 = Do I need a subscription to use the plugin? =
 
-Yes, you need an active subscription package for using this plugin.
-The [starter package is free](https://uptimemonster.com/product/uptimemonster-yearly-pricing?attribute_pa_packages=starter&variation_id=1171&add-to-cart=1170) you can get basic features from the starter package.
-For advanced features and functionalities please check out our [premium packages](https://uptimemonster.com/pricing/).
+Yes, an active subscription is required to use this plugin. The [Starter package is free](https://uptimemonster.com/product/uptimemonster-yearly-pricing?attribute_pa_packages=starter&variation_id=1171&add-to-cart=1170)
+and provides basic features. For advanced features, please explore our [premium packages](https://uptimemonster.com/pricing/).
 
 = Where can I suggest a new feature or report a bug? =
 
-You can use the WordPress support forum to suggest new features and report any bugs or errors.
+You can suggest new features or report bugs through the WordPress support forum.
 
-= How will I be alerted if my site has a security problem? =
+= How will I get notification if my site has any problems? =
 
-You will get alert notification through email, push notifications (WhatsApp and SMS coming soon) based on your subscription package.
+You will receive alerts through email and push notifications (with WhatsApp and SMS notifications coming soon), depending on your subscription package.
 
 = Will UptimeMonster Site Monitor slow down my website? =
 
-The plugin doesn't affect your website speed and performance.
+No, the plugin is designed to operate without affecting your website's speed or performance.
 
 == Screenshots ==
 
