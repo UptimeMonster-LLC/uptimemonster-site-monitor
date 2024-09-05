@@ -9,14 +9,14 @@ jobs:
       - name: Executing Git Pull On Remote Host.
         uses: appleboy/ssh-action@master
         with:
+          username: ${{ secrets.PROD_SERVER_USER }}
           host: ${{ secrets.PROD_SERVER_HOST }}
-          port: 22
-          username: root
+          port: ${{ secrets.PROD_SERVER_PORT }}
           key: ${{ secrets.PROD_SERVER_PRIVATE }}
           script: |
-            cd /opt/www/staging.uptimemonster.com/public/
+            cd ${{ secrets.STAGE_PATH }}/public/
             wp --allow-root flush-opcache flush
-            cd /opt/www/staging.uptimemonster.com/public/wp-content/plugins/uptimemonster-site-monitor/
+            cd ${{ secrets.STAGE_PATH }}/public/wp-content/plugins/uptimemonster-site-monitor/
             git status
             git checkout .
             git pull
@@ -26,11 +26,11 @@ jobs:
             find . -type f -exec chmod 644 {} \;
             chown root:root .git
             chown root:root -R .git/*
-            cd /opt/www/staging.uptimemonster.com/public/
-            rm -rf /opt/www/staging.uptimemonster.com/cache/*
+            cd ${{ secrets.STAGE_PATH }}/public/
+            rm -rf ${{ secrets.STAGE_PATH }}/cache/*
             wp --allow-root flush-opcache flush
             wp --allow-root rocket clean --confirm
-            cd /opt/www/staging.uptimemonster.com/public/wp-content/plugins/uptimemonster-site-monitor/
+            cd ${{ secrets.STAGE_PATH }}/public/wp-content/plugins/uptimemonster-site-monitor/
             git status
   deploy-prod:
     if: github.ref == 'refs/heads/master'
@@ -40,14 +40,14 @@ jobs:
       - name: Executing Git Pull On Remote Host.
         uses: appleboy/ssh-action@master
         with:
+          username: ${{ secrets.PROD_SERVER_USER }}
           host: ${{ secrets.PROD_SERVER_HOST }}
-          port: 22
-          username: root
+          port: ${{ secrets.PROD_SERVER_PORT }}
           key: ${{ secrets.PROD_SERVER_PRIVATE }}
           script: |
-            cd /opt/www/uptimemonster.com/public/
+            cd ${{ secrets.PROD_PATH }}/public/
             wp --allow-root flush-opcache flush
-            cd /opt/www/uptimemonster.com/public/wp-content/plugins/uptimemonster-site-monitor/
+            cd ${{ secrets.PROD_PATH }}/public/wp-content/plugins/uptimemonster-site-monitor/
             git status
             git checkout .
             git pull
@@ -57,9 +57,9 @@ jobs:
             find . -type f -exec chmod 644 {} \;
             chown root:root .git
             chown root:root -R .git/*
-            cd /opt/www/uptimemonster.com/public/
-            rm -rf /opt/www/uptimemonster.com/cache/*
+            cd ${{ secrets.PROD_PATH }}/public/
+            rm -rf ${{ secrets.PROD_PATH }}/cache/*
             wp --allow-root flush-opcache flush
             wp --allow-root rocket clean --confirm
-            cd /opt/www/staging.uptimemonster.com/public/wp-content/plugins/uptimemonster-site-monitor/
+            cd ${{ secrets.PROD_PATH }}/public/wp-content/plugins/uptimemonster-site-monitor/
             git status
