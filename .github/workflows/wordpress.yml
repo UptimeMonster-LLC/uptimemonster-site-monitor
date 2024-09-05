@@ -36,6 +36,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Build
         run: |
           composer install --no-dev
           composer dump-autoload -o --no-dev
