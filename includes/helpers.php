@@ -249,7 +249,7 @@ function uptimemonster_get_ip_address(): string {
 	];
 
 	foreach ( $lookup as $item ) {
-		if ( isset( $_SERVER[ $item ] ) && ! empty( $_SERVER[ $item ] ) ) {
+		if ( ! empty( $_SERVER[ $item ] ) ) {
 			$ip = sanitize_text_field( wp_unslash( $_SERVER[ $item ] ) );
 
 			if ( strpos( $ip, ',' ) ) {

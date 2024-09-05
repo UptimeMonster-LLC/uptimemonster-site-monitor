@@ -31,7 +31,7 @@ class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 	 *
 	 * This method is registered via `register_shutdown_function()`.
 	 *
-	 * @since 5.2.0
+	 * @return void
 	 */
 	public function handle() {
 		if ( ! defined( 'UPTIMEMONSTER_SITE_PLUGIN_VERSION' ) ) {

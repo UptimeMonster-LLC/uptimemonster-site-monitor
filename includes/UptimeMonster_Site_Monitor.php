@@ -62,11 +62,23 @@ final class UptimeMonster_Site_Monitor {
 	}
 
 	public static function install() {
-		// @TODO move installation to another file.
+		// @XXX move installation to another file.
 		self::maybe_install_drop_in();
 
+		// Update keys from old pre-release versions.
+		$old_opt_check = get_option( 'umsm_site_monitor_api_keys' );
+		if ( ! $old_opt_check ) {
+			$old_opt_check = get_option( 'roxwp_site_monitor_api_keys' );
+		}
+
+		if ( $old_opt_check ) {
+			delete_option( 'umsm_site_monitor_api_keys' );
+			delete_option( 'roxwp_site_monitor_api_keys' );
+			update_option( 'uptimemonster_site_monitor_api_keys', $old_opt_check );
+		}
+
 		$api_keys = get_option( 'uptimemonster_site_monitor_api_keys', array() );
-		if ( empty( $api_keys ) ) {
+		if ( empty( $api_keys ) || ! isset( $api_keys['api_key'], $api_keys['api_secret'] ) ) {
 			update_option( 'uptimemonster_need_setup', 'yes' );
 		}
 
@@ -120,7 +132,7 @@ final class UptimeMonster_Site_Monitor {
 	 */
 	public static function drop_in_version( bool $installed = true ) {
 		$data = self::get_drop_in_data( $installed );
-		return isset( $data['Version'] ) ? $data['Version'] : false;
+		return ! empty( $data['Version'] ) ? $data['Version'] : false;
 	}
 
 	public static function is_wp_content_writable(): bool {

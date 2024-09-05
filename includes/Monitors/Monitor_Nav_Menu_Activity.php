@@ -4,7 +4,7 @@
  *
  * @package UptimeMonster\SiteMonitor\Monitors
  * @version 1.0.0
- * @since SiteMonitor 1.0.0
+ * @since 1.0.0
  */
 
 namespace UptimeMonster\SiteMonitor\Monitors;

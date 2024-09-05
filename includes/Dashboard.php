@@ -1,12 +1,8 @@
 <?php
 /**
- * Monitor Activity
+ * Settings Dashboard
  *
  * @package UptimeMonster\SiteMonitor
- * @author Name <email>
- * @version
- * @since
- * @license
  */
 
 namespace UptimeMonster\SiteMonitor;

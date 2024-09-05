@@ -98,7 +98,7 @@ if ( ! file_exists( UPTIMEMONSTER_SITE_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
  * Declare HPOS (COT) compatibility for WooCommerce.
  *
  * @return void
- * @since 1.2.0
+ * @since 1.0.0
  */
 function uptimemonster_declare_wc_hpos_compatibility() {
 	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
