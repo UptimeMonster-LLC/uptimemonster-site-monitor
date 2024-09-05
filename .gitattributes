@@ -13,6 +13,10 @@
 *.png binary
 *.jpg binary
 
+# Directories to exclude when creating archive.
+/.wordpress-org export-ignore
+/.github export-ignore
+
 # Files to exclude when creating archive.
 
 *.git export-ignore

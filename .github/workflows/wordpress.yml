@@ -1,0 +1,51 @@
+# GitHub Actions Workflow: Deploy to WordPress.org SVN Repository
+#
+# This workflow is triggered when a new release is published on GitHub.
+# It automates the deployment of a WordPress plugin to the WordPress.org SVN repository
+# and uploads a release asset to the GitHub release.
+#
+# Workflow Steps:
+# 1. Checkout the latest code from the repository.
+# 2. Deploy the WordPress plugin to the WordPress.org SVN repository using 10up's action.
+#    - `generate-zip: true`: Generates a zip file for the plugin.
+#    - `dry-run: true`: This is a dry run for testing purposes. Set it to `false` for a real deployment.
+# 3. Upload the generated zip file as a release asset to the GitHub release.
+#
+# Secrets:
+# - `SVN_USERNAME`: WordPress.org SVN repository username.
+# - `SVN_PASSWORD`: WordPress.org SVN repository password.
+# - `GITHUB_TOKEN`: GitHub token to upload release assets.
+
+name: Deploy to WordPress.org SVN Repository
+
+#on:
+#  release:
+#    types: [ published ]
+
+on: [push]
+
+jobs:
+  release:
+    if: github.event.release.prerelease == false
+    name: Deploy to WP.org
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: WordPress Plugin Deploy
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          generate-zip: true
+          dry-run: true
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: ${{ github.workspace }}/${{ github.event.repository.name }}.zip
