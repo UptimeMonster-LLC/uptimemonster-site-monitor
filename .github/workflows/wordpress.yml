@@ -15,23 +15,30 @@
 # - `SVN_USERNAME`: WordPress.org SVN repository username.
 # - `SVN_PASSWORD`: WordPress.org SVN repository password.
 # - `GITHUB_TOKEN`: GitHub token to upload release assets.
+#
+# Tag name must be compatible with WordPress versioning (without leading v).
+# E.G
+# Bad tag: vx.x.x
+# Good Tag: x.x.x
+#
 
 name: Deploy to WordPress.org SVN Repository
 
-#on:
-#  release:
-#    types: [ published ]
-
-on: [push]
+on:
+  release:
+    types: [ published ]
 
 jobs:
   release:
-    if: github.event.release.prerelease == false
+#    if: github.event.release.prerelease == false
     name: Deploy to WP.org
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        run: |
+          composer install --no-dev
+          composer dump-autoload -o --no-dev
 
       - name: WordPress Plugin Deploy
         id: deploy
