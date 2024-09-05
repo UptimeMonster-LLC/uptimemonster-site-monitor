@@ -40,8 +40,8 @@ jobs:
           generate-zip: true
           dry-run: true
         env:
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.WP_SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.WP_SVN_PASSWORD }}
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v2
