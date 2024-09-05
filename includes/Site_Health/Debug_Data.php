@@ -8,6 +8,7 @@
 
 namespace UptimeMonster\SiteMonitor\Site_Health;
 
+use Exception;
 use Imagick;
 use ImagickException;
 use WP_Debug_Data;
@@ -37,7 +38,7 @@ if ( ! class_exists( '\WP_Debug_Data' ) ) {
 class Debug_Data extends WP_Debug_Data {
 
 	/**
-	 * @param $info
+	 * @param array $info
 	 *
 	 * @return void
 	 * @see get_core_updates()
@@ -68,6 +69,11 @@ class Debug_Data extends WP_Debug_Data {
 		unset( $fields );
 	}
 
+	/**
+	 * @param array $info
+	 *
+	 * @return void
+	 */
 	protected static function process_dropins_data( &$info ) {
 		$dropins = get_dropins();
 		// Get core dropins descriptions.
@@ -93,6 +99,11 @@ class Debug_Data extends WP_Debug_Data {
 		}
 	}
 
+	/**
+	 * @param array $info
+	 *
+	 * @return void
+	 */
 	protected static function process_mu_plugins_data( &$info ) {
 		$mu_plugins = get_mu_plugins();
 		// Remove fields data from wp-debug-data.
@@ -106,6 +117,11 @@ class Debug_Data extends WP_Debug_Data {
 		}
 	}
 
+	/**
+	 * @param array $info
+	 *
+	 * @return void
+	 */
 	protected static function process_plugins_data( &$info ) {
 		// Reset fields.
 		$info['wp-plugins-active']['fields']   = [];
@@ -182,6 +198,11 @@ class Debug_Data extends WP_Debug_Data {
 		}
 	}
 
+	/**
+	 * @param array $info
+	 *
+	 * @return void
+	 */
 	protected static function process_themes_data( &$info ) {
 		$info['wp-active-theme']    = [];
 		$info['wp-parent-theme']    = [];
@@ -394,6 +415,11 @@ class Debug_Data extends WP_Debug_Data {
 		}
 	}
 
+	/**
+	 * @param array $info
+	 *
+	 * @return void
+	 */
 	protected static function update_path_and_sizes( &$info ) {
 		$sizes = self::get_sizes();
 		foreach ( $info['wp-paths-sizes']['fields'] as $key => &$data ) {
@@ -409,27 +435,30 @@ class Debug_Data extends WP_Debug_Data {
 	/**
 	 * Static function for generating site debug data when required.
 	 *
-	 * @return array The debug data for the site.
-	 * @throws ImagickException
+	 * @return array<string, array> The debug data for the site.
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 */
 	public static function get_report(): array {
-		$info = parent::debug_data();
-		// WP Core Update.
-		self::process_core_update_status( $info );
-		// Dropins data.
-		self::process_dropins_data( $info );
-		// MustUse plugins data.
-		self::process_mu_plugins_data( $info );
-		// Installed plugins data.
-		self::process_plugins_data( $info );
-		// Installed themes data.
-		self::process_themes_data( $info );
-		// Update directory/path sizes.
-		self::update_path_and_sizes( $info );
+		try {
+			$info = parent::debug_data();
+			// WP Core Update.
+			self::process_core_update_status( $info );
+			// Dropins data.
+			self::process_dropins_data( $info );
+			// MustUse plugins data.
+			self::process_mu_plugins_data( $info );
+			// Installed plugins data.
+			self::process_plugins_data( $info );
+			// Installed themes data.
+			self::process_themes_data( $info );
+			// Update directory/path sizes.
+			self::update_path_and_sizes( $info );
+		} catch ( Exception $e ) {
+			$info = [];
+		}
 
 		return [
-			'version' => '1.0.5',
+			'version' => '1.0.0',
 			'data'    => $info,
 		];
 	}

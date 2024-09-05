@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * An Upgrader Skin for WordPress that only generates plain-text
  */
-#[AllowDynamicProperties]
+#[\AllowDynamicProperties]
 class UptimeMonsterUpgraderSkin extends WP_Upgrader_Skin {
 
 	protected $messages = [];

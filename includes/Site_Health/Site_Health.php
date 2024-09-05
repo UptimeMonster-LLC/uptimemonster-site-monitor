@@ -22,6 +22,9 @@ if ( ! class_exists( '\WP_Site_Health' ) ) {
 
 class Site_Health {
 
+	/**
+	 * @return array<string, array>
+	 */
 	public static function get_reports(): array {
 		$site_health = WP_Site_Health::get_instance();
 		$tests       = WP_Site_Health::get_tests();
@@ -110,7 +113,7 @@ class Site_Health {
 		}
 
 		return [
-			'version' => '1.0.5',
+			'version' => '1.0.0',
 			'data'    => $results,
 		];
 	}

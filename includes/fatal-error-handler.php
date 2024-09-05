@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Drop-in fatal-error-handler class for UptimeMonster Site Monitor
  */
-#[AllowDynamicProperties]
+#[\AllowDynamicProperties]
 class UptimeMonster_Monitor_Errors extends WP_Fatal_Error_Handler {
 
 	/**

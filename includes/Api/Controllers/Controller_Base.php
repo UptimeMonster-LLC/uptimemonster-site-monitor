@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-#[AllowDynamicProperties]
+#[\AllowDynamicProperties]
 abstract class Controller_Base extends WP_REST_Controller {
 
 	/**
@@ -53,7 +53,8 @@ abstract class Controller_Base extends WP_REST_Controller {
 	 * @return WP_Error|boolean
 	 * @see WP_REST_Server::respond_to_request()
 	 */
-	public function get_route_access( $request ) {
+	public function get_route_access( WP_REST_Request $request ) {
+		/** @var string[] $api_keys */
 		$api_keys = get_option( 'uptimemonster_site_monitor_api_keys', [] );
 		if ( empty( $api_keys['api_key'] ) || empty( $api_keys['api_secret'] ) ) {
 			// returning false or null results in default "Sorry, you are not allowed to do that." message.
@@ -70,12 +71,12 @@ abstract class Controller_Base extends WP_REST_Controller {
 		$method          = strtolower( $request->get_method() );
 		$data            = $request->get_body();
 
-		if ( empty( $data ) ) {
-			$data = '';
+		if ( $data && ! is_string( $data ) ) {
+			$data = wp_json_encode( $data, JSON_UNESCAPED_SLASHES );
 		}
 
-		if ( ! is_string( $data ) ) {
-			$data = wp_json_encode( $data, JSON_UNESCAPED_SLASHES );
+		if ( empty( $data ) ) {
+			$data = '';
 		}
 
 		$is_valid = hash_equals(
@@ -90,6 +91,11 @@ abstract class Controller_Base extends WP_REST_Controller {
 		return new WP_Error( 'invalid_signature', esc_html__( 'Invalid Signature', 'uptimemonster-site-monitor' ) );
 	}
 
+	/**
+	 * @param array $response
+	 *
+	 * @return void
+	 */
 	protected function add_extra_data( &$response ) {
 		// Check for update.
 		Debug_Data::check_for_updates();

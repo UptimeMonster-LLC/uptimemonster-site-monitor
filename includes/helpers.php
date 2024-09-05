@@ -96,7 +96,7 @@ function uptimemonster_get_current_time(): string {
 /**
  * Get current actor data.
  *
- * @return array<string, array<string, string>|int|string>
+ * @return array<string, array<string, string>
  */
 function uptimemonster_get_current_actor(): array {
 	if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
@@ -117,19 +117,19 @@ function uptimemonster_get_current_actor(): array {
 		$route     = trim( $GLOBALS['wp']->query_vars['rest_route'], '/' );
 		$parts     = explode( '/', $route );
 		$namespace = reset( $parts );
-		$extra = [
-			'method'    => isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( filter_var( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) : null,
+		$extra     = [
+			'method'    => isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : null,
 			'namespace' => $namespace,
 			'route'     => $route,
 		];
 		if ( ! empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
-			$extra['ua'] = sanitize_text_field(filter_var( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ));
+			$extra['ua'] = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ); // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__HTTP_USER_AGENT__
 		}
 		if ( ! empty( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
-			$extra['ul'] = sanitize_text_field(filter_var( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ));
+			$extra['ul'] = sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) );
 		}
 
-		$actor     = [
+		$actor = [
 			'type'  => 'rest-api',
 			'extra' => $extra,
 		];
@@ -255,7 +255,7 @@ function uptimemonster_get_ip_address(): string {
 			if ( strpos( $ip, ',' ) ) {
 				/** @noinspection PhpPregSplitWithoutRegExpInspection */
 				$ip = preg_split( '/,/', $ip );
-				if ( ! is_array( $ip ) ) {
+				if ( empty( $ip ) || ! is_array( $ip ) ) {
 					break;
 				}
 				$ip = (string) rest_is_ip_address( trim( current( $ip ) ) );
@@ -271,7 +271,7 @@ function uptimemonster_get_ip_address(): string {
 /**
  * @param string $plugin_file
  *
- * @return array|false
+ * @return array<string, mixed>|false
  */
 function uptimemonster_get_plugin_data( string $plugin_file ) {
 	if ( ! is_readable( $plugin_file ) ) {
