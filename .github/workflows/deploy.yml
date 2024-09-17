@@ -8,35 +8,15 @@ jobs:
       contents: write
       issues: write
     steps:
-      - name: 🔄 Checkout latest code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: 📦 Build Dependency
-        run: |
-          composer install --no-dev
-          composer dump-autoload -o --no-dev
-
-      - name: 📦 Build Plugin Package
-        run: |
-          zip -r /tmp/${{ github.event.repository.name }}.zip .
-
-      - name: 📦 Upload ZIP as artifact
-        uses: actions/upload-artifact@v3
+      - name: 📦 Generating Zip
+        uses: rudlinkon/action-wordpress-build-zip@master
         with:
-          name: ${{ github.event.repository.name }}
-          path: zip -r /tmp/${{ github.event.repository.name }}.zip
+          retention-days: 7
+          install-composer: true
 
-#      - name: 📦 Post comment with ZIP download link
-#        run: |
-#          PR_NUMBER=$(jq --raw-output .number "${GITHUB_EVENT_PATH}")
-#          ZIP_URL="https://github.com/${{ github.repository }}/suites/${{ github.run_id }}/artifacts"
-#          COMMENT_BODY="Download the generated ZIP [here](${ZIP_URL})"
-#
-#          curl -s --request POST \
-#            --url https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments \
-#            --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-#            --header "Content-Type: application/json" \
-#            --data "{\"body\": \"$COMMENT_BODY\"}"
   deploy-dev:
     if: github.ref == 'refs/heads/develop'
     name: Deploy Development Branch
@@ -68,6 +48,7 @@ jobs:
             wp --allow-root rocket clean --confirm
             cd ${{ secrets.STAGE_PATH }}/public/wp-content/plugins/uptimemonster-site-monitor/
             git status
+
   deploy-prod:
     if: github.ref == 'refs/heads/master'
     name: Deploy Production Branch
