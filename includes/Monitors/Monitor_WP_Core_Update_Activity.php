@@ -61,8 +61,8 @@ class Monitor_WP_Core_Update_Activity extends Activity_Monitor_Base {
 			return;
 		}
 
-		if ( isset( $_POST['upgrade'], $_REQUEST['_wpnonce'] ) && ! empty( $_GET['action'] ) && in_array( sanitize_text_field( $_GET['action'] ), [ 'do-core-upgrade', 'do-core-reinstall' ] ) && wp_verify_nonce( sanitize_text_field( $_REQUEST['_wpnonce'] ), 'upgrade-core' ) ) {
-			$action = sanitize_text_field( $_GET['action'] );
+		if ( isset( $_POST['upgrade'], $_REQUEST['_wpnonce'] ) && ! empty( $_GET['action'] ) && in_array( sanitize_text_field( $_GET['action'] ), [ 'do-core-upgrade', 'do-core-reinstall' ] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'upgrade-core' ) ) {
+			$action = sanitize_text_field( wp_unslash( $_GET['action'] ) );
 			uptimemonster_switch_to_english();
 			/* translators: 1. WordPress Version. */
 			$name = 'do-core-upgrade' == $action ? esc_html__( 'WordPress Upgrading From %s', 'uptimemonster-site-monitor' ) : esc_html__( 'WordPress Reinstalling %s', 'uptimemonster-site-monitor' );

@@ -155,8 +155,8 @@ class Dashboard {
 		if ( isset( $_POST['uptimemonster-save-settings'] ) && ! empty( $_POST['uptimemonster'] ) && is_array( $_POST['uptimemonster'] ) ) {
 			check_admin_referer( 'uptimemonster-site-monitor-settings' );
 
-			$api_key    = isset( $_POST['uptimemonster']['api_key'] ) ? sanitize_text_field( $_POST['uptimemonster']['api_key'] ) : '';
-			$api_secret = isset( $_POST['uptimemonster']['api_secret'] ) ? sanitize_text_field( $_POST['uptimemonster']['api_secret'] ) : '';
+			$api_key    = isset( $_POST['uptimemonster']['api_key'] ) ? sanitize_text_field( wp_unslash( $_POST['uptimemonster']['api_key'] ) ) : '';
+			$api_secret = isset( $_POST['uptimemonster']['api_secret'] ) ? sanitize_text_field( wp_unslash( $_POST['uptimemonster']['api_secret'] ) ) : '';
 
 			if ( $api_key && $api_secret ) {
 				$response = UptimeMonster_Client::get_instance()

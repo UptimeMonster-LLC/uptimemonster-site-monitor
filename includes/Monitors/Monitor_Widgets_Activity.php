@@ -63,7 +63,7 @@ class Monitor_Widgets_Activity extends Activity_Monitor_Base {
 	 */
 	public function on_update( $instance, $new_instance, $old_instance, WP_Widget $widget ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended,Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
 		if ( ! empty( $_REQUEST['sidebar'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$sidebar = sanitize_text_field( $_REQUEST['sidebar'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$sidebar = sanitize_text_field( wp_unslash( $_REQUEST['sidebar'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			if ( $this->maybe_log_widget( Activity_Monitor_Base::ITEM_UPDATED, $sidebar, $widget ) ) {
 				try {
@@ -91,10 +91,10 @@ class Monitor_Widgets_Activity extends Activity_Monitor_Base {
 
 	public function on_delete() {
 		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.NonceVerification.Recommended
-		if ( 'post' == strtolower( $_SERVER['REQUEST_METHOD'] ) && ! empty( $_REQUEST['widget-id'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( 'post' == strtolower( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) && ! empty( $_REQUEST['widget-id'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			if ( isset( $_REQUEST['sidebar'], $_REQUEST['delete_widget'] ) && 1 === (int) $_REQUEST['delete_widget'] ) {
-				$sidebar = sanitize_text_field( $_REQUEST['sidebar'] );
-				$widget  = sanitize_text_field( $_REQUEST['id_base'] );
+				$sidebar = sanitize_text_field( wp_unslash( $_REQUEST['sidebar'] ) );
+				$widget  = sanitize_text_field( wp_unslash( $_REQUEST['id_base'] ) );
 				if ( $this->maybe_log_widget( Activity_Monitor_Base::ITEM_DELETED, $sidebar, '' ) ) {
 					$this->log_activity(
 						Activity_Monitor_Base::ITEM_DELETED,
