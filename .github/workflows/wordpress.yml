@@ -60,4 +60,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: ${{ github.workspace }}/${{ github.event.repository.name }}.zip
+          files: ${{ github.workspace }}/${{ github.event.repository.name }}.${{  github.ref_name }}".zip
