@@ -9,7 +9,7 @@ jobs:
       issues: write
     steps:
       - name: 🔄 Checkout latest code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: 📦 Build Dependency
         run: |
@@ -17,20 +17,14 @@ jobs:
           composer dump-autoload -o --no-dev
 
       - name: 📦 Build Plugin Package
-        id: deploy
-        uses: 10up/action-wordpress-plugin-deploy@stable
-        with:
-          generate-zip: true
-          dry-run: true # Do not commit to WordPress plugin repository.
-        env:
-          SVN_USERNAME: ${{ secrets.WP_SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.WP_SVN_PASSWORD }}
+        run: |
+          zip -r /tmp/${{ github.event.repository.name }}.zip .
 
       - name: 📦 Upload ZIP as artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}
-          path: ${{ github.workspace }}/${{ github.event.repository.name }}.zip
+          path: zip -r /tmp/${{ github.event.repository.name }}.zip
 
 #      - name: 📦 Post comment with ZIP download link
 #        run: |
