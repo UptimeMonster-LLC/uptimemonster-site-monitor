@@ -1,6 +1,48 @@
 name: Deploy
 on: [push]
 jobs:
+  test-build:
+    name: ⚡ Test Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: 🔄 Checkout latest code
+        uses: actions/checkout@v2
+
+      - name: 📦 Build Dependency
+        run: |
+          composer install --no-dev
+          composer dump-autoload -o --no-dev
+
+      - name: 📦 Build Plugin Package
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          generate-zip: true
+          dry-run: true # Do not commit to WordPress plugin repository.
+        env:
+          SVN_USERNAME: ${{ secrets.WP_SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.WP_SVN_PASSWORD }}
+
+      - name: 📦 Upload ZIP as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}
+          path: ${{ github.workspace }}/${{ github.event.repository.name }}.zip
+
+#      - name: 📦 Post comment with ZIP download link
+#        run: |
+#          PR_NUMBER=$(jq --raw-output .number "${GITHUB_EVENT_PATH}")
+#          ZIP_URL="https://github.com/${{ github.repository }}/suites/${{ github.run_id }}/artifacts"
+#          COMMENT_BODY="Download the generated ZIP [here](${ZIP_URL})"
+#
+#          curl -s --request POST \
+#            --url https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments \
+#            --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+#            --header "Content-Type: application/json" \
+#            --data "{\"body\": \"$COMMENT_BODY\"}"
   deploy-dev:
     if: github.ref == 'refs/heads/develop'
     name: Deploy Development Branch
