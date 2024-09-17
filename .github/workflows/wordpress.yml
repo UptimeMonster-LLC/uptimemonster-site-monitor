@@ -30,23 +30,22 @@ on:
 
 jobs:
   release:
-#    if: github.event.release.prerelease == false
-    name: Deploy to WP.org
+    if: github.event.release.prerelease == false
+    name: ⚡ Deploy to WP.org
     runs-on: ubuntu-latest
     permissions:
       contents: write
       issues: read
     steps:
-      - name: Checkout code
+      - name: 🔄 Checkout latest code
         uses: actions/checkout@v2
 
-      - name: Build
+      - name: 📦 Build
         run: |
           composer install --no-dev
           composer dump-autoload -o --no-dev
-          php -v
 
-      - name: WordPress Plugin Deploy
+      - name: 🚚 WordPress Plugin Deploy
         id: deploy
         uses: 10up/action-wordpress-plugin-deploy@stable
         with:
@@ -56,7 +55,7 @@ jobs:
           SVN_USERNAME: ${{ secrets.WP_SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.WP_SVN_PASSWORD }}
 
-      - name: Upload release asset
+      - name: 📦 🎉 Upload release asset
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
