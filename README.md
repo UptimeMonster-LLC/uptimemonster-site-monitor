@@ -4,6 +4,10 @@
 [//]: # ([![UptimeMonster Site Monitor Rating]&#40;https://img.shields.io/wordpress/plugin/r/uptimemonster-site-monitor?label=Rating&style=flat-square&#41;]&#40;https://wordpress.org/plugins/uptimemonster-site-monitor/&#41;)
 [//]: # ([![UptimeMonster Site Monitor Version]&#40;https://img.shields.io/wordpress/plugin/v/uptimemonster-site-monitor.svg?label=Version&style=flat-square&#41;]&#40;https://wordpress.org/plugins/uptimemonster-site-monitor/&#41;)
 [//]: # ([![UptimeMonster Site Monitor Downloads]&#40;https://img.shields.io/wordpress/plugin/dt/uptimemonster-site-monitor?label=Downloads&style=flat-square&#41;]&#40;https://wordpress.org/plugins/uptimemonster-site-monitor/&#41;)
+[//]: # ([![UptimeMonster Site Monitor Active Installs]&#40;https://img.shields.io/wordpress/plugin/installs/uptimemonster-site-monitor?label=Active+Installs&style=flat-square&#41;]&#40;https://wordpress.org/plugins/uptimemonster-site-monitor/&#41;)
+[//]: # ([![UptimeMonster Site Monitor License]&#40;https://img.shields.io/github/license/UptimeMonster-LLC/uptimemonster-site-monitor?style=flat-square&color=default&#41;]&#40;https://wordpress.org/plugins/uptimemonster-site-monitor/&#41;)
+[//]: # ([![UptimeMonster Site Monitor Build Status]&#40;https://img.shields.io/github/actions/workflow/status/UptimeMonster-LLC/uptimemonster-site-monitor/deploy.yml?branch=master&style=flat-square&label=Build&#41;]&#40;https://wordpress.org/plugins/uptimemonster-site-monitor/&#41;)
+
 [//]: # (---)
 
 Effortlessly monitor and optimize the performance, security, and activities of multiple WordPress websites with the UptimeMonster Site Monitor plugin – your all-in-one solution for streamlined website management.
