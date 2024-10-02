@@ -131,17 +131,18 @@ class UptimeMonster_Client {
 	 * Send Log Data to UptimeMonster.
 	 *
 	 * @param array $log Log Data.
+	 * @param bool $wait block request.
 	 *
 	 * @return array|mixed|string|WP_Error
 	 */
-	public function send_log( array $log ) {
+	public function send_log( array $log, bool $wait = false ) {
 		return $this->request(
 			'site/activity/log',
 			$log,
 			'post',
 			[
-				'blocking' => false,
-				'timeout'  => 5, // phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
+				'timeout'   => ! $wait ? 0.01 : 5, // phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
+				'blocking'  => $wait,
 			]
 		);
 	}
