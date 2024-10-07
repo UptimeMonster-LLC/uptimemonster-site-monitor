@@ -285,7 +285,7 @@ function uptimemonster_get_plugin_data( string $plugin_file ) {
 	// Get Data.
 	$plugin_data = get_plugin_data( $plugin_file, false, false );
 	// Set Installation status
-	$plugin_data['Status'] = (int) is_plugin_active( $plugin_file );
+	$plugin_data['Status'] = is_plugin_active( $plugin_file );
 
 	return $plugin_data;
 }
@@ -371,6 +371,10 @@ function uptimemonster_get_all_themes() {
  * @return array<string,bool|string|null>
  */
 function uptimemonster_get_theme_data_headers( $theme ) {
+	if ( ! is_a( $theme, WP_Theme::class ) ) {
+		return [];
+	}
+
 	$headers = [
 		'Name',
 		'Parent Theme',
@@ -388,13 +392,9 @@ function uptimemonster_get_theme_data_headers( $theme ) {
 	$data = [];
 
 	foreach ( $headers as $header ) {
-		if ( is_a( $theme, WP_Theme::class ) ) {
-			$data[ $header ] = $theme->get( $header );
-			if ( 'Status' === $header ) {
-				$data['Status'] = $theme->get_stylesheet() === get_stylesheet();
-			}
-		} else {
-			$data[ $header ] = '';
+		$data[ $header ] = $theme->get( $header );
+		if ( 'Status' === $header ) {
+			$data['Status'] = $theme->get_stylesheet() === get_stylesheet();
 		}
 	}
 

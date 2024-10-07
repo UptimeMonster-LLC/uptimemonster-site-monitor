@@ -82,24 +82,11 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 		);
 		uptimemonster_restore_locale();
 
-		$this->log_activity(
-			Activity_Monitor_Base::ITEM_ACTIVATED,
-			0,
-			$new_name,
-			$name,
-			[
-				'version'    => $new_theme->get( 'Version' ),
-				'author'     => $new_theme->get( 'Author' ),
-				'theme_uri'  => $new_theme->get( 'ThemeURI' ),
-				'author_uri' => $new_theme->get( 'AuthorURI' ),
-				'old_theme'  => [
-					'version'    => $old_theme->get( 'Version' ),
-					'author'     => $old_theme->get( 'Author' ),
-					'theme_uri'  => $old_theme->get( 'ThemeURI' ),
-					'author_uri' => $old_theme->get( 'AuthorURI' ),
-				],
-			]
-		);
+		$data = uptimemonster_get_theme_data_headers( $new_theme );
+		// Get old theme data.
+		$data['old_theme'] = uptimemonster_get_theme_data_headers( $old_theme );
+
+		$this->log_activity( Activity_Monitor_Base::ITEM_ACTIVATED, 0, $new_name, $name, $data );
 	}
 
 	public function on_before_delete( $stylesheet ) {
@@ -129,15 +116,12 @@ class Monitor_Themes_Activity extends Activity_Monitor_Base {
 
 		delete_transient( 'uptimemonster_theme_data_' . $hash );
 
-		$data = $this->get_theme_data( $stylesheet );
-		$data = empty( $data ) ? [] : $data;
-
 		$this->log_activity(
 			Activity_Monitor_Base::ITEM_DELETED,
 			0,
 			$stylesheet,
 			$this->get_name( $stylesheet ),
-			$data
+			$this->get_theme_data( $stylesheet )
 		);
 	}
 
